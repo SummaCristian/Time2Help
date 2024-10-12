@@ -9,21 +9,34 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            Map(coordinateRegion: $viewModel.region, showsUserLocation: true)
-                .mapControlVisibility(.visible)
-                .mapControls {
-                    MapUserLocationButton()
-                    MapCompass()
-                    MapScaleView()
-                    MapPitchToggle()
+            ZStack {
+                Map(coordinateRegion: $viewModel.region, showsUserLocation: true)
+                    .mapControlVisibility(.visible)
+                    .mapControls {
+                        MapUserLocationButton()
+                        MapCompass()
+                        MapScaleView()
+                        MapPitchToggle()
+                    }
+                //.ignoresSafeArea()
+                    .onAppear {
+                        viewModel.checkIfLocationServicesIsEnabled()
+                    }   
+                    .ignoresSafeArea()
+                
+                VStack {
+                    Spacer()
+                    VisualEffectBlurView()
+                        .frame(height: 80)
+                        .edgesIgnoringSafeArea(.bottom)
                 }
-                .onAppear {
-                    viewModel.checkIfLocationServicesIsEnabled()
-                }
-                .tabItem {
-                    Label("Mappa", systemImage: "map")
-                }
-                .tag(0) // Tag for the Map tab
+                .ignoresSafeArea()
+
+            }
+            .tabItem {
+                Label("Mappa", systemImage: "map")
+            }
+            .tag(0) // Tag for the Map tab
             
             Text("Nuovo Favore") // A placeholder just for the tab label
                 .tabItem {
@@ -71,5 +84,16 @@ struct NewFavorSheet: View {
 struct ProfileView: View {
     var body: some View {
         Text("Profilo View")
+    }
+}
+
+struct VisualEffectBlurView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+        // Nothing
     }
 }
