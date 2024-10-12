@@ -30,7 +30,7 @@ struct MapView: View {
             VStack {
                 Spacer()
                 VisualEffectBlurView()
-                    .frame(height: 80)
+                    .frame(height: 90)
                     .edgesIgnoringSafeArea(.bottom)
             }
             .ignoresSafeArea()

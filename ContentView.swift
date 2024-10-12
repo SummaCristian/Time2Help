@@ -9,7 +9,7 @@ struct ContentView: View {
     @State private var selectedTab: Int = 0 // Track the selected tabEmptyView
     // Boolean value to hanlde the behavior of the "New Favor" sheet
     @State private var isSheetPresented = false // State to control sheet visibility
-    
+    @State private var isExportSheetPresented = false
     // Main View
     var body: some View {
         // The main UI of this app is composed of a TabView, meaning the the UI is divided
@@ -42,9 +42,17 @@ struct ContentView: View {
                     Label("Profilo", systemImage: "person.fill")
                 }
                 .tag(2) // Tag for the Profile tab
+                // Temporary: need a way to export an IPA file without XCode
+                .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10) { 
+                    isExportSheetPresented = true
+                }
+
         }
         .sheet(isPresented: $isSheetPresented, onDismiss: {}) {
             NewFavorSheet() // The sliding sheet content
+        }
+        .sheet(isPresented: $isExportSheetPresented, onDismiss: {}) {
+            ExportView()
         }
         .accentColor(.blue)
     }
