@@ -30,10 +30,10 @@ struct ContentView: View {
                     Label("Nuovo Favore", systemImage: "plus.rectangle")
                 }
                 .tag(1) // Tag for the Nuovo Favore tab
-                .onChange(of: selectedTab) { newValue in
+                .onChange(of: selectedTab) { oldValue, newValue in
                     if newValue == 1 {
                         isSheetPresented = true // Show the sheet when the tab is selected
-                        selectedTab = 0 // Return to the previous tab
+                        selectedTab = oldValue // Return to the previous tab
                     }
                 }
             
@@ -47,6 +47,7 @@ struct ContentView: View {
             NewFavorSheet() // The sliding sheet content
         }
         .accentColor(.blue)
+        .background(.ultraThinMaterial)
     }
 }
 
