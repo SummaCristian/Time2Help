@@ -2,42 +2,28 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {
-    @StateObject private var viewModel = ContentViewModel()
+    // Connection to the ViewModel for Data and Location Permissions
+    @StateObject private var viewModel = MapViewModel()
     
-    @State private var selectedTab: Int = 0 // Track the selected tab
+    // Integer to keep track of which tab is selected
+    @State private var selectedTab: Int = 0 // Track the selected tabEmptyView
+    // Boolean value to hanlde the behavior of the "New Favor" sheet
     @State private var isSheetPresented = false // State to control sheet visibility
     
+    // Main View
     var body: some View {
+        // The main UI of this app is composed of a TabView, meaning the the UI is divided
+        // into different tabs, each one containing a portion of the app.
+        // Each one of the different screens is then coded inside its own file.
         TabView(selection: $selectedTab) {
-            ZStack {
-                Map(coordinateRegion: $viewModel.region, showsUserLocation: true)
-                    .mapControlVisibility(.visible)
-                    .mapControls {
-                        MapUserLocationButton()
-                        MapCompass()
-                        MapScaleView()
-                        MapPitchToggle()
-                    }
-                //.ignoresSafeArea()
-                    .onAppear {
-                        viewModel.checkIfLocationServicesIsEnabled()
-                    }   
-                    .ignoresSafeArea()
-                
-                VStack {
-                    Spacer()
-                    VisualEffectBlurView()
-                        .frame(height: 80)
-                        .edgesIgnoringSafeArea(.bottom)
-                }
-                .ignoresSafeArea()
-
-            }
+            // Tab 0: Map
+            MapView(viewModel: viewModel)
             .tabItem {
                 Label("Mappa", systemImage: "map")
             }
             .tag(0) // Tag for the Map tab
             
+            // Tab 1: New Favor (opens sheet)
             Text("Nuovo Favore") // A placeholder just for the tab label
                 .tabItem {
                     Label("Nuovo Favore", systemImage: "plus.rectangle")
@@ -50,6 +36,7 @@ struct ContentView: View {
                     }
                 }
             
+            // Tab 2: Profile
             ProfileView()
                 .tabItem {
                     Label("Profilo", systemImage: "person.fill")
@@ -60,40 +47,5 @@ struct ContentView: View {
             NewFavorSheet() // The sliding sheet content
         }
         .accentColor(.blue)
-        .background(.ultraThinMaterial)
-    }
-}
-
-struct NewFavorSheet: View {
-    var body: some View {
-        VStack {
-            Text("Nuovo Favore")
-                .font(.title)
-                .padding()
-            
-            // Add more form fields or content here
-            Text("Here you can create a new favor")
-                .padding()
-            
-            Spacer()
-        }
-        .presentationDetents([.medium, .large]) // Available on iOS 16+ for adjusting sheet size
-    }
-}
-
-struct ProfileView: View {
-    var body: some View {
-        Text("Profilo View")
-    }
-}
-
-struct VisualEffectBlurView: UIViewRepresentable {
-    func makeUIView(context: Context) -> UIVisualEffectView {
-        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
-        return view
-    }
-    
-    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
-        // Nothing
     }
 }
