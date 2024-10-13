@@ -12,7 +12,7 @@ struct MapView: View {
         // Bundling everything in a ZStack, so that a background blur effect can be applied behind the TabView
         ZStack {
             // The Map, centered around ViewModel's region, and showing the User's position when possible
-            Map(coordinateRegion: $viewModel.region, showsUserLocation: true)
+            Map(coordinateRegion: $viewModel.region, interactionModes: [.all], showsUserLocation: true)
                 .mapControlVisibility(.visible)
                 .mapControls {
                     MapUserLocationButton()
@@ -26,12 +26,15 @@ struct MapView: View {
                     viewModel.checkIfLocationServicesIsEnabled()
                 }   
                 .ignoresSafeArea()
+                .mapStyle(.standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false))
             
             VStack {
                 Spacer()
                 VisualEffectBlurView()
                     .frame(height: 90)
                     .edgesIgnoringSafeArea(.bottom)
+                    .contentShape(Rectangle())
+                    .allowsHitTesting(/*@START_MENU_TOKEN@*/false/*@END_MENU_TOKEN@*/)
             }
             .ignoresSafeArea()
         }
