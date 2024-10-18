@@ -11,6 +11,16 @@ enum MapDetails {
     static let span = MKCoordinateSpan(latitudeDelta: 0.008, longitudeDelta: 0.008)
 }
 
+// Temporary
+extension MKCoordinateRegion: Equatable {
+    public static func == (lhs: MKCoordinateRegion, rhs: MKCoordinateRegion) -> Bool {
+        lhs.center.latitude == rhs.center.latitude &&
+        lhs.center.longitude == rhs.center.longitude &&
+        lhs.span.latitudeDelta == rhs.span.latitudeDelta &&
+        lhs.span.longitudeDelta == rhs.span.longitudeDelta
+    }
+}
+
 final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {    
     // Data used to center the Map inside the UI.
     // When this changes, the Map changes accordingly.

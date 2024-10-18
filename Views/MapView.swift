@@ -6,50 +6,34 @@ import MapKit
 struct MapView: View {
     // The ViewModel, where the Data and Permission are handled.
     @ObservedObject var viewModel: MapViewModel
+    @State private var mapCameraPosition: MapCameraPosition = .userLocation(followsHeading: false, fallback: .automatic)
+    @Namespace private var mapNameSpace
     
     // The UI
     var body: some View {
         // Bundling everything in a ZStack, so that a background blur effect can be applied behind the TabView
         ZStack {
             // The Map, centered around ViewModel's region, and showing the User's position when possible
-            Map(coordinateRegion: $viewModel.region, interactionModes: [.all], showsUserLocation: true)
-                .mapControlVisibility(.visible)
-                .mapControls {
-                    MapUserLocationButton()
-                    MapCompass()
-                    MapScaleView()
-                    MapPitchToggle()
-                }
-                .onAppear {
-                    // When the Map appears on-screen, the Permission is checked, the User's position is
-                    // refreshed, and the Map is then centered on it.
-                    viewModel.checkIfLocationServicesIsEnabled()
-                }   
-                .ignoresSafeArea()
-                .mapStyle(.standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false))
-            
-            VStack {
-                Spacer()
-                VisualEffectBlurView()
-                    .frame(height: 90)
-                    .edgesIgnoringSafeArea(.bottom)
-                    .contentShape(Rectangle())
-                    .allowsHitTesting(/*@START_MENU_TOKEN@*/false/*@END_MENU_TOKEN@*/)
+            //Map(coordinateRegion: $viewModel.region, interactionModes: .all, showsUserLocation: true)
+            Map(initialPosition: mapCameraPosition, bounds: MapCameraBounds(minimumDistance: 0.008, maximumDistance: .infinity), interactionModes: .all, scope: mapNameSpace) {
+                UserAnnotation()
             }
-            .ignoresSafeArea()
+            .mapControlVisibility(.visible)
+            .mapControls {
+                MapUserLocationButton()
+                MapCompass()
+                MapScaleView()
+                MapPitchToggle()
+            }
+            .onAppear {
+                // When the Map appears on-screen, check permissions and update location
+                viewModel.checkIfLocationServicesIsEnabled()
+            }
+            .onChange(of: viewModel.region) { oldRegion, newRegion in
+                mapCameraPosition = .region(viewModel.region)
+            }
+            .edgesIgnoringSafeArea(.bottom)
+            .tint(.blue)
         }
-    }
-}
-
-// Rectangle with semi-transparent and blurred background.
-// Used to create a background effect to the TabView
-struct VisualEffectBlurView: UIViewRepresentable {
-    func makeUIView(context: Context) -> UIVisualEffectView {
-        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
-        return view
-    }
-    
-    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
-        // Nothing
     }
 }
