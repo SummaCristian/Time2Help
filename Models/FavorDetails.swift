@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-enum FavorIcon {
+enum FavorIcon: Identifiable, CaseIterable {
     case people
     case plane
     case shippingBox
@@ -51,109 +51,111 @@ enum FavorIcon {
     case translate
     case globe
     
-    var image: Image {
+    var id: Self{self}
+    
+    var icon: String {
         switch self {
         case .people:
-            return Image(systemName: "person.2.fill")
+            return "person.2.fill"
         case .plane:
-            return Image(systemName: "airplane")
+            return "airplane"
         case .shippingBox:
-            return Image(systemName: "shippingbox.fill")
+            return "shippingbox.fill"
         case .book:
-            return Image(systemName: "book.fill")
+            return "book.fill"
         case .handbag:
-            return Image(systemName: "handbag.fill")
+            return "handbag.fill"
         case .bubble:
-            return Image(systemName: "bubble.fill")
+            return "bubble.fill"
         case .camera:
-            return Image(systemName: "camera.fill")
+            return "camera.fill"
         case .gift:
-            return Image(systemName: "gift.fill")
+            return "gift.fill"
         case .car:
-            return Image(systemName: "car.fill")
+            return "car.fill"
         case .cart:
-            return Image(systemName: "cart.fill")
+            return "cart.fill"
         case .envelope:
-            return Image(systemName: "envelope.fill")
+            return "envelope.fill"
         case .eye:
-            return Image(systemName: "eye.fill")
+            return "eye.fill"
         case .film:
-            return Image(systemName: "film")
+            return "film"
         case .flag:
-            return Image(systemName: "flag.fill")
+            return "flag.fill"
         case .hammer:
-            return Image(systemName: "hammer.fill")
+            return "hammer.fill"
         case .heart:
-            return Image(systemName: "heart.fill")
+            return "heart.fill"
         case .hourglass:
-            return Image(systemName: "hourglass")
+            return "hourglass"
         case .house:
-            return Image(systemName: "house.fill")
+            return "house.fill"
         case .trash:
-            return Image(systemName: "trash.fill")
+            return "trash.fill"
         case .lightbulb:
-            return Image(systemName: "lightbulb.min.fill")
+            return "lightbulb.min.fill"
         case .location:
-            return Image(systemName: "location.fill")
+            return "location.fill"
         case .lock:
-            return Image(systemName: "lock.fill")
+            return "lock.fill"
         case .map:
-            return Image(systemName: "map.fill")
+            return "map.fill"
         case .tree:
-            return Image(systemName: "tree.fill")
+            return "tree.fill"
         case .moon:
-            return Image(systemName: "moon.fill")
+            return "moon.fill"
         case .microphone:
-            return Image(systemName: "music.microphone")
+            return "music.microphone"
         case .musicNote:
-            return Image(systemName: "music.note")
+            return "music.note"
         case .paintbrush:
-            return Image(systemName: "paintbrush.fill")
+            return "paintbrush.fill"
         case .printer:
-            return Image(systemName: "printer.fill")
+            return "printer.fill"
         case .thermometer:
-            return Image(systemName: "thermometer.variable")
+            return "thermometer.variable"
         case .snowflake:
-            return Image(systemName: "snowflake")
+            return "snowflake"
         case .dog:
-            return Image(systemName: "dog.fill")
+            return "dog.fill"
         case .star:
-            return Image(systemName: "star.fill")
+            return "star.fill"
         case .tag:
-            return Image(systemName: "tag.fill")
+            return "tag.fill"
         case .flower:
-            return Image(systemName: "camera.macro")
+            return "camera.macro"
         case .umbrella:
-            return Image(systemName: "umbrella.fill")
+            return "umbrella.fill"
         case .videocamera:
-            return Image(systemName: "video.fill")
+            return "video.fill"
         case .wrench:
-            return Image(systemName: "wrench.adjustable.fill")
+            return "wrench.adjustable.fill"
         case .sun:
-            return Image(systemName: "sun.max.fill")
+            return "sun.max.fill"
         case .stopwatch:
-            return Image(systemName: "stopwatch.fill")
+            return "stopwatch.fill"
         case .football:
-            return Image(systemName: "soccerball")
+            return "soccerball"
         case .stroller:
-            return Image(systemName: "stroller.fill")
+            return "stroller.fill"
         case .bandage:
-            return Image(systemName: "bandage.fill")
+            return "bandage.fill"
         case .battery:
-            return Image(systemName: "battery.75percent")
+            return "battery.75percent"
         case .document:
-            return Image(systemName: "document.fill")
+            return "document.fill"
         case .flashlight:
-            return Image(systemName: "flashlight.on.fill")
+            return "flashlight.on.fill"
         case .translate:
-            return Image(systemName: "translate")
+            return "translate"
         case .globe:
-            return Image(systemName: "globe")
+            return "globe"
         }
     }
 }
 
-enum FavorColor {
+enum FavorColor: Identifiable, CaseIterable {
     case red
     case orange
     case yellow
@@ -166,6 +168,8 @@ enum FavorColor {
     case purple
     case pink
     case brown
+    
+    var id: Self {self}
     
     var color: Color{
         switch self {
