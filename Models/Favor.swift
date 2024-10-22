@@ -1,7 +1,7 @@
 import Foundation
 import MapKit
 
-struct Favor {
+struct Favor: Identifiable {
     // An ID to identify it
     let id: UUID
     

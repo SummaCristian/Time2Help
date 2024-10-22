@@ -12,6 +12,8 @@ struct ContentView: View {
     // Boolean value to handle the behavior of the "Export IPA" sheet
     @State private var isExportSheetPresented = false
     
+    @StateObject private var database = Database()
+    
     
     // Main View
     var body: some View {
@@ -22,7 +24,7 @@ struct ContentView: View {
             TabView(selection: $selectedTab) {
                 Group {
                     // Tab 0: Map
-                    MapView(viewModel: viewModel)
+                    MapView(viewModel: viewModel, database: database)
                         .tabItem {
                             Label("Mappa", systemImage: "map")
                         }
@@ -66,5 +68,8 @@ struct ContentView: View {
             .frame(width: 120, height: 50)
         }
         .tint(.blue)
+        .onAppear() {
+            database.initialize()
+        }
    }
 }
