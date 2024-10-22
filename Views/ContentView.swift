@@ -1,7 +1,7 @@
 import SwiftUI
 import MapKit
 
-struct ContentView: View {
+struct ContentView: View {    
     // Connection to the ViewModel for Data and Location Permissions
     @StateObject private var viewModel = MapViewModel()
     
@@ -50,7 +50,7 @@ struct ContentView: View {
                     
                 }
                 .sheet(isPresented: $isSheetPresented, onDismiss: {}) {
-                    NewFavorSheet() // The sliding sheet content
+                    NewFavorSheet(database: database, mapViewModel: viewModel) // The sliding sheet content
                 }
                 .sheet(isPresented: $isExportSheetPresented, onDismiss: {}) {
                     ExportView()

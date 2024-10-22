@@ -4,8 +4,15 @@ import SwiftUI
 
 
 struct NewFavorSheet: View {    
+    @Environment(\.dismiss) var dismiss
+    
     @State private var isPresented = false
     @State var selectedDetent: PresentationDetent = .large
+    
+    @ObservedObject var database: Database
+    @ObservedObject var mapViewModel: MapViewModel
+    
+    @StateObject private var newFavor: Favor = Favor()
     
     var body: some View {
         VStack(spacing: 0) {
@@ -28,10 +35,10 @@ struct NewFavorSheet: View {
                     Image(systemName: "arrowtriangle.down.circle")
                     ZStack {
                         Circle()
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(Color(newFavor.color.color))
                             .frame(width: 40, height: 40)
                             .shadow(radius: 3)
-                        Image(systemName: "person.2.fill")
+                        Image(systemName: newFavor.icon.icon)
                             .foregroundStyle(.white)
                             .scaledToFit()
                             .frame(width: 20, height: 20)                        
@@ -49,7 +56,7 @@ struct NewFavorSheet: View {
             })
             
             VStack(spacing: 0) {
-                TextField("Titolo", text: .constant(""))
+                TextField("Titolo", text: $newFavor.title)
                     .padding(12)
                     .font(.body)
                     .padding(.horizontal)
@@ -58,7 +65,7 @@ struct NewFavorSheet: View {
                 
                 Divider()
                 
-                TextField("Descrizione", text: .constant(""))
+                TextField("Descrizione", text: $newFavor.description)
                     .padding(12)
                     .font(.body)
                     .padding(.horizontal)
@@ -83,7 +90,7 @@ struct NewFavorSheet: View {
                 Divider()
                 
                 HStack {
-                    DatePicker("Inizio", selection: .constant(Date()),displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("Inizio", selection: $newFavor.startingDate,displayedComponents: [.date, .hourAndMinute])
                         .padding(5)
                         .padding(.horizontal)
                 }
@@ -92,7 +99,7 @@ struct NewFavorSheet: View {
                 Divider()
                 
                 HStack {
-                    DatePicker("Fine", selection: .constant(Date().addingTimeInterval(3600)),displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("Fine", selection: $newFavor.endingDate, displayedComponents: [.date, .hourAndMinute])
                         .padding(5)
                         .padding(.horizontal)
                 }
@@ -104,7 +111,7 @@ struct NewFavorSheet: View {
             Spacer().frame(height: 20)
             
             VStack(spacing: 0) {
-                Toggle(isOn: .constant(false), label: {
+                Toggle(isOn: $newFavor.isCarNecessary, label: {
                     HStack {
                         ZStack {
                             Rectangle()
@@ -126,7 +133,7 @@ struct NewFavorSheet: View {
                 
                 Divider()
                 
-                Toggle(isOn: .constant(true), label: {
+                Toggle(isOn: $newFavor.isHeavyTask, label: {
                     HStack {
                         ZStack {
                             Rectangle()
@@ -177,9 +184,33 @@ struct NewFavorSheet: View {
             .padding(.horizontal)
             
             Spacer()
+            
+            Button(action: {
+                database.favors.append(newFavor)
+                dismiss()
+            }) {
+                HStack {
+                    Text("Crea Favore")
+                        .font(.headline) // Increase the text size
+                        .foregroundColor(.white) // White text color
+                    Image(systemName: "plus")
+                        .foregroundColor(.white) // White icon color
+                }
+                .padding() // Add padding around the content
+                .frame(maxWidth: .infinity) // Make the button take full width
+                .background(Color.blue) // Set the background to blue
+                .cornerRadius(10) // Add rounded corners
+                .shadow(radius: 5) // Optional: Add a shadow
+            }
+            .padding(.horizontal) // Add padding to the sides of the button
+            .offset(y: -10)
+            
+        }
+        .onAppear() {
+            newFavor.location = mapViewModel.region.center
         }
         .sheet(isPresented: $isPresented, content: {
-            NewFavorIconSheet()
+            NewFavorIconSheet(newFavor: newFavor)
         })
         .presentationDetents([.large], selection: $selectedDetent)
         .presentationDragIndicator(.visible)

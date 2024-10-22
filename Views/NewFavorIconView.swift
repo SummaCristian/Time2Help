@@ -3,6 +3,8 @@ import SwiftUI
 struct NewFavorIconSheet: View {
     @State private var selectedDetent: PresentationDetent = .large
     
+    @StateObject var newFavor: Favor
+    
     var body: some View {
         Spacer().frame(height: 80)
         
@@ -12,10 +14,10 @@ struct NewFavorIconSheet: View {
                 
                 ZStack {
                     Circle()
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(newFavor.color.color)
                         .frame(width: 80, height: 80)
                         .shadow(radius: 3)
-                    Image(systemName: "person.2.fill")
+                    Image(systemName: newFavor.icon.icon)
                         .resizable()
                         .foregroundStyle(.white)
                         .scaledToFit()
@@ -41,6 +43,9 @@ struct NewFavorIconSheet: View {
                             Circle()
                                 .frame(width: 40, height: 40)
                                 .foregroundStyle(Color(colorCase.color))
+                                .onTapGesture() {
+                                    newFavor.color = colorCase
+                                }
                         }
                     }
                 })
@@ -65,6 +70,9 @@ struct NewFavorIconSheet: View {
                             
                         }
                         .padding(5)
+                        .onTapGesture() {
+                            newFavor.icon = iconCase
+                        }
                     }
                 })
                 .padding(1)

@@ -1,27 +1,27 @@
 import Foundation
 import MapKit
 
-struct Favor: Identifiable {
+class Favor: Identifiable, ObservableObject{
     // An ID to identify it
     let id: UUID
     
     // Primary details
-    let title: String
-    let description: String
-    let author: String
+    @Published var title: String
+    @Published var description: String
+    @Published var author: String
     
     // Secondary details
-    let startingDate: Date
-    let endingDate: Date
-    let location: CLLocationCoordinate2D
-    let isCarNecessary: Bool
-    let isHeavyTask: Bool
-    let reward: Int
-    let status: FavorStatus
+    @Published var startingDate: Date
+    @Published var endingDate: Date
+    @Published var location: CLLocationCoordinate2D
+    @Published var isCarNecessary: Bool
+    @Published var isHeavyTask: Bool
+    @Published var reward: Int
+    @Published var status: FavorStatus
     
     // Cosmetic details
-    let icon: FavorIcon
-    let color: FavorColor
+    @Published var icon: FavorIcon
+    @Published var color: FavorColor
     
     
     // Initializers
@@ -39,7 +39,7 @@ struct Favor: Identifiable {
         self.reward = 0
         self.status = FavorStatus.notAcceptedYet
         self.icon = .people
-        self.color = .red
+        self.color = .orange
     }
     
     init(title: String, description: String, author: String, startingDate: Date,
