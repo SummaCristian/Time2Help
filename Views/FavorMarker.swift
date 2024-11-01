@@ -7,6 +7,7 @@ struct FavorMarker: View {
     // The Favor associated to this UI Element
     @ObservedObject var favor: Favor
     
+    // The UI
     var body: some View {
         VStack(spacing: 0) {
             ZStack {

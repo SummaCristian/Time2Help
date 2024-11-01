@@ -9,10 +9,20 @@ struct MapView: View {
     // The Database, where the Favors are stored
     @ObservedObject var database: Database
     
+    // The MapCameraPosition used to center around the User's Location
     @State private var mapCameraPosition: MapCameraPosition = .userLocation(followsHeading: true, fallback: .automatic)
+    // The list of Map Elements from Apple's MapKit database
     @State private var selection: MapFeature? = nil
     
+    // A NameSpace needed for certain Map features
     @Namespace private var mapNameSpace
+    
+    // Boolean value that is used to open and close the Favor Details sheet
+    @State private var isShowingFavorsDetails = false
+    // An Optional<Favor> used as a selector for a Favor: 
+    // nil => no Favor selected
+    // *something* => that Favor is selected
+    @State private var selectedFavor: Favor? = nil
     
     // The UI
     var body: some View {
@@ -32,9 +42,14 @@ struct MapView: View {
                         coordinate: favor.location,
                         content: {
                             FavorMarker(favor: favor)
+                                .onTapGesture {
+                                    // Selects the Favor and triggers the showing of the sheet
+                                    selectedFavor = favor
+                                    isShowingFavorsDetails = true
+                                }
                         }, 
                         label: {
-                            Label(favor.title, systemImage: favor.icon.icon)
+                            //Label(favor.title, systemImage: favor.icon.icon)
                         }
                     )
                     .mapOverlayLevel(level: .aboveLabels)
@@ -59,5 +74,9 @@ struct MapView: View {
             }
             .edgesIgnoringSafeArea(.bottom)
             .tint(.blue)
+            .sheet(item: $selectedFavor, content: { favor in 
+                FavorDetailsSheet(favor: favor)
+                    .presentationBackground(.ultraThinMaterial)
+            })
     }
 }

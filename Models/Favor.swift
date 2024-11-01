@@ -13,6 +13,7 @@ class Favor: Identifiable, ObservableObject{
     // Secondary details
     @Published var startingDate: Date
     @Published var endingDate: Date
+    @Published var isAllDay: Bool
     @Published var location: CLLocationCoordinate2D
     @Published var isCarNecessary: Bool
     @Published var isHeavyTask: Bool
@@ -30,20 +31,21 @@ class Favor: Identifiable, ObservableObject{
         self.id = UUID()
         self.title = ""
         self.description = ""
-        self.author = ""
+        self.author = "Unknown"
         self.startingDate = Date()
         self.endingDate = Date().addingTimeInterval(3600)
+        self.isAllDay = false
         self.location = CLLocationCoordinate2D.init()
         self.isCarNecessary = false
         self.isHeavyTask = false
         self.reward = 0
         self.status = FavorStatus.notAcceptedYet
         self.icon = .people
-        self.color = .orange
+        self.color = .red
     }
     
     init(title: String, description: String, author: String, startingDate: Date,
-         endingDate: Date, location: CLLocationCoordinate2D, isCarNecessary: Bool,
+         endingDate: Date, isAllDay: Bool, location: CLLocationCoordinate2D, isCarNecessary: Bool,
          isHeavyTask: Bool, reward: Int, status: FavorStatus, icon: FavorIcon, color: FavorColor) {
         // Custom initialer
         self.id = UUID()
@@ -52,6 +54,7 @@ class Favor: Identifiable, ObservableObject{
         self.author = author
         self.startingDate = startingDate
         self.endingDate = endingDate
+        self.isAllDay = isAllDay
         self.location = location
         self.isCarNecessary = isCarNecessary
         self.isHeavyTask = isHeavyTask

@@ -8,13 +8,13 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "Progetto HCI",
+    name: "Time2Help",
     platforms: [
         .iOS("17.5")
     ],
     products: [
         .iOSApplication(
-            name: "Progetto HCI",
+            name: "Time2Help",
             targets: ["AppModule"],
             displayVersion: "1.0",
             bundleVersion: "1",

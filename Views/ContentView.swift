@@ -4,6 +4,8 @@ import MapKit
 struct ContentView: View {    
     // Connection to the ViewModel for Data and Location Permissions
     @StateObject private var viewModel = MapViewModel()
+    // Connection to the Database that stores the Favors 
+    @StateObject private var database = Database()
     
     // Integer to keep track of which tab is selected
     @State private var selectedTab: Int = 0 // Track the selected tabEmptyView
@@ -11,8 +13,6 @@ struct ContentView: View {
     @State private var isSheetPresented = false // State to control sheet visibility
     // Boolean value to handle the behavior of the "Export IPA" sheet
     @State private var isExportSheetPresented = false
-    
-    @StateObject private var database = Database()
     
     
     // Main View
@@ -50,8 +50,9 @@ struct ContentView: View {
                     
                 }
                 .sheet(isPresented: $isSheetPresented, onDismiss: {}) {
-                    NewFavorSheet(database: database, mapViewModel: viewModel) // The sliding sheet content
+                    NewFavorSheet(database: database, mapViewModel: viewModel)
                 }
+                
                 .sheet(isPresented: $isExportSheetPresented, onDismiss: {}) {
                     ExportView()
                 }
@@ -69,6 +70,7 @@ struct ContentView: View {
         }
         .tint(.blue)
         .onAppear() {
+            // Adds the template Markers to the Map
             database.initialize()
         }
    }
