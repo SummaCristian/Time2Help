@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 
 // This file contains the UI for the New Favor sheet.
 
@@ -8,10 +9,14 @@ struct NewFavorSheet: View {
     
     // Boolean value that controls the appearing of the second sheet, used to edit the Favor's Icon
     @State private var isEditIconSheetPresented = false
+    // Boolean value that controls the appearing of the second sheet, used to edit the Favor's Location
+    @State private var isLocationSelectorPresented = false
     // Boolean value that controls the appearing of the Dialog, asking the User if he wants to quit the creation process
     @State private var isConfirmationDialogPresented = false
     // Boolean value that controls whether the newly created Favor can be added to the Database, or if the data is not enough
-    @State private var canBeCreated = false        
+    @State private var canBeCreated = false
+    // A buffer to save the last reward value, to use for aniamtion purposes
+    @State private var lastRewardValue = 0
     
     // Connection to the Database, where Favors are stored
     @ObservedObject var database: Database
@@ -41,7 +46,9 @@ struct NewFavorSheet: View {
                                 Text("Annulla")
                                     .foregroundStyle(.red)
                             })
-                        .padding(20)
+                            .padding(20)
+                            .hoverEffect(.automatic)
+                        
                         Spacer()
                     }
                     
@@ -67,12 +74,14 @@ struct NewFavorSheet: View {
                                     .frame(width: 25, height: 25)                        
                             }
                         }
+                        .hoverEffect(.automatic)
                         .padding(10)
                         .background(Color(.secondarySystemBackground))
                         .clipShape(Rectangle())
                         .cornerRadius(5)
                         
                     }
+                    .padding()
                     .onTapGesture(perform: {
                         // Shows the second sheet, where the User can edit the Icon
                         isEditIconSheetPresented = true
@@ -81,18 +90,16 @@ struct NewFavorSheet: View {
                     // Title and Description
                     VStack(spacing: 0) {
                         TextField("Titolo", text: $newFavor.title)
-                            .padding(12)
+                            .padding()
                             .font(.body)
-                            .padding(.horizontal)
                             .background(Color(.secondarySystemBackground))
                             .textInputAutocapitalization(.sentences)
                         
                         Divider()
                         
                         TextField("Descrizione", text: $newFavor.description)
-                            .padding(12)
+                            .padding()
                             .font(.body)
-                            .padding(.horizontal)
                             .background(Color(.secondarySystemBackground))           
                             .textInputAutocapitalization(.sentences)
                     }
@@ -192,26 +199,41 @@ struct NewFavorSheet: View {
                     .tint(.green)   
                     
                     // Location Selector
-                    HStack {
-                        Text("Luogo")
-                            .padding(.vertical)
-                        
-                        Spacer()
-                        
-                        Button {
-                            // Your action here
-                        } label: {
-                            Label("Scegli", systemImage: "pin.fill")
-                                .foregroundColor(.white)
-                                .padding(8)
-                                .background(Color.green)
-                                .cornerRadius(8)
+                    VStack {
+                        HStack {
+                            Text("Luogo")
+                                .padding(.vertical)
+                            
+                            Spacer()
+                            
+                            Button {
+                                isLocationSelectorPresented = true
+                            } label: {
+                                Label("Scegli", systemImage: "pin.fill")
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.green)
+                                    .cornerRadius(8)
+                            }
+                            .hoverEffect(.lift)
+                            
+                            Spacer().frame(width: 10)
+                            
                         }
                         
-                        Spacer().frame(width: 10)
-                        
+                        Map(
+                            bounds: MapCameraBounds(minimumDistance: 800, maximumDistance: 800),
+                            interactionModes: [] // No interactions allowed
+                        ) {
+                            Annotation("", coordinate: newFavor.location, content: {
+                                // Only this Favor is shown in this mini-Map
+                                FavorMarker(favor: newFavor)
+                            })
+                        }
+                        .frame(height: 200)
+                        .cornerRadius(10)
                     }
-                    .padding(.horizontal)
+                    .padding()
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(8)
                     
@@ -247,8 +269,10 @@ struct NewFavorSheet: View {
                                     .frame(width: 20, height: 20)
                                     .bold()
                             }
+                            .hoverEffect(.lift)
                             .onTapGesture {
                                 if newFavor.reward > 0 {
+                                    lastRewardValue = newFavor.reward
                                     withAnimation {
                                         newFavor.reward -= 1
                                     }
@@ -261,25 +285,8 @@ struct NewFavorSheet: View {
                                     .foregroundStyle(Color(.systemYellow))
                                     .opacity(0.3)
                                 
-                                Text(String(newFavor.reward))
-                                    .font(.system(size: 60, weight: .black, design: .rounded))
-                                    .foregroundStyle(
-                                        LinearGradient(
-                                            gradient: Gradient(
-                                                colors: [ Color(hex: 0xDBB400),
-                                                          Color(hex: 0xEFAF00),
-                                                          Color(hex: 0xF5D100),
-                                                          Color(hex: 0xF5D100),
-                                                          Color(hex: 0xD1AE15),
-                                                          Color(hex: 0xDBB400)
-                                                        ]
-                                            ), 
-                                            startPoint: .top, 
-                                            endPoint: .bottom
-                                        )
-                                    )
-                                    .shadow(radius: 10)
-                                    .contentTransition(.numericText())
+                                CreditNumberView(favor: newFavor)
+                                    .contentTransition(.numericText(countsDown: newFavor.reward > lastRewardValue))
                                     .sensoryFeedback(.impact, trigger: newFavor.reward)
                             }
                             
@@ -296,13 +303,16 @@ struct NewFavorSheet: View {
                                     .frame(width: 20, height: 20)
                                     .bold()
                             }
+                            .hoverEffect(.lift)
                             .onTapGesture {
+                                lastRewardValue = newFavor.reward
                                 withAnimation {
                                     newFavor.reward += 1
                                 }
                             }
                         }
                     }
+                    .buttonRepeatBehavior(.enabled)
                     .padding()
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(8)
@@ -323,6 +333,10 @@ struct NewFavorSheet: View {
             .sheet(isPresented: $isEditIconSheetPresented, content: {
                 // Shows the Edit Icon sheet
                 NewFavorIconSheet(newFavor: newFavor)
+            })
+            .sheet(isPresented: $isLocationSelectorPresented, content: {
+                // Shows the Location Selector sheet
+                LocationSelector(newFavor: newFavor)
             })
             .alert("Tornare indietro?", isPresented: $isConfirmationDialogPresented) {
                 Button("No", role: .cancel) {}
@@ -364,6 +378,7 @@ struct NewFavorSheet: View {
                     .offset(y: canBeCreated ? 0 : 50)
                     .animation(.easeInOut, value: canBeCreated)
                     .sensoryFeedback(.pathComplete, trigger: canBeCreated)
+                    .hoverEffect(.highlight)
                     
                     Spacer()
                 }
