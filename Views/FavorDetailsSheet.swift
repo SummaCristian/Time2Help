@@ -37,37 +37,12 @@ struct FavorDetailsSheet: View {
                         
                         Spacer()
                         
-                        // The Favor's Reward
-                        ZStack {
-                            // Background
-                            Circle()
-                                .frame(width: 100, height: 100)
-                                .foregroundStyle(Color(.systemBrown))
-                                .opacity(0.4)
-                                .blur(radius: 15.0)
-                            
-                            // The Reward
-                            Text(String(favor.reward))
-                                .font(.system(size: 60, weight: .black, design: .rounded))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        // Golden gradient
-                                        gradient: Gradient(
-                                            colors: [ Color(hex: 0xDBB400),
-                                                      Color(hex: 0xEFAF00),
-                                                      Color(hex: 0xF5D100),
-                                                      Color(hex: 0xF5D100),
-                                                      Color(hex: 0xD1AE15),
-                                                      Color(hex: 0xDBB400)
-                                                    ]
-                                        ), 
-                                        startPoint: .top, 
-                                        endPoint: .bottom
-                                    )
-                                )
-                                .shadow(radius: 10)
-                        }
+                        // The Favor's Reward                        
+                        CreditNumberView(favor: favor)
                     }
+                    .padding()
+                    .background(.regularMaterial)
+                    .cornerRadius(10)
                     
                     // The Favor's Description
                     VStack() {
@@ -258,6 +233,7 @@ struct FavorDetailsSheet: View {
                     .controlSize(.large)
                     .tint(.blue)
                     .shadow(radius: 10)
+                    .hoverEffect(.highlight)
                     
                     Spacer()
                 }
