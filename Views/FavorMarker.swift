@@ -7,37 +7,69 @@ struct FavorMarker: View {
     // The Favor associated to this UI Element
     @ObservedObject var favor: Favor
     
+    @Binding var isSelected: Bool
+    
+    @State private var showTriangle = false
+    
     // The UI
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
                 // Outer Circle with Stroke Border
                 Circle()
-                    .frame(width: 55, height: 55)
+                    .frame(
+                        width: isSelected ? 55 : 30, 
+                        height: isSelected ? 55 : 30)
                     .foregroundStyle(Color.white)
+                    .animation(.spring, value: isSelected)
                 
                 // Inner Circle
                 Circle()
                     .foregroundStyle(favor.color.color)
-                    .frame(width: 50, height: 50)
+                    .frame(
+                        width: isSelected ? 50 : 25, 
+                        height: isSelected ? 50 : 25)
+                    .animation(.spring, value: isSelected)
                 
                 // Icon inside the Circle
                 Image(systemName: favor.icon.icon)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 30, height: 30)
+                    .frame(
+                        width: isSelected ? 30 : 15, 
+                        height: isSelected ? 30 : 15)
                     .foregroundStyle(Color.white)
+                    .animation(.spring, value: isSelected)
             }
+            .frame(width: 55, height: 55, alignment: .center)
             
             // Triangle Pin
-            Image(systemName: "triangle.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 10, height: 10)
-                .foregroundStyle(Color.white)                                
-                .rotationEffect(.degrees(180))
-                .offset(y: -3)
-                .padding(.bottom, 80)
+            if showTriangle {
+                Image(systemName: "triangle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 10, height: 10)
+                    .foregroundStyle(Color.white)                                
+                    .rotationEffect(.degrees(180))
+                    .offset(y: -3)
+                    //.padding(.bottom, 80)
+                    .transition(.opacity.combined(with: .scale(scale: 0.5, anchor: .top)))
+                    .animation(.spring(duration: 500), value: isSelected)
+            }
+        }
+        .onChange(of: isSelected) { old, new in
+            if new{
+                withAnimation(.spring.delay(0.25)) {
+                    showTriangle = true
+                }
+            } else {
+                showTriangle = false
+            }
+        }
+        .onAppear() {
+            if isSelected {
+                showTriangle = true
+            }
         }
     }
 }

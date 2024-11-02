@@ -15,10 +15,8 @@ struct FavorDetailsSheet: View {
         // The GeometryReader is used to achieve a top alignment for the UI
         GeometryReader { _ in
             // The ScrollView is needed to be able to scroll through the UI
-            ScrollView {
-                VStack(spacing: 20) {
-                    Spacer()
-                        .frame(height: 30)
+            Form {
+                Section() {
                     HStack {
                         // The Favor's Title
                         VStack {
@@ -41,110 +39,75 @@ struct FavorDetailsSheet: View {
                         CreditNumberView(favor: favor)
                     }
                     .padding()
-                    .background(.regularMaterial)
                     .cornerRadius(10)
-                    
-                    // The Favor's Description
-                    VStack() {
-                        HStack {
-                            Text("DESCRIZIONE")
-                                .font(.caption)
-                                .foregroundStyle(.gray)
-                            
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-                        
-                        HStack(){
-                            Text(favor.description)
-                            
-                            Spacer()
-                            
-                        }
-                        .padding()
-                        .background(.regularMaterial)
-                        .cornerRadius(10)
+                }
+                
+                // The Favor's Description
+                Section(
+                    content: {
+                        Text(favor.description)
+                    }, 
+                    header: {
+                        Text("DESCRIZIONE")
                     }
-                    
-                    // The Favor's Date data
-                    VStack {
+                )
+                
+                // The Favor's Date data
+                Section(
+                    content: {
                         HStack {
-                            Text("DATA E ORA")
-                                .font(.caption)
-                                .foregroundStyle(.gray)
+                            Text("Data di inizio:")
+                            Spacer()
+                            Text(favor.startingDate.formatted(date: .long, time: .omitted))
+                                .bold()
+                                .foregroundStyle(favor.color.color)
+                        }
+                        
+                        HStack {
+                            Text("Data di fine:")
+                            Spacer()
+                            Text(favor.endingDate.formatted(date: .long, time: .omitted))
+                                .bold()
+                                .foregroundStyle(favor.color.color)
+                        }
+                        
+                        HStack {
+                            Text("Ora:")
                             
                             Spacer()
+                            
+                            Text(favor.startingDate.formatted(date: .omitted, time: .shortened))
+                                .bold()
+                                .foregroundStyle(favor.color.color)
+                            
+                            Image(systemName: "arrow.right")
+                            
+                            Text(favor.endingDate.formatted(date: .omitted, time: .shortened))
+                                .bold()
+                                .foregroundStyle(favor.color.color)
                         }
-                        .padding(.horizontal)
                         
-                        VStack() {
-                            HStack {
-                                Text("Data di inizio:")
-                                Spacer()
-                                Text(favor.startingDate.formatted(date: .long, time: .omitted))
-                                    .bold()
-                                    .foregroundStyle(favor.color.color)
-                            }
+                        HStack {
+                            Text("Durata:")
                             
-                            Divider()
+                            Spacer()
                             
-                            HStack {
-                                Text("Data di fine:")
-                                Spacer()
-                                Text(favor.endingDate.formatted(date: .long, time: .omitted))
-                                    .bold()
-                                    .foregroundStyle(favor.color.color)
-                            }
-                            
-                            Divider()
-                            
-                            HStack {
-                                Text("Ora:")
-                                
-                                Spacer()
-                                
-                                Text(favor.startingDate.formatted(date: .omitted, time: .shortened))
-                                    .bold()
-                                    .foregroundStyle(favor.color.color)
-                                
-                                Image(systemName: "arrow.right")
-                                
-                                Text(favor.endingDate.formatted(date: .omitted, time: .shortened))
-                                    .bold()
-                                    .foregroundStyle(favor.color.color)
-                            }
-                            
-                            Divider()
-                            
-                            HStack {
-                                Text("Durata:")
-                                
-                                Spacer()
-                                
-                                Text(calculateTime(favor: favor))
-                                    .bold()
-                                    .foregroundStyle(favor.color.color)
-                            }
+                            Text(calculateTime(favor: favor))
+                                .bold()
+                                .foregroundStyle(favor.color.color)
                         }
-                        .padding()
-                        .background(.regularMaterial)
-                        .cornerRadius(10)
+                    },
+                    header: {
+                        Text("DATA E ORA")
                     }
-                    
-                    // The Additional Infos (only shown if needed)
-                    if favor.isCarNecessary || favor.isHeavyTask {
-                        VStack {
-                            HStack {
-                                Text("INFO")
-                                    .font(.caption)
-                                    .foregroundStyle(.gray)
-                                
-                                Spacer()
-                            }
-                            .padding(.horizontal)
-                            
+                )
+                
+                // The Additional Infos (only shown if needed)
+                if favor.isCarNecessary || favor.isHeavyTask {
+                    Section(
+                        content: {
                             // Is Car Necessary
-                            HStack {
+                            HStack() {
                                 if favor.isCarNecessary{
                                     HStack {
                                         Image(systemName: "car.fill")
@@ -176,20 +139,15 @@ struct FavorDetailsSheet: View {
                                     .cornerRadius(10)
                                 }
                             }
-                        }
-                    }
-                    
-                    // The Favor's Location
-                    VStack {
-                        HStack {
-                            Text("POSIZIONE")
-                                .font(.caption)
-                                .foregroundStyle(.gray)
-                            
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-                        
+                        }, 
+                        header: {
+                            Text("INFO")
+                        })
+                }
+                
+                // The Favor's Location
+                Section(
+                    content: {
                         // A Map to show a preview of the Location
                         Map(
                             bounds: MapCameraBounds(minimumDistance: 500, maximumDistance: 500),
@@ -197,20 +155,16 @@ struct FavorDetailsSheet: View {
                         ) {
                             Annotation("", coordinate: favor.location, content: {
                                 // Only this Favor is shown in this mini-Map
-                                FavorMarker(favor: favor)
+                                FavorMarker(favor: favor, isSelected: .constant(true))
                             })
                         }
                         .frame(height: 300)
                         .cornerRadius(10)
+                    },
+                    header: {
+                        Text("POSIZIONE")
                     }
-                    
-                    Spacer()
-                        .frame(height: 50)
-                }
-                .padding()
-                .presentationDragIndicator(.visible)
-                .presentationDetents([.medium, .large])
-                .frame(maxHeight: .infinity, alignment: .top)
+                )
             }
             
             // The Accept Favor Button
@@ -239,6 +193,8 @@ struct FavorDetailsSheet: View {
                 }
             }
             .padding()
+            .presentationDragIndicator(.visible)
+            .presentationDetents([.medium, .large])
         }
     }
 }

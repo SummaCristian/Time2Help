@@ -27,7 +27,7 @@ struct LocationSelector: View {
                     // The Favor's Marker
                     // Note: it's set in selectedLocation if possible, but if it's nil, it defaults to the Favor's old Location
                     Annotation("", coordinate: selectedLocation ?? newFavor.location){
-                        FavorMarker(favor: newFavor)
+                        FavorMarker(favor: newFavor, isSelected: .constant(true))
                     }
                 }
                 .safeAreaPadding(.vertical, 65)
@@ -37,7 +37,9 @@ struct LocationSelector: View {
                     let location = reader.convert(screenCoord, from: .local)
                     // Saves these coordinates as the new selectedLocation.
                     // This value is also used for the Favor Marker: it's now moved to this location
-                    selectedLocation = location
+                    withAnimation(.easeInOut) {
+                        selectedLocation = location
+                    }
                 })
                 
             }

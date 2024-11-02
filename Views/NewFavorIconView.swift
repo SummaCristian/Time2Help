@@ -20,12 +20,15 @@ struct NewFavorIconSheet: View {
                         .foregroundStyle(newFavor.color.color)
                         .frame(width: 80, height: 80)
                         .shadow(radius: 3)
+                        .animation(.easeInOut, value: newFavor.color)
+                    
                     Image(systemName: newFavor.icon.icon)
                         .resizable()
                         .foregroundStyle(.white)
                         .scaledToFit()
-                        .frame(width: 50, height: 50)                        
-                }
+                        .frame(width: 50, height: 50)
+                        .contentTransition(.symbolEffect(.automatic))
+                    }
                 .padding(10)
                 .background(Color(.secondarySystemBackground))
                 .clipShape(Rectangle())
@@ -57,7 +60,9 @@ struct NewFavorIconSheet: View {
                                 .foregroundStyle(Color(colorCase.color))
                                 .onTapGesture() {
                                     // Sets the color inside the Favor
-                                    newFavor.color = colorCase
+                                    withAnimation {
+                                        newFavor.color = colorCase
+                                    }
                                 }
                         }
                     }
@@ -97,7 +102,9 @@ struct NewFavorIconSheet: View {
                         .padding(3)
                         .onTapGesture() {
                             // Sets the icon inside the Favor
-                            newFavor.icon = iconCase
+                            withAnimation {
+                                newFavor.icon = iconCase
+                            }
                         }
                     }
                 })

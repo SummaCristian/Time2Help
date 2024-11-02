@@ -23,6 +23,9 @@ struct MapView: View {
     // nil => no Favor selected
     // *something* => that Favor is selected
     @State private var selectedFavor: Favor? = nil
+    // An Optional<FavorMarker> used as a buffer for the last selected Favor.
+    // This is used to deselect the Favor once it's not selected anymore
+    @State private var selectedFavorID: UUID? = nil
     
     // The UI
     var body: some View {
@@ -41,10 +44,11 @@ struct MapView: View {
                     Annotation(
                         coordinate: favor.location,
                         content: {
-                            FavorMarker(favor: favor)
+                            FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id))
                                 .onTapGesture {
                                     // Selects the Favor and triggers the showing of the sheet
                                     selectedFavor = favor
+                                    selectedFavorID = favor.id
                                     isShowingFavorsDetails = true
                                 }
                         }, 
@@ -76,7 +80,6 @@ struct MapView: View {
             .tint(.blue)
             .sheet(item: $selectedFavor, content: { favor in 
                 FavorDetailsSheet(favor: favor)
-                    .presentationBackground(.ultraThinMaterial)
             })
     }
 }
