@@ -7,6 +7,8 @@ struct NewFavorSheet: View {
     // Used to control the dismissal mechanism from inside the sheet
     @Environment(\.dismiss) var dismiss
     
+    @Binding var isPresented: Bool
+    
     // Boolean value that controls the appearing of the second sheet, used to edit the Favor's Icon
     @State private var isEditIconSheetPresented = false
     // Boolean value that controls the appearing of the second sheet, used to edit the Favor's Location
@@ -96,13 +98,11 @@ struct NewFavorSheet: View {
                             TextField("Titolo", text: $newFavor.title)
                                 .padding()
                                 .font(.body)
-                                .background(Color(.secondarySystemBackground))
                                 .textInputAutocapitalization(.sentences)
                             
                             TextField("Descrizione", text: $newFavor.description, axis: .vertical)
                                 .padding()
                                 .font(.body)
-                                .background(Color(.secondarySystemBackground))           
                                 .textInputAutocapitalization(.sentences)
                                 .lineLimit(5 ... 5)
                         }, 
@@ -335,7 +335,8 @@ struct NewFavorSheet: View {
                 .alert("Tornare indietro?", isPresented: $isConfirmationDialogPresented) {
                     Button("No", role: .cancel) {}
                     Button("Sì", role: .destructive) {
-                        dismiss()
+                        //dismiss()
+                        isPresented = false
                     }
                 } message: {
                     Text("I dettagli che hai inserito andranno persi")
@@ -356,8 +357,9 @@ struct NewFavorSheet: View {
                         Spacer()
                         
                         Button(action: {
-                            database.favors.append(newFavor)
-                            dismiss()
+                            database.addFavor(favor: newFavor)
+                            //dismiss()
+                            isPresented = false
                         }) {
                             Label("Richiedi Favore", systemImage: "plus")
                                 .bold()

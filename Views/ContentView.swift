@@ -5,15 +5,16 @@ struct ContentView: View {
     // Connection to the ViewModel for Data and Location Permissions
     @StateObject private var viewModel = MapViewModel()
     // Connection to the Database that stores the Favors 
-    @StateObject private var database = Database()
+    @StateObject private var database = Database.shared
     
+    // An Optional<Favor> used as a selector for a Favor: 
+    // nil => no Favor selected
+    // *something* => that Favor is selected
+    @State private var selectedFavor: Favor? = nil
     // Integer to keep track of which tab is selected
     @State private var selectedTab: Int = 0 // Track the selected tabEmptyView
     // Boolean value to hanlde the behavior of the "New Favor" sheet
-    @State private var isSheetPresented = false // State to control sheet visibility
-    // Boolean value to handle the behavior of the "Export IPA" sheet
-    @State private var isExportSheetPresented = false
-    
+    @State private var isSheetPresented = false // State to control sheet visibility    
     
     // Main View
     var body: some View {
@@ -24,7 +25,7 @@ struct ContentView: View {
             TabView(selection: $selectedTab) {
                 Group {
                     // Tab 0: Map
-                    MapView(viewModel: viewModel, database: database)
+                    MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor)
                         .tabItem {
                             Label("Mappa", systemImage: "map")
                         }
@@ -32,30 +33,30 @@ struct ContentView: View {
                     
                     // Tab 1: New Favor (opens sheet)
                     Text("Nuovo Favore") // A placeholder just for the tab label
+                    //NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
                      .tabItem {
                          Label("Nuovo Favore", systemImage: "plus.rectangle")
                      }
                      .tag(1) // Tag for the Nuovo Favore tab
                     
                     // Tab 2: Profile
-                    ProfileView()
+                    ProfileView(database: database, selectedFavor: $selectedFavor)
                         .tabItem {
                             Label("Profilo", systemImage: "person.fill")
                         }
-                        .tag(2) // Tag for the Profile tab
-                    // Temporary: need a way to export an IPA file without XCode
-                        .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10) { 
-                            isExportSheetPresented = true
-                        }
-                    
+                        .tag(2) // Tag for the Profile tab                    
                 }
                 .sheet(isPresented: $isSheetPresented, onDismiss: {}) {
-                    NewFavorSheet(database: database, mapViewModel: viewModel)
+                    NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
                 }
-                
-                .sheet(isPresented: $isExportSheetPresented, onDismiss: {}) {
-                    ExportView()
-                }
+                .sheet(
+                    item: $selectedFavor,
+                    onDismiss: {
+                        selectedFavor = nil
+                    },
+                    content: { favor in 
+                        FavorDetailsSheet(favor: favor)
+                    })
                 .toolbarBackground(.ultraThinMaterial, for: .tabBar)
             }
             

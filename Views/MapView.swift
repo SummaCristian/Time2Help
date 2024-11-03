@@ -22,7 +22,7 @@ struct MapView: View {
     // An Optional<Favor> used as a selector for a Favor: 
     // nil => no Favor selected
     // *something* => that Favor is selected
-    @State private var selectedFavor: Favor? = nil
+    @Binding var selectedFavor: Favor?
     // An Optional<FavorMarker> used as a buffer for the last selected Favor.
     // This is used to deselect the Favor once it's not selected anymore
     @State private var selectedFavorID: UUID? = nil
@@ -78,8 +78,5 @@ struct MapView: View {
             }
             .edgesIgnoringSafeArea(.bottom)
             .tint(.blue)
-            .sheet(item: $selectedFavor, content: { favor in 
-                FavorDetailsSheet(favor: favor)
-            })
     }
 }

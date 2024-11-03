@@ -10,7 +10,7 @@ struct FavorMarker: View {
     @Binding var isSelected: Bool
     
     @State private var showTriangle = false
-    
+        
     // The UI
     var body: some View {
         VStack(spacing: 0) {

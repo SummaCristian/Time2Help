@@ -3,24 +3,26 @@ import SwiftUI
 struct CreditNumberView: View {
     @ObservedObject var favor: Favor
     
+    @State var size: Int?
+    
     var body: some View {
         ZStack {
             // Soft outer glow behind the text
             Text(String(favor.reward))
-                .font(.system(size: 60, weight: .black, design: .rounded))
+                .font(.system(size: CGFloat(size ?? 6), weight: .black, design: .rounded))
                 .foregroundColor(Color.yellow.opacity(0.6))
                 .blur(radius: 13)
                 .offset(y: 2)
             
             // Inner shadow effect with slight offset
             Text(String(favor.reward))
-                .font(.system(size: 60, weight: .black, design: .rounded))
+                .font(.system(size: CGFloat(size ?? 60), weight: .black, design: .rounded))
                 .foregroundColor(Color.brown.opacity(0.60))
                 .offset(x: 2, y: 2)
             
             // Main text with golden gradient and layered shadows
             Text(String(favor.reward))
-                .font(.system(size: 60, weight: .black, design: .rounded))
+                .font(.system(size: CGFloat(size ?? 60), weight: .black, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(
                         gradient: Gradient(

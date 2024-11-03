@@ -4,8 +4,16 @@ import MapKit
 // This class handles the saving of the Favors, acting as a Database
 
 class Database: ObservableObject {
+    
+    static let shared = Database()
+    
     // The List of Favors, accessible by others
     @Published var favors: [Favor] = []
+    
+    // Function to append a new Favor to the List
+    func addFavor(favor: Favor) {
+        favors.append(favor)
+    }
     
     // Appends some pre-determined Favors inside the List, allowing them to be seen in the Map (testing purposes)
     func initialize() {
@@ -38,7 +46,7 @@ class Database: ObservableObject {
                 isCarNecessary: true, 
                 isHeavyTask: false, 
                 reward: 3, 
-                status: .notAcceptedYet, 
+                status: .halfwayThere, 
                 icon: .hammer, 
                 color: .cyan)
         )
@@ -55,7 +63,7 @@ class Database: ObservableObject {
                 isCarNecessary: true, 
                 isHeavyTask: true, 
                 reward: 8, 
-                status: .notAcceptedYet, 
+                status: .completed, 
                 icon: .football, 
                 color: .green)
         )
