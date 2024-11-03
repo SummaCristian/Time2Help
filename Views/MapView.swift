@@ -4,6 +4,9 @@ import MapKit
 // This file contains the UI of the Map screen.
 
 struct MapView: View {
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.openURL) private var openURL
+    
     // The ViewModel, where the Data and Permission are handled.
     @ObservedObject var viewModel: MapViewModel
     // The Database, where the Favors are stored
@@ -72,11 +75,46 @@ struct MapView: View {
                     emphasis: .automatic, 
                     pointsOfInterest: .all, 
                     showsTraffic: false))
-            .onAppear {
+            /*.onAppear {
                 // When the Map appears on-screen, check permissions and update location
                 viewModel.checkIfLocationServicesIsEnabled()
-            }
+            }*/
             .edgesIgnoringSafeArea(.bottom)
             .tint(.blue)
+            .blur(radius: viewModel.error ? 10 : 0)
+            .disabled(viewModel.error)
+            .overlay {
+                if viewModel.error {
+                    Rectangle()
+                        .foregroundStyle(.black)
+                        .opacity(0.2)
+                        .ignoresSafeArea()
+                    
+                    VStack(spacing: 16) {
+                        Text(viewModel.errorMessage)
+                            .fontWeight(.medium)
+                            .multilineTextAlignment(.center)
+                        
+                        Divider()
+                        
+                        Button(action: {
+                            let settingsString = UIApplication.openSettingsURLString
+                            if let settingsURL = URL (string: settingsString) {
+                                openURL(settingsURL)
+                            }
+                        }, label: {
+                            Text("Vai alle impostazioni")
+                                .bold()
+                                .foregroundStyle(.blue)
+                        })
+                    }
+                    .padding(.all, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
+                    )
+                    .padding(.horizontal, 60)
+                }
+             }
     }
 }

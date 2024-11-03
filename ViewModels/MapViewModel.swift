@@ -30,49 +30,46 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
         center: MapDetails.startingLocation,
         span: MapDetails.span
     )
+    @Published var error: Bool = false
+    @Published var errorMessage: String = ""
     
     // iOS's Location Manager    
-    var locationManager: CLLocationManager?
+    let locationManager: CLLocationManager = CLLocationManager()
     
-    // Function that runs a rountine check of the Location Permission, and acts accordingly based
-    // on the result
-    func checkIfLocationServicesIsEnabled() {
-        if CLLocationManager.locationServicesEnabled() {
-            // Location Permission granted and GPS is ON
-            locationManager = CLLocationManager()
-            locationManager?.delegate = self
-            locationManager?.desiredAccuracy = kCLLocationAccuracyBest
-        } else {
-            // Location Permission not granted or GPS is OFF
-            print("Show an alert letting them know this is off and to go turn it on...")
-            // TODO: Implement something in UI
-        }
+    override init() {
+        super.init()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        checkLocationAuthorization()
     }
     
     // Reads the actual Permission and decides what to do
-    private func checkLocationAuthorization() {
-        guard let locationManager = locationManager else {return }
-        // Not showing error because nil cases are handled here
-        
+    func checkLocationAuthorization() {        
         switch locationManager.authorizationStatus {
             case .notDetermined:
                 // The User hasn't been asked for Permission yet. Asking now...
                 locationManager.requestWhenInUseAuthorization()
             case .restricted:
                 // Permission Restricted: Something like Parental Controls or MDM doesn't allow it
-                print("Your location is restricted likely due to parental controls")
-                // TODO: Implement in UI
+                presentError("La tua location è bloccata dal parental control")
             case .denied:
                 // The User has denied the Permission. Showing error...
-                print("You have denied location permissions to this app. Go into Settings and change that")
+                presentError("Non ci sono i permessi per accedere alla tua location, vai alle Impostazioni e attivali")
                 // TODO: Implement in UI
             case .authorizedAlways, .authorizedWhenInUse:
                 // The User has granted one of the two levels of Permission. Both are ok.
                 // Saving the User's position inside the region value, so that the Map can be centered on it.
                 region = MKCoordinateRegion(center: locationManager.location!.coordinate, span: MapDetails.span)
+                errorMessage = ""
+                error = false
             @unknown default:
                 break
         }
+    }
+    
+    func presentError(_ message: String) {
+        errorMessage = message
+        error = true
     }
     
     // Delegated function: iOS will automatically call it when the User changes the app's Location Permission.

@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {    
+    @Environment(\.colorScheme) var colorScheme
     // Connection to the ViewModel for Data and Location Permissions
     @StateObject private var viewModel = MapViewModel()
     // Connection to the Database that stores the Favors 
@@ -21,53 +22,67 @@ struct ContentView: View {
         // The main UI of this app is composed of a TabView, meaning the the UI is divided
         // into different tabs, each one containing a portion of the app.
         // Each one of the different screens is then coded inside its own file.
-        ZStack(alignment: .bottom) {
-            TabView(selection: $selectedTab) {
-                Group {
-                    // Tab 0: Map
-                    MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor)
-                        .tabItem {
-                            Label("Mappa", systemImage: "map")
-                        }
-                        .tag(0) // Tag for the Map tab
-                    
-                    // Tab 1: New Favor (opens sheet)
-                    Text("Nuovo Favore") // A placeholder just for the tab label
-                    //NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
-                     .tabItem {
-                         Label("Nuovo Favore", systemImage: "plus.rectangle")
-                     }
-                     .tag(1) // Tag for the Nuovo Favore tab
-                    
-                    // Tab 2: Profile
-                    ProfileView(database: database, selectedFavor: $selectedFavor)
-                        .tabItem {
-                            Label("Profilo", systemImage: "person.fill")
-                        }
-                        .tag(2) // Tag for the Profile tab                    
+        GeometryReader { geometry in
+            ZStack(alignment: .bottom) {
+                TabView(selection: $selectedTab) {
+                    Group {
+                        // Tab 0: Map
+                        MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor)
+                            .tabItem {
+                                Label("Mappa", systemImage: "map")
+                            }
+                            .tag(0) // Tag for the Map tab
+                        
+                        // Tab 1: New Favor (opens sheet)
+                        Text("Nuovo Favore") // A placeholder just for the tab label
+                        //NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
+                            .tabItem {
+                                Label("Nuovo Favore", systemImage: "plus.rectangle")
+                            }
+                            .tag(1) // Tag for the Nuovo Favore tab
+                        
+                        // Tab 2: Profile
+                        ProfileView(database: database, selectedFavor: $selectedFavor)
+                            .tabItem {
+                                Label("Profilo", systemImage: "person.fill")
+                            }
+                            .tag(2) // Tag for the Profile tab                    
+                    }
+                    .sheet(isPresented: $isSheetPresented, onDismiss: {}) {
+                        NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
+                    }
+                    .sheet(
+                        item: $selectedFavor,
+                        onDismiss: {
+                            selectedFavor = nil
+                        },
+                        content: { favor in 
+                            FavorDetailsSheet(favor: favor)
+                        })
+                    .toolbarBackground(.ultraThinMaterial, for: .tabBar)
                 }
-                .sheet(isPresented: $isSheetPresented, onDismiss: {}) {
-                    NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
-                }
-                .sheet(
-                    item: $selectedFavor,
-                    onDismiss: {
-                        selectedFavor = nil
-                    },
-                    content: { favor in 
-                        FavorDetailsSheet(favor: favor)
-                    })
-                .toolbarBackground(.ultraThinMaterial, for: .tabBar)
+                
+                // Invisible Button that covers the middle tab, used to open the "New Favor" sheet
+                Button(action: {
+                    isSheetPresented = true // Show the sheet when the tab is selected
+                }, label: {
+                    /*Rectangle()
+                        .fill(.clear)*/
+                    Image(systemName: "plus")
+                        .font(.largeTitle)
+                        .tint(.blue)
+                        .frame(width: geometry.size.width / 3, height: 60)
+                })
+                //.frame(width: 120, height: 50)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
+                        .overlay(content: {
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(.blue, lineWidth: 2)
+                        })
+                )
             }
-            
-            // Invisible Button that covers the middle tab, used to open the "New Favor" sheet
-            Button(action: {
-                isSheetPresented = true // Show the sheet when the tab is selected
-            }, label: {
-                Rectangle()
-                    .fill(.clear)
-            })
-            .frame(width: 120, height: 50)
         }
         .tint(.blue)
         .onAppear() {
