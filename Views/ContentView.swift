@@ -50,6 +50,7 @@ struct ContentView: View {
                     }
                     .sheet(isPresented: $isSheetPresented, onDismiss: {}) {
                         NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
+                            .interactiveDismissDisabled()
                     }
                     .sheet(
                         item: $selectedFavor,
