@@ -9,7 +9,7 @@ struct FavorMarker: View {
     
     @Binding var isSelected: Bool
     
-    @State private var showTriangle = false
+    @State private var showBase = false
         
     // The UI
     var body: some View {
@@ -25,7 +25,7 @@ struct FavorMarker: View {
                 
                 // Inner Circle
                 Circle()
-                    .foregroundStyle(favor.color.color)
+                    .foregroundStyle(favor.color.color.gradient)
                     .frame(
                         width: isSelected ? 50 : 25, 
                         height: isSelected ? 50 : 25)
@@ -44,7 +44,7 @@ struct FavorMarker: View {
             .frame(width: 55, height: 55, alignment: .center)
             
             // Triangle Pin
-            if showTriangle {
+            if showBase {
                 Image(systemName: "triangle.fill")
                     .resizable()
                     .scaledToFit()
@@ -55,20 +55,24 @@ struct FavorMarker: View {
                     //.padding(.bottom, 80)
                     .transition(.opacity.combined(with: .scale(scale: 0.5, anchor: .top)))
                     .animation(.spring(duration: 500), value: isSelected)
+                
+                Circle()
+                    .frame(width: 7, height: 7)
+                    .foregroundStyle(favor.color.color.gradient)
             }
         }
         .onChange(of: isSelected) { old, new in
             if new{
                 withAnimation(.spring.delay(0.25)) {
-                    showTriangle = true
+                    showBase = true
                 }
             } else {
-                showTriangle = false
+                showBase = false
             }
         }
         .onAppear() {
             if isSelected {
-                showTriangle = true
+                showBase = true
             }
         }
     }

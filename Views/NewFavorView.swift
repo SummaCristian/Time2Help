@@ -3,7 +3,7 @@ import MapKit
 
 // This file contains the UI for the New Favor sheet.
 
-struct NewFavorSheet: View {    
+struct NewFavorSheet: View {
     // Used to control the dismissal mechanism from inside the sheet
     @Environment(\.dismiss) var dismiss
     
@@ -35,77 +35,23 @@ struct NewFavorSheet: View {
         NavigationStack {
             GeometryReader {_ in
                 
-                // Title Button
-                HStack {
-                    Button(
-                        role: .cancel, 
-                        action: {
-                            // Shows the Dialog, asking for the User's confirmation
-                            isConfirmationDialogPresented = true
-                        },
-                        label: {
-                            Text("Annulla")
-                                .foregroundStyle(.red)
-                        })
-                    .padding(20)
-                    .hoverEffect(.automatic)    
-                    
-                    Spacer()
-                }
-                
-                // Title Bar
-                HStack {
-                    Text("Richiedi un nuovo Favore")
-                        .font(.headline)
-                    
-                    Spacer()
-                    
-                    // Favor's Icon selector Button
-                    HStack {
-                        Image(systemName: "arrowtriangle.down.circle")
-                        ZStack {
-                            Circle()
-                                .foregroundStyle(Color(newFavor.color.color))
-                                .frame(width: 40, height: 40)
-                                .shadow(radius: 3)
-                            Image(systemName: newFavor.icon.icon)
-                                .resizable()
-                                .foregroundStyle(.white)
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)                        
-                        }
-                    }
-                    .hoverEffect(.automatic)
-                    .padding(10)
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(Rectangle())
-                    .cornerRadius(5)
-                    
-                }
-                .padding()
-                .onTapGesture(perform: {
-                    // Shows the second sheet, where the User can edit the Icon
-                    isEditIconSheetPresented = true
-                })
-                
                 // Form is needed to build the UI
                 Form {
-                    
                     
                     // Title and Description
                     Section(
                         content: {
                             TextField("Titolo", text: $newFavor.title)
-                                .padding()
-                                .font(.body)
+                                .padding(.vertical, 8)
+                                .font(.title3.bold())
                                 .textInputAutocapitalization(.sentences)
                             
                             TextField("Descrizione", text: $newFavor.description, axis: .vertical)
-                                .padding()
-                                .font(.body)
+                                .padding(.vertical, 6)
+                                .font(.callout)
                                 .textInputAutocapitalization(.sentences)
                                 .lineLimit(5 ... 5)
-                        }, 
+                        },
                         header: {
                             Text("TITOLO E DESCRIZIONE")
                         })
@@ -128,21 +74,24 @@ struct NewFavorSheet: View {
                                     newFavor.endingDate = .now.addingTimeInterval(3600)
                                 }
                             }
+                            .padding(.vertical, 4)
                             
                             DatePicker(
-                                "Inizio", 
+                                "Inizio",
                                 selection: $newFavor.startingDate,
                                 displayedComponents: newFavor.isAllDay ? .date : [.date, .hourAndMinute]
                             )
                             .tint(.green)
+                            .padding(.vertical, 4)
                             
                             DatePicker(
-                                "Fine", 
-                                selection: $newFavor.endingDate, 
+                                "Fine",
+                                selection: $newFavor.endingDate,
                                 displayedComponents: newFavor.isAllDay ? .date : [.date, .hourAndMinute]
                             )
                             .tint(.green)
-                        }, 
+                            .padding(.vertical, 4)
+                        },
                         header: {
                             Text("DATA E ORA")
                         })
@@ -151,39 +100,35 @@ struct NewFavorSheet: View {
                     Section(
                         content: {
                             Toggle(isOn: $newFavor.isCarNecessary, label: {
-                                HStack {
-                                    ZStack {
-                                        Rectangle()
-                                            .frame(width: 25, height: 25)
-                                            .foregroundStyle(Color(.systemRed))
-                                        Image(systemName: "car.fill")
-                                            .foregroundStyle(Color(.white))
-                                            .frame(width: 20, height: 20)
-                                            .scaledToFit()
-                                    }
-                                    .cornerRadius(3)
+                                HStack(spacing: 8) {
+                                    Image(systemName: "car.fill")
+                                        .foregroundStyle(Color(.white))
+                                        .frame(width: 30, height: 30)
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .foregroundStyle(Color(.systemRed))
+                                        }
                                     
                                     Text("Auto Necessaria")
                                 }
                             })
+                            .padding(.vertical, 4)
                             
                             Toggle(isOn: $newFavor.isHeavyTask, label: {
-                                HStack {
-                                    ZStack {
-                                        Rectangle()
-                                            .frame(width: 25, height: 25)
-                                            .foregroundStyle(Color(.systemGreen))
-                                        Image(systemName: "hammer.fill")
-                                            .foregroundStyle(Color(.white))
-                                            .frame(width: 20, height: 20)
-                                            .scaledToFit()
-                                    }
-                                    .cornerRadius(3)
+                                HStack(spacing: 8) {
+                                    Image(systemName: "hammer.fill")
+                                        .foregroundStyle(Color(.white))
+                                        .frame(width: 30, height: 30)
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .foregroundStyle(Color(.systemGreen))
+                                        }
                                     
                                     Text("Faticoso")
                                 }
                             })
-                        }, 
+                            .padding(.vertical, 4)
+                        },
                         header: {
                             Text("INFO AGGIUNTIVE")
                         }
@@ -193,26 +138,18 @@ struct NewFavorSheet: View {
                     // Location Selector
                     Section(
                         content: {
-                            VStack {
-                                HStack {
+                            VStack(spacing: 12) {
+                                HStack(spacing: 0) {
                                     Text("Luogo")
-                                        .padding(.vertical)
                                     
                                     Spacer()
                                     
-                                    Button {
-                                        isLocationSelectorPresented = true
-                                    } label: {
-                                        Label("Scegli", systemImage: "pin.fill")
-                                            .foregroundColor(.white)
-                                            .padding(8)
-                                            .background(Color.green)
-                                            .cornerRadius(8)
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "pin.fill")
+                                            .font(.subheadline)
+                                        Text("Scegli")
                                     }
-                                    .hoverEffect(.lift)
-                                    
-                                    Spacer().frame(width: 10)
-                                    
+                                    .foregroundColor(.green)
                                 }
                                 
                                 Map(
@@ -226,6 +163,11 @@ struct NewFavorSheet: View {
                                 }
                                 .frame(height: 200)
                                 .cornerRadius(10)
+                                .hoverEffect(.lift)
+                            }
+                            .padding(.vertical, 4)
+                            .onTapGesture {
+                                isLocationSelectorPresented = true
                             }
                         },
                         header: {
@@ -236,34 +178,32 @@ struct NewFavorSheet: View {
                     // Reward
                     Section(
                         content: {
-                            VStack (spacing: 20) {
-                                HStack {
-                                    ZStack {
-                                        Rectangle()
-                                            .frame(width: 25, height: 25)
-                                            .foregroundStyle(Color(.systemYellow))
-                                        Image(systemName: "dollarsign.circle.fill")
-                                            .foregroundStyle(Color(.white))
-                                            .frame(width: 20, height: 20)
-                                            .scaledToFit()
-                                    }
-                                    .cornerRadius(3)
+                            VStack(spacing: 20) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "dollarsign.circle.fill")
+                                        .foregroundStyle(Color(.white))
+                                        .frame(width: 30, height: 30)
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .foregroundStyle(Color(.systemYellow))
+                                        }
                                     
                                     Text("Ricompensa")
+                                    
                                     Spacer()
                                 }
                                 
-                                HStack {
+                                HStack(spacing: 12) {
                                     ZStack {
                                         Circle()
                                             .frame(width: 50, height: 50)
-                                            .foregroundStyle(Color(.systemYellow))
+                                            .foregroundStyle(newFavor.reward > 0 ? Color(.systemYellow) : Color(.systemGray2))
                                             .opacity(0.6)
                                         
                                         Image(systemName: "minus")
                                             .resizable()
                                             .scaledToFit()
-                                            .foregroundStyle(.white)
+                                            .foregroundStyle(newFavor.reward > 0 ? .white : Color(.systemGray))
                                             .frame(width: 20, height: 20)
                                             .bold()
                                     }
@@ -310,6 +250,7 @@ struct NewFavorSheet: View {
                                     }
                                 }
                             }
+                            .padding(.vertical, 4)
                         },
                         header: {
                             Text("RICOMPENSA")
@@ -350,10 +291,10 @@ struct NewFavorSheet: View {
                 }
                 
                 // Create Button: only shown if it can be pressed
-                VStack {
+                VStack(spacing: 0) {
                     Spacer()
                     
-                    HStack {
+                    HStack(spacing: 0) {
                         Spacer()
                         
                         Button(action: {
@@ -380,6 +321,7 @@ struct NewFavorSheet: View {
                 }
                 .padding()
             }
+            .presentationDragIndicator(.hidden)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(content: {
                 ToolbarItem(placement: .cancellationAction) {
@@ -398,16 +340,20 @@ struct NewFavorSheet: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     // Favor's Icon selector Button
-                    ZStack {
-                        Circle()
-                            .foregroundStyle(Color(newFavor.color.color))
-                            .frame(width: 35, height: 35)
-                            .shadow(radius: 3)
-                        Image(systemName: newFavor.icon.icon)
-                            .resizable()
-                            .foregroundStyle(.white)
-                            .scaledToFit()
-                            .frame(width: 22, height: 22)                        
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrowtriangle.down.circle")
+                            .font(.caption)
+                        ZStack {
+                            Circle()
+                                .foregroundStyle(Color(newFavor.color.color).gradient)
+                                .frame(width: 35, height: 35)
+                                .shadow(radius: 3)
+                            Image(systemName: newFavor.icon.icon)
+                                .resizable()
+                                .foregroundStyle(.white)
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                        }
                     }
                     .onTapGesture(perform: {
                         // Shows the second sheet, where the User can edit the Icon
@@ -417,6 +363,5 @@ struct NewFavorSheet: View {
                 }
             })
         }
-        .presentationDragIndicator(.visible)
     }
 }

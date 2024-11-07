@@ -119,7 +119,7 @@ struct FavorDetailsSheet: View {
                                             .bold()
                                     }
                                     .padding()
-                                    .background(Color(.systemRed))
+                                    .background(Color(.systemRed).gradient)
                                     .cornerRadius(10)
                                 }
                                 
@@ -135,7 +135,7 @@ struct FavorDetailsSheet: View {
                                             .bold()
                                     }
                                     .padding()
-                                    .background(Color(.systemGreen))
+                                    .background(Color(.systemGreen).gradient)
                                     .cornerRadius(10)
                                 }
                             }

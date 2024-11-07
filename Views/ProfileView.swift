@@ -14,6 +14,10 @@ struct ProfileView: View {
     // Boolean value to handle the behavior of the "Export IPA" sheet
     @State private var isExportSheetPresented = false
     
+    @State private var isChangeNameAlertPresented = false
+    
+    @State private var newName: String = ""
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -24,13 +28,14 @@ struct ProfileView: View {
                         // Background
                         Circle()
                             .frame(width: 100, height: 100)
-                            .foregroundStyle(.cyan)
+                            .foregroundStyle(.cyan.gradient)
                         
                         // Icon
                         Image(systemName: "person.fill")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 40, height: 40)
+                            .foregroundStyle(.white)
                     }
                     // Temporary: need a way to export an IPA file without XCode
                     .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10) { 
@@ -39,9 +44,12 @@ struct ProfileView: View {
                     
                     // Info
                     VStack() {
-                        Text("Nome Cognome")
+                        Text(database.userName)
                             .font(.title2)
                             .bold()
+                            .onLongPressGesture() {
+                                isChangeNameAlertPresented = true
+                            }
                         
                         Spacer()
                             .frame(height: 40)
@@ -88,5 +96,22 @@ struct ProfileView: View {
         .sheet(isPresented: $isExportSheetPresented, onDismiss: {}) {
             ExportView()
         }
+        .alert("Cambia nome", 
+               isPresented: $isChangeNameAlertPresented, 
+               actions: {
+                    Button("Annulla", role: .destructive, action: {
+                        isChangeNameAlertPresented = false
+                        }
+                    )
+                    
+                    Button("Conferma", role: .cancel, action: {
+                        database.userName = newName
+                        isChangeNameAlertPresented = true
+                        }
+                    )
+            
+            TextField("Nome Cognome", text: $newName)
+               }
+           )
     }
 }

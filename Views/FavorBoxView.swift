@@ -67,14 +67,17 @@ struct FavorBoxView: View {
                 }
             }
         }
-        .frame(width: 140, height: 140)
+        .frame(minWidth: 140, minHeight: 140)
         .padding(10)
         .background(
-            RadialGradient(colors: [.clear, .black], center: .center, startRadius: 0, endRadius: 100)
-                .opacity(0.3)
+            GeometryReader { geometry in
+                RadialGradient(colors: [.clear, .black], center: .center, startRadius: 0, endRadius: max(geometry.size.width, geometry.size.height) * 0.9)
+                    .opacity(0.25)
+            }
         )
-        .background(favor.color.color)
+        .background(favor.color.color.gradient)
         .cornerRadius(18)
-        .shadow(radius: 10)
+        .shadow(radius: 5)
+        .hoverEffect(.lift)
     }
 }

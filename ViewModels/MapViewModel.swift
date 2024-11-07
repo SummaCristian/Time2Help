@@ -46,24 +46,24 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     // Reads the actual Permission and decides what to do
     func checkLocationAuthorization() {        
         switch locationManager.authorizationStatus {
-            case .notDetermined:
-                // The User hasn't been asked for Permission yet. Asking now...
-                locationManager.requestWhenInUseAuthorization()
-            case .restricted:
-                // Permission Restricted: Something like Parental Controls or MDM doesn't allow it
-                presentError("La tua location è bloccata dal parental control")
-            case .denied:
-                // The User has denied the Permission. Showing error...
-                presentError("Non ci sono i permessi per accedere alla tua location, vai alle Impostazioni e attivali")
-                // TODO: Implement in UI
-            case .authorizedAlways, .authorizedWhenInUse:
-                // The User has granted one of the two levels of Permission. Both are ok.
-                // Saving the User's position inside the region value, so that the Map can be centered on it.
-                region = MKCoordinateRegion(center: locationManager.location!.coordinate, span: MapDetails.span)
-                errorMessage = ""
-                error = false
-            @unknown default:
-                break
+        case .notDetermined:
+            // The User hasn't been asked for Permission yet. Asking now...
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted:
+            // Permission Restricted: Something like Parental Controls or MDM doesn't allow it
+            presentError("La tua location è bloccata dal parental control")
+        case .denied:
+            // The User has denied the Permission. Showing error...
+            presentError("Non ci sono i permessi per accedere alla tua location, vai alle Impostazioni e attivali")
+            locationManager.requestWhenInUseAuthorization()
+        case .authorizedAlways, .authorizedWhenInUse:
+            // The User has granted one of the two levels of Permission. Both are ok.
+            // Saving the User's position inside the region value, so that the Map can be centered on it.
+            region = MKCoordinateRegion(center: locationManager.location!.coordinate, span: MapDetails.span)
+            errorMessage = ""
+            error = false
+        @unknown default:
+            break
         }
     }
     

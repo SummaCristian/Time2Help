@@ -34,7 +34,8 @@ struct LocationSelector: View {
                 .onTapGesture(perform: { screenCoord in
                     // Intercepted a tap made by the User
                     // Converts the tap position into Map's coordinates
-                    let location = reader.convert(screenCoord, from: .local)
+                    let screenCoordUpdated = CGPoint(x: screenCoord.x, y: screenCoord.y - 70)
+                    let location = reader.convert(screenCoordUpdated, from: .local)
                     // Saves these coordinates as the new selectedLocation.
                     // This value is also used for the Favor Marker: it's now moved to this location
                     withAnimation(.easeInOut) {

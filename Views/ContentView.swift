@@ -1,7 +1,7 @@
 import SwiftUI
 import MapKit
 
-struct ContentView: View {    
+struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     // Connection to the ViewModel for Data and Location Permissions
     @StateObject private var viewModel = MapViewModel()
@@ -40,6 +40,7 @@ struct ContentView: View {
                                 Label("Nuovo Favore", systemImage: "plus.rectangle")
                             }
                             .tag(1) // Tag for the Nuovo Favore tab
+                            .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
                         
                         // Tab 2: Profile
                         ProfileView(database: database, selectedFavor: $selectedFavor)
@@ -50,6 +51,7 @@ struct ContentView: View {
                     }
                     .sheet(isPresented: $isSheetPresented, onDismiss: {}) {
                         NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
+                            .interactiveDismissDisabled()
                     }
                     .sheet(
                         item: $selectedFavor,
@@ -66,8 +68,6 @@ struct ContentView: View {
                 Button(action: {
                     isSheetPresented = true // Show the sheet when the tab is selected
                 }, label: {
-                    /*Rectangle()
-                        .fill(.clear)*/
                     Image(systemName: "plus")
                         .font(.largeTitle)
                         .tint(.blue)
@@ -76,18 +76,21 @@ struct ContentView: View {
                 //.frame(width: 120, height: 50)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
+                        .foregroundStyle(.regularMaterial)
                         .overlay(content: {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(.blue, lineWidth: 2)
                         })
                 )
+                .hoverEffect(.lift)
             }
         }
+        .ignoresSafeArea(.keyboard)
         .tint(.blue)
         .onAppear() {
             // Adds the template Markers to the Map
             database.initialize()
         }
+        .sensoryFeedback(.selection, trigger: _selectedTab.wrappedValue)
    }
 }

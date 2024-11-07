@@ -17,7 +17,7 @@ struct NewFavorIconSheet: View {
                 
                 ZStack {
                     Circle()
-                        .foregroundStyle(newFavor.color.color)
+                        .foregroundStyle(newFavor.color.color.gradient)
                         .frame(width: 80, height: 80)
                         .shadow(radius: 3)
                         .animation(.easeInOut, value: newFavor.color)

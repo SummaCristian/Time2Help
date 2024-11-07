@@ -10,6 +10,9 @@ class Database: ObservableObject {
     // The List of Favors, accessible by others
     @Published var favors: [Favor] = []
     
+    // The User's Name
+    @Published var userName: String = "Nome Cognome"
+    
     // Function to append a new Favor to the List
     func addFavor(favor: Favor) {
         favors.append(favor)
