@@ -169,6 +169,11 @@ struct NewFavorSheet: View {
                             .onTapGesture {
                                 isLocationSelectorPresented = true
                             }
+                            .padding(.vertical, 4)
+                            .hoverEffect(.lift)
+                            .onTapGesture {
+                                isLocationSelectorPresented = true
+                            }
                         },
                         header: {
                             Text("POSIZIONE")
