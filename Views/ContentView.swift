@@ -11,7 +11,7 @@ struct ContentView: View {
     // An Optional<Favor> used as a selector for a Favor: 
     // nil => no Favor selected
     // *something* => that Favor is selected
-    @State private var selectedFavor: Favor? = nil
+    @State private var selectedFavor: Favor?
     // Integer to keep track of which tab is selected
     @State private var selectedTab: Int = 0 // Track the selected tabEmptyView
     // Boolean value to hanlde the behavior of the "New Favor" sheet
@@ -40,7 +40,7 @@ struct ContentView: View {
                                 Label("Nuovo Favore", systemImage: "plus.rectangle")
                             }
                             .tag(1) // Tag for the Nuovo Favore tab
-                            .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                            .disabled(true)
                         
                         // Tab 2: Profile
                         ProfileView(database: database, selectedFavor: $selectedFavor)
@@ -49,19 +49,6 @@ struct ContentView: View {
                             }
                             .tag(2) // Tag for the Profile tab                    
                     }
-                    .sheet(isPresented: $isSheetPresented, onDismiss: {}) {
-                        NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
-                            .interactiveDismissDisabled()
-                    }
-                    .sheet(
-                        item: $selectedFavor,
-                        onDismiss: {
-                            selectedFavor = nil
-                        },
-                        content: { favor in 
-                            FavorDetailsSheet(favor: favor)
-                        })
-                    .toolbarBackground(.ultraThinMaterial, for: .tabBar)
                 }
                 
                 // Invisible Button that covers the middle tab, used to open the "New Favor" sheet
@@ -85,6 +72,16 @@ struct ContentView: View {
                 .hoverEffect(.lift)
             }
         }
+        .sheet(isPresented: $isSheetPresented) {
+            NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
+                .interactiveDismissDisabled()
+        }
+        .sheet(
+            item: $selectedFavor,
+            content: { favor in
+                FavorDetailsSheet(favor: favor)
+            })
+        .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         .ignoresSafeArea(.keyboard)
         .tint(.blue)
         .onAppear() {
