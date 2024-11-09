@@ -13,7 +13,7 @@ struct FavorBoxView: View {
                 // Progress Indicator + Icon
                 ZStack {
                     // Progress Indicator
-                    CircularProgressView(value: favor.status.progressPercentage)
+                    CircularProgressView(value: favor.status.progressPercentage, showNumber: false, progressColor: favor.color.color)
                     
                     // Icon
                     Image(systemName: favor.icon.icon)
@@ -63,7 +63,7 @@ struct FavorBoxView: View {
                         .foregroundStyle(Material.ultraThick)
                         .opacity(0.3)
                     
-                    CreditNumberView(favor: favor, size: 30)
+                    CreditNumberView(favor: favor, size: (favor.reward < 10) ? 30 : 25)
                 }
             }
         }
@@ -72,7 +72,7 @@ struct FavorBoxView: View {
         .background(
             GeometryReader { geometry in
                 RadialGradient(colors: [.clear, .black], center: .center, startRadius: 0, endRadius: max(geometry.size.width, geometry.size.height) * 0.9)
-                    .opacity(0.25)
+                    .opacity(0.3)
             }
         )
         .background(favor.color.color.gradient)

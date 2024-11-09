@@ -52,6 +52,26 @@ struct FavorDetailsSheet: View {
                     }
                 )
                 
+                Section(
+                    content: {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("Stato")
+                                    .font(.title2)
+                                    .bold()
+                                Text(favor.status.textualForm)
+                            }
+                            
+                            Spacer()
+                            
+                            CircularProgressView(value: favor.status.progressPercentage, size: .large, numberColor: favor.color.color, progressColor: favor.color.color)
+                        }
+                    },
+                    header: {
+                        Text("Stato di avanzamento")
+                    }
+                )
+                
                 // The Favor's Date data
                 Section(
                     content: {
