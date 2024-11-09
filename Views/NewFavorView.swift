@@ -169,11 +169,6 @@ struct NewFavorSheet: View {
                             .onTapGesture {
                                 isLocationSelectorPresented = true
                             }
-                            .padding(.vertical, 4)
-                            .hoverEffect(.lift)
-                            .onTapGesture {
-                                isLocationSelectorPresented = true
-                            }
                         },
                         header: {
                             Text("POSIZIONE")
@@ -266,6 +261,9 @@ struct NewFavorSheet: View {
                 .onAppear() {
                     // Retrieves the User's current Location and sets it as the Favor's location
                     newFavor.location = mapViewModel.region.center
+                    
+                    // Writes the User's username as the Favor's Owner
+                    newFavor.author = database.userName
                 }
                 .onDisappear() {
                     isConfirmationDialogPresented = true

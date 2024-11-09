@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "variableblur",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nikstar/VariableBlur",
+      "state" : {
+        "revision" : "41698eecb3373550b2100dbcd308d886501d7033",
+        "version" : "1.2.0"
+      }
+    }
+  ],
+  "version" : 2
+}

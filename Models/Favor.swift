@@ -1,7 +1,7 @@
 import Foundation
 import MapKit
 
-class Favor: Identifiable, ObservableObject{
+class Favor: Identifiable, ObservableObject {
     // An ID to identify it
     let id: UUID
     
@@ -24,7 +24,6 @@ class Favor: Identifiable, ObservableObject{
     @Published var icon: FavorIcon
     @Published var color: FavorColor
     
-    
     // Initializers
     init() {
         // Standard initializer
@@ -35,11 +34,11 @@ class Favor: Identifiable, ObservableObject{
         self.startingDate = Date()
         self.endingDate = Date().addingTimeInterval(3600)
         self.isAllDay = false
-        self.location = CLLocationCoordinate2D.init()
+        self.location = CLLocationCoordinate2D()
         self.isCarNecessary = false
         self.isHeavyTask = false
         self.reward = 0
-        self.status = FavorStatus.notAcceptedYet
+        self.status = .notAcceptedYet
         self.icon = .people
         self.color = .red
     }
@@ -47,7 +46,7 @@ class Favor: Identifiable, ObservableObject{
     init(title: String, description: String, author: String, startingDate: Date,
          endingDate: Date, isAllDay: Bool, location: CLLocationCoordinate2D, isCarNecessary: Bool,
          isHeavyTask: Bool, reward: Int, status: FavorStatus, icon: FavorIcon, color: FavorColor) {
-        // Custom initialer
+        // Custon initializer
         self.id = UUID()
         self.title = title
         self.description = description
