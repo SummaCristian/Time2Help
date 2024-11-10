@@ -15,6 +15,8 @@ struct NewFavorSheet: View {
     @State private var isLocationSelectorPresented = false
     // Boolean value that controls the appearing of the Dialog, asking the User if he wants to quit the creation process
     @State private var isConfirmationDialogPresented = false
+    // Boolean value that controls the appearing of the Dialog that explains what the Reward is
+    @State private var isRewardInfoDialogPresented = false
     // Boolean value that controls whether the newly created Favor can be added to the Database, or if the data is not enough
     @State private var canBeCreated = false
     // A buffer to save the last reward value, to use for aniamtion purposes
@@ -191,6 +193,11 @@ struct NewFavorSheet: View {
                                     Text("Ricompensa")
                                     
                                     Spacer()
+                                    
+                                    Image(systemName: "info.circle")
+                                        .onTapGesture {
+                                            isRewardInfoDialogPresented = true
+                                        }
                                 }
                                 
                                 HStack(spacing: 12) {
@@ -291,6 +298,12 @@ struct NewFavorSheet: View {
                     } else {
                         canBeCreated = false
                     }
+                }
+                .alert("Cos'è una ricompensa?", isPresented: $isRewardInfoDialogPresented) {
+                    Button("Chiudi", role: .cancel) {}
+                } message: {
+                    Text("La Ricompensa rappresenta il numero di Crediti di Tempo che la persona che completa il Favore riceverà.\nOgni Credito equivale a circa 30 minuti, ma è possibile aggiungere ulteriori Crediti se ritenuti adeguati.")
+                        .multilineTextAlignment(.leading)
                 }
                 
                 // Create Button: only shown if it can be pressed

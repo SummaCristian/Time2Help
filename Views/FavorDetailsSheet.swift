@@ -15,11 +15,11 @@ struct FavorDetailsSheet: View {
         // The GeometryReader is used to achieve a top alignment for the UI
         GeometryReader { _ in
             // The ScrollView is needed to be able to scroll through the UI
-            Form {
-                Section() {
+            Form {                
+                Section {
                     HStack {
                         // The Favor's Title
-                        VStack {
+                        VStack(alignment: .leading) {                            
                             Text(favor.title)
                                 .font(.largeTitle)
                                 .bold()
