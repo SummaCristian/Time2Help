@@ -3,19 +3,25 @@ import MapKit
 
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
+    
+    @Binding var nameSurname: String
+    @Binding var selectedColor: String
+    @Binding var selectedNeighbourhood: String
+    
     // Connection to the ViewModel for Data and Location Permissions
     @StateObject private var viewModel = MapViewModel()
-    // Connection to the Database that stores the Favors 
+    // Connection to the Database that stores the Favors
     @StateObject private var database = Database.shared
     
-    // An Optional<Favor> used as a selector for a Favor: 
+    // An Optional<Favor> used as a selector for a Favor:
     // nil => no Favor selected
     // *something* => that Favor is selected
     @State private var selectedFavor: Favor?
+    @State private var selectedFavorID: UUID?
     // Integer to keep track of which tab is selected
     @State private var selectedTab: Int = 0 // Track the selected tabEmptyView
     // Boolean value to hanlde the behavior of the "New Favor" sheet
-    @State private var isSheetPresented = false // State to control sheet visibility    
+    @State private var isSheetPresented = false // State to control sheet visibility
     
     // Main View
     var body: some View {
@@ -27,7 +33,7 @@ struct ContentView: View {
                 TabView(selection: $selectedTab) {
                     Group {
                         // Tab 0: Map
-                        MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor)
+                        MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID)
                             .tabItem {
                                 Label("Mappa", systemImage: "map")
                             }
@@ -43,11 +49,11 @@ struct ContentView: View {
                             .disabled(true)
                         
                         // Tab 2: Profile
-                        ProfileView(database: database, selectedFavor: $selectedFavor)
+                        ProfileView(database: database, selectedFavor: $selectedFavor, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
                             .tabItem {
                                 Label("Profilo", systemImage: "person.fill")
                             }
-                            .tag(2) // Tag for the Profile tab                    
+                            .tag(2) // Tag for the Profile tab
                     }
                 }
                 
@@ -78,6 +84,10 @@ struct ContentView: View {
         }
         .sheet(
             item: $selectedFavor,
+            onDismiss: {
+                selectedFavor = nil
+                selectedFavorID = nil
+            },
             content: { favor in
                 FavorDetailsSheet(favor: favor)
             })
