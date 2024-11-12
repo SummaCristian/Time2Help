@@ -53,6 +53,8 @@ struct FavorBoxView: View {
                 Spacer()
             }
             
+            Spacer()
+            
             // Reward
             HStack {
                 Spacer()
@@ -67,17 +69,18 @@ struct FavorBoxView: View {
                 }
             }
         }
-        .frame(minWidth: 140, minHeight: 140)
-        .padding(10)
+        .frame(width: 124, height: 164)
+        .padding(16)
         .background(
             GeometryReader { geometry in
                 RadialGradient(colors: [.clear, .black], center: .center, startRadius: 0, endRadius: max(geometry.size.width, geometry.size.height) * 0.9)
-                    .opacity(0.3)
+                    .opacity(0.2)
             }
         )
         .background(favor.color.color.gradient)
-        .cornerRadius(18)
+        .cornerRadius(27)
         .shadow(radius: 5)
         .hoverEffect(.lift)
+        .padding(.vertical, 4)
     }
 }
