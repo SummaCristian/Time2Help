@@ -9,6 +9,7 @@ class Favor: Identifiable, ObservableObject {
     @Published var title: String
     @Published var description: String
     @Published var author: String
+    @Published var neighbourhood: String
     
     // Secondary details
     @Published var startingDate: Date
@@ -31,6 +32,7 @@ class Favor: Identifiable, ObservableObject {
         self.title = ""
         self.description = ""
         self.author = "Unknown"
+        self.neighbourhood = ""
         self.startingDate = Date()
         self.endingDate = Date().addingTimeInterval(3600)
         self.isAllDay = false
@@ -43,14 +45,13 @@ class Favor: Identifiable, ObservableObject {
         self.color = .red
     }
     
-    init(title: String, description: String, author: String, startingDate: Date,
-         endingDate: Date, isAllDay: Bool, location: CLLocationCoordinate2D, isCarNecessary: Bool,
-         isHeavyTask: Bool, reward: Int, status: FavorStatus, icon: FavorIcon, color: FavorColor) {
+    init(title: String, description: String, author: String, neighbourhood: String, startingDate: Date, endingDate: Date, isAllDay: Bool, location: CLLocationCoordinate2D, isCarNecessary: Bool, isHeavyTask: Bool, reward: Int, status: FavorStatus, icon: FavorIcon, color: FavorColor) {
         // Custon initializer
         self.id = UUID()
         self.title = title
         self.description = description
         self.author = author
+        self.neighbourhood = neighbourhood
         self.startingDate = startingDate
         self.endingDate = endingDate
         self.isAllDay = isAllDay
