@@ -3,12 +3,12 @@ import SwiftUI
 // This file contains the UI for the New Favor's Icon Editing sheet.
 
 struct NewFavorIconSheet: View {
-    // The newly created Favor, whose icon is being edited    
+    // The newly created Favor, whose icon is being edited
     @StateObject var newFavor: Favor
     
     // The UI
     var body: some View {
-        Spacer().frame(height: 80)
+        Spacer().frame(height: 40)
         
         VStack(spacing: 20) {
             // The Icon Preview box
@@ -47,24 +47,23 @@ struct NewFavorIconSheet: View {
                 // A grid, showing 6 columns and as many rows as needed
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 6), content: {
                     ForEach(FavorColor.allCases) { colorCase in
-                        ZStack {
-                            // The selector: is shown if this color is currently selected
-                            Circle()
-                                .frame(width: 42, height: 42)
-                                .foregroundStyle(.foreground)
-                                .opacity(newFavor.color == colorCase ? 0.4 : 0)
-
-                            // The color itself
-                            Circle()
-                                .frame(width: 35, height: 35)
-                                .foregroundStyle(Color(colorCase.color))
-                                .onTapGesture() {
-                                    // Sets the color inside the Favor
-                                    withAnimation {
-                                        newFavor.color = colorCase
-                                    }
+                        // The color itself
+                        Circle()
+                            .frame(width: 35, height: 35)
+                            .foregroundStyle(Color(colorCase.color))
+                            .padding(.all, 4)
+                            .background {
+                                // The selector: is shown if this color is currently selected
+                                Circle()
+                                    .stroke(.primary, lineWidth: 2)
+                                    .opacity(newFavor.color == colorCase ? 1 : 0)
+                            }
+                            .onTapGesture() {
+                                // Sets the color inside the Favor
+                                withAnimation {
+                                    newFavor.color = colorCase
                                 }
-                        }
+                            }
                     }
                 })
                 .padding(10)
@@ -79,16 +78,10 @@ struct NewFavorIconSheet: View {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 6), content: {
                     ForEach(FavorIcon.allCases) { iconCase in
                         ZStack {
-                            // The selector: is only shown if this icon is selected
-                            Circle()
-                                .frame(width: 42, height: 42)
-                                .foregroundStyle(.foreground)
-                                .opacity(newFavor.icon == iconCase ? 0.4 : 0)
-                            
                             // The Icon's circular background
                             Circle()
                                 .frame(width: 37, height: 37)
-                                .foregroundStyle(Color(.systemGray2))
+                                .foregroundStyle(Color(.systemGray3))
                             
                             // The icon itself
                             Image(systemName: iconCase.icon)
@@ -98,6 +91,13 @@ struct NewFavorIconSheet: View {
                                 .opacity(0.8)
                                 .frame(width: 23, height: 23)
                             
+                        }
+                        .padding(.all, 4)
+                        .background {
+                            // The selector: is only shown if this icon is selected
+                            Circle()
+                                .stroke(.primary, lineWidth: 2)
+                                .opacity(newFavor.icon == iconCase ? 1 : 0)
                         }
                         .padding(3)
                         .onTapGesture() {
