@@ -4,76 +4,81 @@ import SwiftUI
 // of a Favor on the Map.
 
 struct FavorMarker: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     // The Favor associated to this UI Element
     @ObservedObject var favor: Favor
     
     @Binding var isSelected: Bool
     
-    @State private var showBase = false
+    var isInFavorSheet: Bool
+    
+    @State private var moveTitle = false
         
     // The UI
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack {
-                // Outer Circle with Stroke Border
+        ZStack(alignment: moveTitle ? .center : .leading) {
+            ZStack(alignment: .center) {
                 Circle()
-                    .frame(
-                        width: isSelected ? 55 : 30, 
-                        height: isSelected ? 55 : 30)
-                    .foregroundStyle(Color.white)
-                    .animation(.spring, value: isSelected)
+                    .frame(width: 7, height: 7)
+                    .foregroundStyle(favor.color.color.gradient)
                 
+                Image(systemName: "triangle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 10, height: 10)
+                    .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
+                    .rotationEffect(.degrees(180))
+                    .offset(y: isSelected ? -15 : 7)
+                    
                 // Inner Circle
-                Circle()
+                Circle() // RoundedRectangle(cornerRadius: 6)
                     .foregroundStyle(favor.color.color.gradient)
                     .frame(
-                        width: isSelected ? 50 : 25, 
-                        height: isSelected ? 50 : 25)
-                    .animation(.spring, value: isSelected)
+                        width: isSelected ? 50 : 30,
+                        height: isSelected ? 50 : 30)
+                    .padding(.all, 2.5)
+                    .background {
+                         Circle() // RoundedRectangle(cornerRadius: 8)
+                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
+                    }
+                    .padding(.all, isSelected ? -1 : 1.5)
+                    .background {
+                         Circle() // RoundedRectangle(cornerRadius: 10)
+                            .foregroundStyle(favor.color.color.gradient)
+                    }
+                    .offset(y: isSelected ? -45 : 0)
                 
                 // Icon inside the Circle
                 Image(systemName: favor.icon.icon)
                     .resizable()
                     .scaledToFit()
                     .frame(
-                        width: isSelected ? 30 : 15, 
+                        width: isSelected ? 30 : 15,
                         height: isSelected ? 30 : 15)
-                    .foregroundStyle(Color.white)
-                    .animation(.spring, value: isSelected)
-            }
-            .frame(width: 55, height: 55, alignment: .center)
-            
-            // Triangle Pin
-            if showBase {
-                Image(systemName: "triangle.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 10, height: 10)
-                    .foregroundStyle(Color.white)                                
-                    .rotationEffect(.degrees(180))
-                    .offset(y: -3)
-                    //.padding(.bottom, 80)
-                    .transition(.opacity.combined(with: .scale(scale: 0.5, anchor: .top)))
-                    .animation(.spring(duration: 500), value: isSelected)
+                    .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
+                    .offset(y: isSelected ? -45 : 0)
                 
-                Circle()
-                    .frame(width: 7, height: 7)
-                    .foregroundStyle(favor.color.color.gradient)
+                if !isInFavorSheet {
+                    Text(favor.title)
+                        .font(moveTitle ? .subheadline.bold() : .footnote.bold())
+                        .foregroundStyle(.primary)
+                        .multilineTextAlignment(moveTitle ? .center : .leading)
+                        .lineLimit(2)
+                        .frame(width: 120, height: 120, alignment: moveTitle ? .top : .leading)
+                        .offset(x: moveTitle ? 0 : 86, y: moveTitle ? 75 : 0)
+                }
             }
         }
-        .onChange(of: isSelected) { old, new in
-            if new{
-                withAnimation(.spring.delay(0.25)) {
-                    showBase = true
+        .onChange(of: isSelected) { _, newValue in
+            if newValue {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    moveTitle = true
                 }
             } else {
-                showBase = false
+                moveTitle = false
             }
         }
-        .onAppear() {
-            if isSelected {
-                showBase = true
-            }
-        }
+        .animation(.spring(duration: 0.4), value: isSelected)
     }
 }
