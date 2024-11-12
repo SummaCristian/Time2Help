@@ -15,11 +15,11 @@ struct FavorDetailsSheet: View {
         // The GeometryReader is used to achieve a top alignment for the UI
         GeometryReader { _ in
             // The ScrollView is needed to be able to scroll through the UI
-            Form {                
+            Form {
                 Section {
                     HStack {
                         // The Favor's Title
-                        VStack(alignment: .leading) {                            
+                        VStack(alignment: .leading) {
                             Text(favor.title)
                                 .font(.largeTitle)
                                 .bold()
@@ -35,7 +35,7 @@ struct FavorDetailsSheet: View {
                         
                         Spacer()
                         
-                        // The Favor's Reward                        
+                        // The Favor's Reward
                         CreditNumberView(favor: favor)
                     }
                     .padding()
@@ -46,7 +46,7 @@ struct FavorDetailsSheet: View {
                 Section(
                     content: {
                         Text(favor.description)
-                    }, 
+                    },
                     header: {
                         Text("DESCRIZIONE")
                     }
@@ -159,7 +159,7 @@ struct FavorDetailsSheet: View {
                                     .cornerRadius(10)
                                 }
                             }
-                        }, 
+                        },
                         header: {
                             Text("INFO")
                         })
@@ -175,7 +175,7 @@ struct FavorDetailsSheet: View {
                         ) {
                             Annotation("", coordinate: favor.location, content: {
                                 // Only this Favor is shown in this mini-Map
-                                FavorMarker(favor: favor, isSelected: .constant(true))
+                                FavorMarker(favor: favor, isSelected: .constant(true), isInFavorSheet: true)
                             })
                         }
                         .frame(height: 300)
@@ -185,6 +185,11 @@ struct FavorDetailsSheet: View {
                         Text("POSIZIONE")
                     }
                 )
+                
+                Text("") // To leave space for popup button
+                    .frame(height: 0)
+                    .listRowBackground(Color.clear)
+                    .safeAreaPadding(.bottom, 34)
             }
             
             // The Accept Favor Button
@@ -201,18 +206,19 @@ struct FavorDetailsSheet: View {
                         dismiss()
                     }) {
                         Label("Accetta Favore", systemImage: "checkmark")
-                            .bold()
+                            .font(.body.bold())
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 15)
+                            .padding(.horizontal, 45)
+                            .background(.blue, in: .capsule)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .tint(.blue)
                     .shadow(radius: 10)
                     .hoverEffect(.highlight)
                     
                     Spacer()
                 }
             }
-            .padding()
+            .padding(.all, 20)
             .presentationDragIndicator(.visible)
             .presentationDetents([.medium, .large])
         }
