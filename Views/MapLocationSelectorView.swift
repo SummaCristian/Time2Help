@@ -15,9 +15,9 @@ struct LocationSelector: View {
     var body: some View {
         ZStack {
             // The MapReader is needed to intercept the User's tap inputs
-            MapReader {reader in
+            MapReader { reader in
                 Map(
-                    initialPosition: .automatic,
+                    initialPosition: .userLocation(fallback: .automatic),
                     bounds: MapCameraBounds(minimumDistance: 500, maximumDistance: .infinity),
                     interactionModes: .all
                 ) {
@@ -26,8 +26,8 @@ struct LocationSelector: View {
                     
                     // The Favor's Marker
                     // Note: it's set in selectedLocation if possible, but if it's nil, it defaults to the Favor's old Location
-                    Annotation("", coordinate: selectedLocation ?? newFavor.location){
-                        FavorMarker(favor: newFavor, isSelected: .constant(true))
+                    Annotation("", coordinate: selectedLocation ?? newFavor.location) {
+                        FavorMarker(favor: newFavor, isSelected: .constant(true), isInFavorSheet: true)
                     }
                 }
                 .safeAreaPadding(.vertical, 65)
@@ -72,9 +72,7 @@ struct LocationSelector: View {
             VStack {
                 Spacer()
                 
-                HStack {
-                    Spacer()
-                    
+                HStack(spacing: 16) {
                     // The Cancel Button
                     // This button does not save the newly selectedLocation
                     Button(action: {
@@ -83,15 +81,14 @@ struct LocationSelector: View {
                         dismiss()
                     }) {
                         Label("Annulla", systemImage: "xmark")
-                            .bold()
+                            .font(.body.bold())
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 15)
+                            .frame(maxWidth: .infinity)
+                            .background(.red, in: .capsule)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .tint(.red)
                     .shadow(radius: 10)
                     .hoverEffect(.highlight)
-                    
-                    Spacer()
                     
                     // The Confirm Button
                     // This button saves the newly selectedLocation inside the Favor
@@ -102,18 +99,17 @@ struct LocationSelector: View {
                         dismiss()
                     }) {
                         Label("Seleziona", systemImage: "checkmark")
-                            .bold()
+                            .font(.body.bold())
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 15)
+                            .frame(maxWidth: .infinity)
+                            .background(.green, in: .capsule)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .tint(.green)
                     .shadow(radius: 10)
                     .hoverEffect(.highlight)
-                    
-                    Spacer()
                 }
             }
-            .padding(.vertical)
+            .padding(.all, 20)
         }
         .presentationDragIndicator(.visible)
     }
