@@ -1,11 +1,20 @@
 import SwiftUI
 
 @main
-struct MyApp: App {
+struct AppTime2Help2App: App {
+    
+    @AppStorage("showlogin") var showLogin: Bool = true
+    @AppStorage("nameSurname") var nameSurname: String = ""
+    @AppStorage("selectedColor") var selectedColor: String = "blue"
+    @AppStorage("selectedNeighbourhood") var selectedNeighbourhood: String = "Bande Nere"
+    
     var body: some Scene {
         WindowGroup {
-            // Launches the UI
-            ContentView()
+            if showLogin {
+                LoginView(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
+            } else {
+                ContentView(nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
+            }
         }
     }
 }
