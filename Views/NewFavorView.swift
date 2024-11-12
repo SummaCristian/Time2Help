@@ -9,8 +9,6 @@ struct NewFavorSheet: View {
     
     @Binding var isPresented: Bool
     
-    // Boolean value that controls the appearing of the second sheet, used to edit the Favor's Icon
-    @State private var isEditIconSheetPresented = false
     // Boolean value that controls the appearing of the second sheet, used to edit the Favor's Location
     @State private var isLocationSelectorPresented = false
     // Boolean value that controls the appearing of the Dialog, asking the User if he wants to quit the creation process
@@ -35,7 +33,7 @@ struct NewFavorSheet: View {
     var body: some View {
         // GeometryReader is used to set the UI with a top alignment
         NavigationStack {
-            GeometryReader { _ in
+            GeometryReader {_ in
                 
                 // Form is needed to build the UI
                 Form {
@@ -57,6 +55,22 @@ struct NewFavorSheet: View {
                         header: {
                             Text("TITOLO E DESCRIZIONE")
                         })
+                    
+                    // Category
+                    Section(
+                        content: {
+                            Picker(selection: $newFavor.category, label: Text("Categoria")) {
+                                ForEach(FavorCategory.allCases.filter({$0 != .all})) { category in
+                                    Label(category.name, systemImage: category.icon).tag(category)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .tint(newFavor.color)
+                        }, 
+                        header: {
+                            Text("Categoria")
+                        }
+                    )
                     
                     // Date selectors
                     Section(
@@ -263,11 +277,6 @@ struct NewFavorSheet: View {
                             Text("RICOMPENSA")
                         }
                     )
-                    
-                    Text("") // To leave space for popup button
-                        .frame(height: 0)
-                        .listRowBackground(Color.clear)
-                        .safeAreaPadding(.bottom, 34)
                 }
                 .scrollDismissesKeyboard(.immediately)
                 .onAppear() {
@@ -280,10 +289,6 @@ struct NewFavorSheet: View {
                 .onDisappear() {
                     isConfirmationDialogPresented = true
                 }
-                .sheet(isPresented: $isEditIconSheetPresented, content: {
-                    // Shows the Edit Icon sheet
-                    NewFavorIconSheet(newFavor: newFavor)
-                })
                 .sheet(isPresented: $isLocationSelectorPresented, content: {
                     // Shows the Location Selector sheet
                     LocationSelector(newFavor: newFavor)
@@ -324,12 +329,11 @@ struct NewFavorSheet: View {
                             isPresented = false
                         }) {
                             Label("Richiedi Favore", systemImage: "plus")
-                                .font(.body.bold())
-                                .foregroundStyle(.white)
-                                .padding(.vertical, 15)
-                                .padding(.horizontal, 45)
-                                .background(.blue, in: .capsule)
+                                .bold()
                         }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        .tint(.blue)
                         .shadow(radius: 10)
                         .disabled(!canBeCreated)
                         .opacity(canBeCreated ? 1 : 0)
@@ -341,7 +345,7 @@ struct NewFavorSheet: View {
                         Spacer()
                     }
                 }
-                .padding(.all, 20)
+                .padding()
             }
             .presentationDragIndicator(.hidden)
             .navigationBarTitleDisplayMode(.inline)
@@ -363,25 +367,20 @@ struct NewFavorSheet: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     // Favor's Icon selector Button
                     HStack(spacing: 6) {
-                        Image(systemName: "arrowtriangle.down.circle")
-                            .font(.caption)
+                        /*Image(systemName: "arrowtriangle.down.circle")
+                            .font(.caption)*/
                         ZStack {
                             Circle()
-                                .foregroundStyle(Color(newFavor.color.color).gradient)
+                                .foregroundStyle(Color(newFavor.color).gradient)
                                 .frame(width: 35, height: 35)
                                 .shadow(radius: 3)
-                            Image(systemName: newFavor.icon.icon)
+                            Image(systemName: newFavor.icon)
                                 .resizable()
                                 .foregroundStyle(.white)
                                 .scaledToFit()
                                 .frame(width: 22, height: 22)
                         }
                     }
-                    .onTapGesture(perform: {
-                        // Shows the second sheet, where the User can edit the Icon
-                        isEditIconSheetPresented = true
-                    })
-                    .hoverEffect(.lift)
                 }
             })
         }

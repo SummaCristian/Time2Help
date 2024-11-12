@@ -15,13 +15,13 @@ struct LoginView: View {
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
     
-//    @State private var showLogin: Bool = true // da fare con AppStorage
+    //    @State private var showLogin: Bool = true // da fare con AppStorage
     
     var body: some View {
         ZStack(alignment: .top) {
             NavigationStack {
                 LoginViewOne(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
-                    .toolbarVisibility(.hidden, for: .navigationBar)
+                    .toolbar(.hidden, for: .navigationBar)
             }
             
             LoginHeader()
@@ -100,7 +100,7 @@ struct LoginViewOne: View {
                 
                 NavigationLink {
                     LoginViewTwo(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodTemp: $selectedNeighbourhoodTemp)
-                        .toolbarVisibility(.hidden, for: .navigationBar)
+                        .toolbar(.hidden, for: .navigationBar)
                 } label: {
                     Text("Sì, andiamo!")
                         .font(.body.bold())
@@ -249,7 +249,7 @@ struct LoginViewTwo: View {
                 } else {
                     NavigationLink {
                         LoginViewThree(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodTemp: $selectedNeighbourhoodTemp)
-                            .toolbarVisibility(.hidden, for: .navigationBar)
+                            .toolbar(.hidden, for: .navigationBar)
                     } label: {
                         Text("Proseguiamo!")
                             .font(.body.bold())
@@ -311,7 +311,7 @@ struct LoginViewThree: View {
                 VStack(spacing: 16) {
                     Text("Seleziona il tuo quartiere")
                         .frame(maxWidth: .infinity, alignment: .center)
-
+                    
                     Picker("", selection: $selectedNeighbourhoodTemp) {
                         ForEach(neighbourhoods, id: \.self) { neighbourhood in
                             Text(neighbourhood)
@@ -320,7 +320,7 @@ struct LoginViewThree: View {
                     .pickerStyle(.wheel)
                     .frame(height: 150)
                     .scrollDisabled(disabledPicker)
-//                            .background(.blue.opacity(0.2), in: .rect(cornerRadius: 10))
+                    //                            .background(.blue.opacity(0.2), in: .rect(cornerRadius: 10))
                 }
                 .padding(.all, 20)
                 .overlay {
@@ -344,7 +344,7 @@ struct LoginViewThree: View {
                 
                 NavigationLink {
                     LoginViewFour(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodTemp: $selectedNeighbourhoodTemp)
-                        .toolbarVisibility(.hidden, for: .navigationBar)
+                        .toolbar(.hidden, for: .navigationBar)
                 } label: {
                     Text("Proseguiamo!")
                         .font(.body.bold())
@@ -381,7 +381,7 @@ struct LoginViewFour: View {
     @Binding var selectedColorTemp: String
     @Binding var selectedNeighbourhoodTemp: String
     
-//    @State private var showLogin: Bool = true // da fare con AppStorage
+    //    @State private var showLogin: Bool = true // da fare con AppStorage
     
     var body: some View {
         GeometryReader { _ in

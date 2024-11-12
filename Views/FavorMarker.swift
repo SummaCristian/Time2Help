@@ -14,14 +14,14 @@ struct FavorMarker: View {
     var isInFavorSheet: Bool
     
     @State private var moveTitle = false
-        
+    
     // The UI
     var body: some View {
         ZStack(alignment: moveTitle ? .center : .leading) {
             ZStack(alignment: .center) {
                 Circle()
                     .frame(width: 7, height: 7)
-                    .foregroundStyle(favor.color.color.gradient)
+                    .foregroundStyle(favor.color.gradient)
                 
                 Image(systemName: "triangle.fill")
                     .resizable()
@@ -30,27 +30,27 @@ struct FavorMarker: View {
                     .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
                     .rotationEffect(.degrees(180))
                     .offset(y: isSelected ? -15 : 7)
-                    
+                
                 // Inner Circle
-                Circle() // RoundedRectangle(cornerRadius: 6)
-                    .foregroundStyle(favor.color.color.gradient)
+                Circle()
+                    .foregroundStyle(favor.color.gradient)
                     .frame(
                         width: isSelected ? 50 : 30,
                         height: isSelected ? 50 : 30)
                     .padding(.all, 2.5)
                     .background {
-                         Circle() // RoundedRectangle(cornerRadius: 8)
+                        Circle() // RoundedRectangle(cornerRadius: 8)
                             .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
                     }
                     .padding(.all, isSelected ? -1 : 1.5)
                     .background {
-                         Circle() // RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(favor.color.color.gradient)
+                        Circle() // RoundedRectangle(cornerRadius: 10)
+                            .foregroundStyle(favor.color.gradient)
                     }
                     .offset(y: isSelected ? -45 : 0)
                 
                 // Icon inside the Circle
-                Image(systemName: favor.icon.icon)
+                Image(systemName: favor.icon)
                     .resizable()
                     .scaledToFit()
                     .frame(
@@ -68,15 +68,24 @@ struct FavorMarker: View {
                         .frame(width: 120, height: 120, alignment: moveTitle ? .top : .leading)
                         .offset(x: moveTitle ? 0 : 86, y: moveTitle ? 75 : 0)
                 }
+                
+                Circle()
+                    .frame(width: 7, height: 7)
+                    .foregroundStyle(favor.color.gradient)
+                    .opacity(moveTitle ? 1 : 0)
             }
         }
         .onChange(of: isSelected) { _, newValue in
             if newValue {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    moveTitle = true
+                    withAnimation {
+                        moveTitle = true
+                    }
                 }
             } else {
-                moveTitle = false
+                withAnimation {
+                    moveTitle = false
+                }
             }
         }
         .animation(.spring(duration: 0.4), value: isSelected)

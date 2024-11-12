@@ -43,12 +43,12 @@ struct ModifyProfileView: View {
                                                 .onTapGesture {
                                                     nameSurnameTemp = ""
                                                 }
-    //                                        Button {
-    //                                            nameSurnameTemp = ""
-    //                                        } label: {
-    //                                            Image(systemName: "xmark.circle.fill")
-    //                                                .foregroundStyle(.red, .red.opacity(0.2))
-    //                                        }
+                                            //                                        Button {
+                                            //                                            nameSurnameTemp = ""
+                                            //                                        } label: {
+                                            //                                            Image(systemName: "xmark.circle.fill")
+                                            //                                                .foregroundStyle(.red, .red.opacity(0.2))
+                                            //                                        }
                                         }
                                     }
                                     .frame(height: 50)
@@ -79,10 +79,10 @@ struct ModifyProfileView: View {
                                 
                                 VStack(alignment: .center, spacing: 16) {
                                     Text("Seleziona il colore per la tua immagine")
-                            
+                                    
                                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 6), content: {
                                         ForEach(FavorColor.allCases) { colorCase in
-//                                            // The color itself
+                                            //                                            // The color itself
                                             Circle()
                                                 .frame(width: 35, height: 35)
                                                 .foregroundStyle(Color(colorCase.color))
@@ -106,14 +106,14 @@ struct ModifyProfileView: View {
                         },
                         header: {
                             Text("Nome e cognome")
-                    })
+                        })
                     
                     Section(
                         content: {
                             VStack(spacing: 16) {
                                 Text("Seleziona il tuo quartiere")
                                     .frame(maxWidth: .infinity, alignment: .center)
-                        
+                                
                                 Picker("", selection: $selectedNeighbourhoodTemp) {
                                     ForEach(neighbourhoods, id: \.self) { neighbourhood in
                                         Text(neighbourhood)
@@ -121,13 +121,13 @@ struct ModifyProfileView: View {
                                 }
                                 .pickerStyle(.wheel)
                                 .frame(height: 150)
-    //                            .tint(.clear)
-    //                            .background(.blue.opacity(0.2), in: .rect(cornerRadius: 10))
+                                //                            .tint(.clear)
+                                //                            .background(.blue.opacity(0.2), in: .rect(cornerRadius: 10))
                             }
                         },
                         header: {
                             Text("Quartiere")
-                    })
+                        })
                     
                     Text("") // To leave space for popup button
                         .frame(height: 0)

@@ -13,10 +13,10 @@ struct FavorBoxView: View {
                 // Progress Indicator + Icon
                 ZStack {
                     // Progress Indicator
-                    CircularProgressView(value: favor.status.progressPercentage, showNumber: false, progressColor: favor.color.color)
+                    CircularProgressView(value: favor.status.progressPercentage, showNumber: false, progressColor: favor.color)
                     
                     // Icon
-                    Image(systemName: favor.icon.icon)
+                    Image(systemName: favor.icon)
                         .foregroundStyle(.white)
                 }
                 
@@ -77,8 +77,8 @@ struct FavorBoxView: View {
                     .opacity(0.2)
             }
         )
-        .background(favor.color.color.gradient)
-        .cornerRadius(27)
+        .background(favor.color.gradient)
+        .cornerRadius(18)
         .shadow(radius: 5)
         .hoverEffect(.lift)
         .padding(.vertical, 4)

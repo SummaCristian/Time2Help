@@ -45,6 +45,9 @@ let package = Package(
                 .product(name: "VariableBlur", package: "VariableBlur")
             ],
             path: ".",
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("BareSlashRegexLiterals")
             ]

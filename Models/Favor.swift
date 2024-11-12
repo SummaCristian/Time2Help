@@ -1,5 +1,6 @@
 import Foundation
 import MapKit
+import SwiftUI
 
 class Favor: Identifiable, ObservableObject {
     // An ID to identify it
@@ -22,8 +23,11 @@ class Favor: Identifiable, ObservableObject {
     @Published var status: FavorStatus
     
     // Cosmetic details
-    @Published var icon: FavorIcon
-    @Published var color: FavorColor
+    @Published var icon: String
+    @Published var color: Color
+    
+    // Category
+    @Published var category: FavorCategory
     
     // Initializers
     init() {
@@ -41,12 +45,28 @@ class Favor: Identifiable, ObservableObject {
         self.isHeavyTask = false
         self.reward = 0
         self.status = .notAcceptedYet
-        self.icon = .people
-        self.color = .red
+        self.category = .generic
+        
+        self.color = FavorCategory.generic.color
+        self.icon = FavorCategory.generic.icon
     }
     
-    init(title: String, description: String, author: String, neighbourhood: String, startingDate: Date, endingDate: Date, isAllDay: Bool, location: CLLocationCoordinate2D, isCarNecessary: Bool, isHeavyTask: Bool, reward: Int, status: FavorStatus, icon: FavorIcon, color: FavorColor) {
-        // Custon initializer
+    init (
+        title: String, 
+        description: String, 
+        author: String, 
+        neighbourhood: String, 
+        startingDate: Date, 
+        endingDate: Date, 
+        isAllDay: Bool, 
+        location: CLLocationCoordinate2D, 
+        isCarNecessary: Bool, 
+        isHeavyTask: Bool, 
+        reward: Int, 
+        status: FavorStatus,
+        category: FavorCategory
+    ) {
+        // Custom initializer
         self.id = UUID()
         self.title = title
         self.description = description
@@ -60,7 +80,9 @@ class Favor: Identifiable, ObservableObject {
         self.isHeavyTask = isHeavyTask
         self.reward = reward
         self.status = status
-        self.icon = icon
-        self.color = color
+        self.category = category
+        
+        self.color = category.color
+        self.icon = category.icon
+        }    
     }
-}

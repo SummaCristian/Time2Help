@@ -14,7 +14,7 @@ struct ProfileView: View {
     @Binding var nameSurname: String
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
-        
+    
     // Boolean value to handle the behavior of the "Export IPA" sheet
     @State private var isExportSheetPresented: Bool = false
     
@@ -101,14 +101,15 @@ struct ProfileView: View {
                 Section(
                     content: {
                         // Favors
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), content: {
+                        //LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 30), count: 2), content: {
+                        LazyVGrid(columns: [.init(.adaptive(minimum: 140), spacing: 30)], spacing: 10) {
                             ForEach(database.favors) { favor in
                                 FavorBoxView(favor: favor)
                                     .onTapGesture {
                                         selectedFavor = favor
                                     }
                             }
-                        })
+                        }
                     },
                     header: {
                         Text("I tuoi favori")

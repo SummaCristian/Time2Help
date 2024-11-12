@@ -6,7 +6,7 @@ import MapKit
 struct FavorDetailsSheet: View {
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
-
+    
     // The Favor whose details are being showed
     @State var favor: Favor
     
@@ -64,7 +64,7 @@ struct FavorDetailsSheet: View {
                             
                             Spacer()
                             
-                            CircularProgressView(value: favor.status.progressPercentage, size: .large, numberColor: favor.color.color, progressColor: favor.color.color)
+                            CircularProgressView(value: favor.status.progressPercentage, size: .large, numberColor: favor.color, progressColor: favor.color)
                         }
                     },
                     header: {
@@ -80,7 +80,7 @@ struct FavorDetailsSheet: View {
                             Spacer()
                             Text(favor.startingDate.formatted(date: .long, time: .omitted))
                                 .bold()
-                                .foregroundStyle(favor.color.color)
+                                .foregroundStyle(favor.color)
                         }
                         
                         HStack {
@@ -88,7 +88,7 @@ struct FavorDetailsSheet: View {
                             Spacer()
                             Text(favor.endingDate.formatted(date: .long, time: .omitted))
                                 .bold()
-                                .foregroundStyle(favor.color.color)
+                                .foregroundStyle(favor.color)
                         }
                         
                         HStack {
@@ -98,13 +98,13 @@ struct FavorDetailsSheet: View {
                             
                             Text(favor.startingDate.formatted(date: .omitted, time: .shortened))
                                 .bold()
-                                .foregroundStyle(favor.color.color)
+                                .foregroundStyle(favor.color)
                             
                             Image(systemName: "arrow.right")
                             
                             Text(favor.endingDate.formatted(date: .omitted, time: .shortened))
                                 .bold()
-                                .foregroundStyle(favor.color.color)
+                                .foregroundStyle(favor.color)
                         }
                         
                         HStack {
@@ -114,7 +114,7 @@ struct FavorDetailsSheet: View {
                             
                             Text(calculateTime(favor: favor))
                                 .bold()
-                                .foregroundStyle(favor.color.color)
+                                .foregroundStyle(favor.color)
                         }
                     },
                     header: {

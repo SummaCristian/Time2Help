@@ -1,160 +1,6 @@
 import Foundation
 import SwiftUI
 
-enum FavorIcon: Identifiable, CaseIterable {
-    case people
-    case plane
-    case shippingBox
-    case book
-    case handbag
-    case bubble
-    case camera
-    case gift
-    case car
-    case cart
-    case envelope
-    case eye
-    case film
-    case flag
-    case hammer
-    case heart
-    case hourglass
-    case house
-    case trash
-    case lightbulb
-    case location
-    case lock
-    case map
-    case tree
-    case moon
-    case microphone
-    case musicNote
-    case paintbrush
-    case printer
-    case thermometer
-    case snowflake
-    case dog
-    case star
-    case tag
-    case flower
-    case umbrella
-    case videocamera
-    case wrench
-    case sun
-    case stopwatch
-    case football
-    case stroller
-    case bandage
-    case battery
-    case document
-    case flashlight
-    case translate
-    case globe
-    
-    var id: Self{self}
-    
-    var icon: String {
-        switch self {
-        case .people:
-            return "person.2.fill"
-        case .plane:
-            return "airplane"
-        case .shippingBox:
-            return "shippingbox.fill"
-        case .book:
-            return "book.fill"
-        case .handbag:
-            return "handbag.fill"
-        case .bubble:
-            return "bubble.fill"
-        case .camera:
-            return "camera.fill"
-        case .gift:
-            return "gift.fill"
-        case .car:
-            return "car.fill"
-        case .cart:
-            return "cart.fill"
-        case .envelope:
-            return "envelope.fill"
-        case .eye:
-            return "eye.fill"
-        case .film:
-            return "film"
-        case .flag:
-            return "flag.fill"
-        case .hammer:
-            return "hammer.fill"
-        case .heart:
-            return "heart.fill"
-        case .hourglass:
-            return "hourglass"
-        case .house:
-            return "house.fill"
-        case .trash:
-            return "trash.fill"
-        case .lightbulb:
-            return "lightbulb.min.fill"
-        case .location:
-            return "location.fill"
-        case .lock:
-            return "lock.fill"
-        case .map:
-            return "map.fill"
-        case .tree:
-            return "tree.fill"
-        case .moon:
-            return "moon.fill"
-        case .microphone:
-            return "music.microphone"
-        case .musicNote:
-            return "music.note"
-        case .paintbrush:
-            return "paintbrush.fill"
-        case .printer:
-            return "printer.fill"
-        case .thermometer:
-            return "thermometer.variable"
-        case .snowflake:
-            return "snowflake"
-        case .dog:
-            return "dog.fill"
-        case .star:
-            return "star.fill"
-        case .tag:
-            return "tag.fill"
-        case .flower:
-            return "camera.macro"
-        case .umbrella:
-            return "umbrella.fill"
-        case .videocamera:
-            return "video.fill"
-        case .wrench:
-            return "wrench.adjustable.fill"
-        case .sun:
-            return "sun.max.fill"
-        case .stopwatch:
-            return "stopwatch.fill"
-        case .football:
-            return "soccerball"
-        case .stroller:
-            return "stroller.fill"
-        case .bandage:
-            return "bandage.fill"
-        case .battery:
-            return "battery.75percent"
-        case .document:
-            return "document.fill"
-        case .flashlight:
-            return "flashlight.on.fill"
-        case .translate:
-            return "translate"
-        case .globe:
-            return "globe"
-        }
-    }
-}
-
 enum FavorColor: Identifiable, CaseIterable {
     case red
     case orange
@@ -257,6 +103,120 @@ enum FavorStatus {
             return "Completato!"
         case .expired:
             return "Scaduto"
+        }
+    }
+}
+
+enum FavorCategory: Identifiable, CaseIterable {
+    // All is needed for the filtering system
+    case all
+    
+    // The real categories
+    case generic
+    case gardening
+    case transport
+    case petSitting
+    case manualJob
+    case shopping
+    case school
+    case babySitting
+    case houseChores
+    case trash
+    case sport
+    case weather
+    
+    var id: Self {self}
+    
+    var name: String {
+        switch self {
+        case .generic:
+            return "Generico"
+        case .gardening:
+            return "Giardinaggio"
+        case .transport:
+            return "Trasporto"
+        case .petSitting:
+            return "Animali"
+        case .manualJob:
+            return "Lavoro"
+        case .shopping:
+            return "Shopping"
+        case .school:
+            return "Scuola"
+        case .babySitting:
+            return "Bambini"
+        case .houseChores:
+            return "Faccende"
+        case .trash:
+            return "Spazzatura"
+        case .sport:
+            return "Sport"
+        case .weather:
+            return "Meteo"
+        case .all:
+            return "Tutte"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .generic:
+            return FavorColor.orange.color
+        case .gardening:
+            return FavorColor.green.color
+        case .transport:
+            return FavorColor.red.color
+        case .petSitting:
+            return FavorColor.yellow.color
+        case .manualJob:
+            return FavorColor.blue.color
+        case .shopping:
+            return FavorColor.purple.color
+        case .school:
+            return FavorColor.indigo.color
+        case .babySitting:
+            return FavorColor.pink.color
+        case .houseChores:
+            return FavorColor.teal.color
+        case .trash:
+            return FavorColor.brown.color
+        case .sport:
+            return FavorColor.mint.color
+        case .weather:
+            return FavorColor.cyan.color
+        case .all:
+            return FavorColor.yellow.color
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .generic:
+            return "person.2.fill"
+        case .gardening:
+            return "camera.macro"
+        case .transport:
+            return "car.fill"
+        case .petSitting:
+            return "dog.fill"
+        case .manualJob:
+            return "hammer.fill"
+        case .shopping:
+            return "cart.fill"
+        case .school:
+            return "book.fill"
+        case .babySitting:
+            return "stroller.fill"
+        case .houseChores:
+            return "house.fill"
+        case .trash:
+            return "trash.fill"
+        case .sport:
+            return "soccerball"
+        case .weather:
+            return "umbrella.fill"
+        case .all:
+            return "star.fill"
         }
     }
 }
