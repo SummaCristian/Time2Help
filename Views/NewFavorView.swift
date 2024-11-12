@@ -35,7 +35,7 @@ struct NewFavorSheet: View {
     var body: some View {
         // GeometryReader is used to set the UI with a top alignment
         NavigationStack {
-            GeometryReader {_ in
+            GeometryReader { _ in
                 
                 // Form is needed to build the UI
                 Form {
@@ -160,7 +160,7 @@ struct NewFavorSheet: View {
                                 ) {
                                     Annotation("", coordinate: newFavor.location, content: {
                                         // Only this Favor is shown in this mini-Map
-                                        FavorMarker(favor: newFavor, isSelected: .constant(true))
+                                        FavorMarker(favor: newFavor, isSelected: .constant(true), isInFavorSheet: true)
                                     })
                                 }
                                 .frame(height: 200)
@@ -263,6 +263,11 @@ struct NewFavorSheet: View {
                             Text("RICOMPENSA")
                         }
                     )
+                    
+                    Text("") // To leave space for popup button
+                        .frame(height: 0)
+                        .listRowBackground(Color.clear)
+                        .safeAreaPadding(.bottom, 34)
                 }
                 .scrollDismissesKeyboard(.immediately)
                 .onAppear() {
@@ -319,11 +324,12 @@ struct NewFavorSheet: View {
                             isPresented = false
                         }) {
                             Label("Richiedi Favore", systemImage: "plus")
-                                .bold()
+                                .font(.body.bold())
+                                .foregroundStyle(.white)
+                                .padding(.vertical, 15)
+                                .padding(.horizontal, 45)
+                                .background(.blue, in: .capsule)
                         }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
-                        .tint(.blue)
                         .shadow(radius: 10)
                         .disabled(!canBeCreated)
                         .opacity(canBeCreated ? 1 : 0)
@@ -335,7 +341,7 @@ struct NewFavorSheet: View {
                         Spacer()
                     }
                 }
-                .padding()
+                .padding(.all, 20)
             }
             .presentationDragIndicator(.hidden)
             .navigationBarTitleDisplayMode(.inline)
