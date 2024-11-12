@@ -20,24 +20,22 @@ struct MapView: View {
     // A NameSpace needed for certain Map features
     @Namespace private var mapNameSpace
     
-    // Boolean value that is used to open and close the Favor Details sheet
-    @State private var isShowingFavorsDetails = false
-    // An Optional<Favor> used as a selector for a Favor: 
+    // An Optional<Favor> used as a selector for a Favor:
     // nil => no Favor selected
     // *something* => that Favor is selected
     @Binding var selectedFavor: Favor?
     // An Optional<FavorMarker> used as a buffer for the last selected Favor.
     // This is used to deselect the Favor once it's not selected anymore
-    @State private var selectedFavorID: UUID? = nil
+    @Binding var selectedFavorID: UUID?
     
     // The UI
     var body: some View {
         // The Map, centered around ViewModel's region, and showing the User's position when possible
         Map(
-            initialPosition: mapCameraPosition, 
-            bounds: MapCameraBounds(minimumDistance: 0.008, maximumDistance: .infinity), 
-            interactionModes: .all, 
-            selection: $selection, 
+            initialPosition: mapCameraPosition,
+            bounds: MapCameraBounds(minimumDistance: 0.008, maximumDistance: .infinity),
+            interactionModes: .all,
+            selection: $selection,
             scope: mapNameSpace) {
                 // The User's position
                 UserAnnotation()
@@ -47,17 +45,14 @@ struct MapView: View {
                     Annotation(
                         coordinate: favor.location,
                         content: {
-                            FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id))
+                            FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: false)
                                 .onTapGesture {
                                     // Selects the Favor and triggers the showing of the sheet
                                     selectedFavor = favor
                                     selectedFavorID = favor.id
-                                    isShowingFavorsDetails = true
                                 }
-                        }, 
-                        label: {
-                            //Label(favor.title, systemImage: favor.icon.icon)
-                        }
+                        },
+                        label: {}
                     )
                     .mapOverlayLevel(level: .aboveLabels)
                 }
@@ -71,14 +66,10 @@ struct MapView: View {
             }
             .mapStyle(
                 .standard(
-                    elevation: .realistic, 
-                    emphasis: .automatic, 
-                    pointsOfInterest: .all, 
+                    elevation: .realistic,
+                    emphasis: .automatic,
+                    pointsOfInterest: .all,
                     showsTraffic: false))
-            /*.onAppear {
-                // When the Map appears on-screen, check permissions and update location
-                viewModel.checkIfLocationServicesIsEnabled()
-            }*/
             .edgesIgnoringSafeArea(.bottom)
             .tint(.blue)
             .blur(radius: viewModel.error ? 10 : 0)
