@@ -1,6 +1,8 @@
 import Foundation
 import MapKit
 
+let neighbourhoods: [String] = ["Bande Nere", "Bisceglie", "Cadorna", "Cairoli", "Conciliazione", "Cordusio", "De Angeli", "Gambara", "Gorla", "Duomo", "Inganni", "Lima", "Loreto", "Pagano", "Palestro", "Pasteur", "Porta Venezia", "Precotto", "Primaticcio", "Rovereto", "San Babila", "Sesto Marelli", "Turro", "Villa San Giovanni", "Wagner"]
+
 // This class handles the saving of the Favors, acting as a Database
 
 class Database: ObservableObject {
