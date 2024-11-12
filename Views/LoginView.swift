@@ -109,7 +109,6 @@ struct LoginViewOne: View {
                         .frame(maxWidth: .infinity)
                         .background(.black, in: .capsule)
                 }
-                .padding(.bottom, 20)
             }
         }
         .padding(.all, 20)
