@@ -63,23 +63,24 @@ struct ContentView: View {
                 }, label: {
                     Image(systemName: "plus")
                         .font(.largeTitle)
+                        .fontWeight(.semibold)
                         .tint(.blue)
-                        .frame(width: geometry.size.width / 3, height: 60)
+                        .frame(width: (geometry.size.width/3) + 5, height: 65)
                 })
-                //.frame(width: 120, height: 50)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(.regularMaterial)
-                        .overlay(content: {
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(.blue, lineWidth: 2)
-                        })
+                    RoundedRectangle(cornerRadius: 20)
+                        .foregroundStyle(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray4), Color(.systemGray5)] : [Color(.systemGray6), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
+                        }
                 )
                 .hoverEffect(.lift)
+                .offset(y: 5)
             }
         }
         .sheet(isPresented: $isSheetPresented) {
-            NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
+            NewFavorSheet(isPresented: $isSheetPresented, nameSurname: nameSurname, selectedNeighbourhood: selectedNeighbourhood, database: database, mapViewModel: viewModel)
                 .interactiveDismissDisabled()
         }
         .sheet(
