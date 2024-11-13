@@ -9,6 +9,9 @@ struct NewFavorSheet: View {
     
     @Binding var isPresented: Bool
     
+    let nameSurname: String
+    let selectedNeighbourhood: String
+    
     // Boolean value that controls the appearing of the second sheet, used to edit the Favor's Location
     @State private var isLocationSelectorPresented = false
     // Boolean value that controls the appearing of the Dialog, asking the User if he wants to quit the creation process
@@ -33,7 +36,7 @@ struct NewFavorSheet: View {
     var body: some View {
         // GeometryReader is used to set the UI with a top alignment
         NavigationStack {
-            GeometryReader {_ in
+            GeometryReader { _ in
                 
                 // Form is needed to build the UI
                 Form {
@@ -66,7 +69,7 @@ struct NewFavorSheet: View {
                             }
                             .pickerStyle(.menu)
                             .tint(newFavor.color)
-                        }, 
+                        },
                         header: {
                             Text("Categoria")
                         }
@@ -277,6 +280,11 @@ struct NewFavorSheet: View {
                             Text("RICOMPENSA")
                         }
                     )
+                    
+                    Text("") // To leave space for popup button
+                        .frame(height: 0)
+                        .listRowBackground(Color.clear)
+                        .safeAreaPadding(.bottom, 34)
                 }
                 .scrollDismissesKeyboard(.immediately)
                 .onAppear() {
@@ -324,16 +332,19 @@ struct NewFavorSheet: View {
                         Spacer()
                         
                         Button(action: {
+                            newFavor.author = nameSurname
+                            newFavor.neighbourhood = selectedNeighbourhood
                             database.addFavor(favor: newFavor)
                             //dismiss()
                             isPresented = false
                         }) {
                             Label("Richiedi Favore", systemImage: "plus")
-                                .bold()
+                                .font(.body.bold())
+                                .foregroundStyle(.white)
+                                .padding(.vertical, 15)
+                                .padding(.horizontal, 45)
+                                .background(.blue, in: .capsule)
                         }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
-                        .tint(.blue)
                         .shadow(radius: 10)
                         .disabled(!canBeCreated)
                         .opacity(canBeCreated ? 1 : 0)
@@ -345,7 +356,7 @@ struct NewFavorSheet: View {
                         Spacer()
                     }
                 }
-                .padding()
+                .padding(.all, 20)
             }
             .presentationDragIndicator(.hidden)
             .navigationBarTitleDisplayMode(.inline)
@@ -365,22 +376,19 @@ struct NewFavorSheet: View {
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    // Favor's Icon selector Button
-                    HStack(spacing: 6) {
-                        /*Image(systemName: "arrowtriangle.down.circle")
-                            .font(.caption)*/
-                        ZStack {
-                            Circle()
-                                .foregroundStyle(Color(newFavor.color).gradient)
-                                .frame(width: 35, height: 35)
-                                .shadow(radius: 3)
-                            Image(systemName: newFavor.icon)
-                                .resizable()
-                                .foregroundStyle(.white)
-                                .scaledToFit()
-                                .frame(width: 22, height: 22)
-                        }
+                    // Favor's Icon
+                    ZStack {
+                        Circle()
+                            .foregroundStyle(Color(newFavor.color).gradient)
+                            .frame(width: 35, height: 35)
+                            .shadow(radius: 3)
+                        Image(systemName: newFavor.icon)
+                            .resizable()
+                            .foregroundStyle(.white)
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
                     }
+                    .hoverEffect(.lift)
                 }
             })
         }
