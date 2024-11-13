@@ -54,7 +54,7 @@ struct MapView: View {
                                         selectedFavor = favor
                                         selectedFavorID = favor.id
                                     }
-                            }, 
+                            },
                             label: {
                                 //Label(favor.title, systemImage: favor.icon.icon)
                             }
@@ -79,9 +79,8 @@ struct MapView: View {
             )
             .edgesIgnoringSafeArea(.bottom)
             .tint(.blue)
-            .blur(radius: viewModel.error ? 10 : 0)
-            .disabled(viewModel.error)
-            .safeAreaPadding(.top, 90)
+            .safeAreaPadding(.top, 80)
+            .safeAreaPadding(.horizontal, 10)
             .overlay {
                 VStack {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -108,8 +107,10 @@ struct MapView: View {
                     
                     Spacer()
                 }
-                .padding(.top, 25)
+                .padding(.top, 20)
             }
+            .blur(radius: viewModel.error ? 10 : 0)
+            .disabled(viewModel.error)
             .overlay {
                 if viewModel.error {
                     Rectangle()
@@ -135,10 +136,17 @@ struct MapView: View {
                                 .foregroundStyle(.blue)
                         })
                     }
-                    .padding(.all, 16)
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 20)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
+//                        RoundedRectangle(cornerRadius: 12)
+//                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
+                        RoundedRectangle(cornerRadius: 20)
+                            .foregroundStyle(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray4), Color(.systemGray5)] : [Color(.systemGray6), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
+                            }
                     )
                     .padding(.horizontal, 60)
                 }
@@ -146,7 +154,7 @@ struct MapView: View {
     }
     
     func isCategorySelected(category: FavorCategory) -> Bool {
-        return (selectedCategories.contains(.all) || selectedCategories.contains(category)) 
+        return (selectedCategories.contains(.all) || selectedCategories.contains(category))
     }
     
     func selectCategory(category: FavorCategory) {
