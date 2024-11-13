@@ -6,16 +6,19 @@ struct CategoryCapsule: View {
     @State var category: FavorCategory
     
     var body: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 6) {
             Image(systemName: category.icon)
+                .font(.subheadline)
                 .foregroundStyle(.white)
             
             Text(category.name)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .font(.subheadline.bold())
+                .fontDesign(.rounded)
                 .foregroundStyle(.white)
             
         }
-        .padding(12)
+        .frame(height: 40)
+        .padding(.horizontal, 12)
         .background(isCategorySelected(category: category) ? category.color.gradient : Color.gray.gradient)
         .shadow(radius: 3)
         .clipShape(Capsule())
@@ -24,6 +27,6 @@ struct CategoryCapsule: View {
     }
     
     func isCategorySelected(category: FavorCategory) -> Bool {
-        return (selectedCategories.contains(.all) || selectedCategories.contains(category)) 
+        return (selectedCategories.contains(.all) || selectedCategories.contains(category))
     }
 }
