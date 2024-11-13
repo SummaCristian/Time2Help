@@ -2,7 +2,6 @@
 Implementation of Progetto_HCI in Swift and SwiftUI, as a real iOS app
 
 # Screenshots
-<img width=400 src="https://github.com/user-attachments/assets/35c94ef6-a7d4-459d-868c-83554897f1ae">
-<img width=400 src="https://github.com/user-attachments/assets/0c820cbd-1590-47bc-b209-87f91e03b54a">
-
+<img width=400 src="https://github.com/user-attachments/assets/c2da01ba-a7e8-457c-8398-88da3c752b2a">
+<img width=400 src="https://github.com/user-attachments/assets/b22335bf-c159-4338-a523-4c5afcd302ff">
 
