@@ -1,11 +1,5 @@
-//
-//  LoginView.swift
-//  AppTime2Help2
-//
-//  Created by Mattia Di Nardo on 08/11/24.
-//
-
 import SwiftUI
+import MapKit
 
 struct LoginView: View {
     
@@ -14,8 +8,6 @@ struct LoginView: View {
     @Binding var nameSurname: String
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
-    
-    //    @State private var showLogin: Bool = true // da fare con AppStorage
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -71,10 +63,6 @@ struct LoginViewOne: View {
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
     
-    @State private var nameSurnameTemp: String = ""
-    @State private var selectedColorTemp: String = "blue"
-    @State private var selectedNeighbourhoodTemp: String = "Bande Nere"
-    
     var body: some View {
         GeometryReader { _ in
             VStack(spacing: 20) {
@@ -99,7 +87,7 @@ struct LoginViewOne: View {
                 .frame(maxHeight: .infinity, alignment: .top)
                 
                 NavigationLink {
-                    LoginViewTwo(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodTemp: $selectedNeighbourhoodTemp)
+                    LoginViewTwo(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
                         .toolbar(.hidden, for: .navigationBar)
                 } label: {
                     Text("Sì, andiamo!")
@@ -126,13 +114,12 @@ struct LoginViewTwo: View {
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
     
-    @Binding var nameSurnameTemp: String
-    @Binding var selectedColorTemp: String
-    @Binding var selectedNeighbourhoodTemp: String
+    @State private var nameSurnameTemp: String = ""
+    @State private var selectedColorTemp: String = "blue"
+    @State private var selectedNeighbourhoodStructTemp: Neighbourhood = .init(name: "", location: .init())
+    @State private var selectedNeighbourhoodStructTempTwo: Neighbourhood = .init(name: "", location: .init())
     
     @State private var errorNameSurnameEmpty: Bool = false
-    
-    @State private var disabledPicker: Bool = false
     
     var body: some View {
         GeometryReader { _ in
@@ -182,7 +169,7 @@ struct LoginViewTwo: View {
                         
                         Circle()
                             .frame(width: 60, height: 60)
-                            .foregroundStyle(selectedColorTemp.toColor().gradient)
+                            .foregroundStyle(selectedColorTemp.toColor()!.gradient)
                         
                         Text(nameSurnameTemp.filter({ $0.isUppercase }))
                             .font(.custom("Futura-bold", size: nameSurnameTemp.filter({ $0.isUppercase }).count == 1 ? 25 : nameSurnameTemp.filter({ $0.isUppercase }).count <= 2 ? 20 : 15))
@@ -202,12 +189,12 @@ struct LoginViewTwo: View {
                                 .background {
                                     Circle()
                                         .stroke(.primary, lineWidth: 2)
-                                        .opacity(selectedColorTemp.toColor() == colorCase.color ? 1 : 0)
+                                        .opacity(selectedColorTemp.toColor()! == colorCase.color ? 1 : 0) // MARK: Modified
                                 }
                                 .onTapGesture() {
                                     // Sets the color inside the Favor
                                     withAnimation {
-                                        selectedColorTemp = colorCase.color.toString()
+                                        selectedColorTemp = colorCase.color.toString()!
                                     }
                                 }
                         }
@@ -248,7 +235,7 @@ struct LoginViewTwo: View {
                     }
                 } else {
                     NavigationLink {
-                        LoginViewThree(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodTemp: $selectedNeighbourhoodTemp)
+                        LoginViewThree(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
                             .toolbar(.hidden, for: .navigationBar)
                     } label: {
                         Text("Proseguiamo!")
@@ -272,6 +259,10 @@ struct LoginViewTwo: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemGray6))
         .safeAreaPadding(.top, 60)
+        .onAppear {
+            selectedNeighbourhoodStructTemp = Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!
+            selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
+        }
     }
 }
 
@@ -285,11 +276,13 @@ struct LoginViewThree: View {
     
     @Binding var nameSurnameTemp: String
     @Binding var selectedColorTemp: String
-    @Binding var selectedNeighbourhoodTemp: String
+    @Binding var selectedNeighbourhoodStructTemp: Neighbourhood
+    @Binding var selectedNeighbourhoodStructTempTwo: Neighbourhood
     
     @State private var errorNameSurnameEmpty: Bool = false
     
-    @State private var disabledPicker: Bool = false
+    // Boolean value that controls the appearing of the second sheet, used to edit the user's neighbourhood
+    @State private var isNeighbourhoodSelectorPresented: Bool = false
     
     var body: some View {
         GeometryReader { _ in
@@ -309,23 +302,48 @@ struct LoginViewThree: View {
                 .padding([.horizontal, .bottom], 20)
                 
                 VStack(spacing: 16) {
-                    Text("Seleziona il tuo quartiere")
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    Picker("", selection: $selectedNeighbourhoodTemp) {
-                        ForEach(neighbourhoods, id: \.self) { neighbourhood in
-                            Text(neighbourhood)
+                    HStack(spacing: 0) {
+                        Text("Seleziona il tuo quartiere")
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 6) {
+                            Image(systemName: "pin.fill")
+                                .font(.subheadline)
+                            Text("Scegli")
                         }
+                        .foregroundColor(.green)
                     }
-                    .pickerStyle(.wheel)
-                    .frame(height: 150)
-                    .scrollDisabled(disabledPicker)
-                    //                            .background(.blue.opacity(0.2), in: .rect(cornerRadius: 10))
+                    
+                    Map(
+                        bounds: MapCameraBounds(minimumDistance: 800, maximumDistance: 800),
+                        interactionModes: [] // No interactions allowed
+                    ) {
+                        Annotation("", coordinate: selectedNeighbourhoodStructTemp.location, content: {
+                            // Only this Neighbourhood is shown in this mini-Map
+                            NeighbourhoodMarker(isSelected: .constant(true), neighbourhood: selectedNeighbourhoodStructTemp)
+                        })
+                    }
+                    .mapStyle(
+                        .standard(
+                            elevation: .realistic,
+                            emphasis: .automatic,
+                            pointsOfInterest: .excludingAll
+                        )
+                    )
+                    .frame(height: 200)
+                    .cornerRadius(10)
+                    .hoverEffect(.lift)
+                    .shadow(color: .primary.opacity(0.1), radius: 10)
                 }
                 .padding(.all, 20)
                 .overlay {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(.gray, lineWidth: 0.5)
+                }
+                .contentShape(.rect(cornerRadius: 12))
+                .onTapGesture {
+                    isNeighbourhoodSelectorPresented = true
                 }
                 
                 HStack(spacing: 8) {
@@ -343,7 +361,7 @@ struct LoginViewThree: View {
                 .frame(maxHeight: .infinity, alignment: .bottom)
                 
                 NavigationLink {
-                    LoginViewFour(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodTemp: $selectedNeighbourhoodTemp)
+                    LoginViewFour(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
                         .toolbar(.hidden, for: .navigationBar)
                 } label: {
                     Text("Proseguiamo!")
@@ -366,6 +384,12 @@ struct LoginViewThree: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemGray6))
         .safeAreaPadding(.top, 60)
+        .sheet(isPresented: $isNeighbourhoodSelectorPresented, onDismiss: {
+            selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
+        }, content: {
+            // Shows the Neighbourhood Selector sheet
+            NeighbourhoodSelector(selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+        })
     }
 }
 
@@ -379,9 +403,7 @@ struct LoginViewFour: View {
     
     @Binding var nameSurnameTemp: String
     @Binding var selectedColorTemp: String
-    @Binding var selectedNeighbourhoodTemp: String
-    
-    //    @State private var showLogin: Bool = true // da fare con AppStorage
+    @Binding var selectedNeighbourhoodStructTemp: Neighbourhood
     
     var body: some View {
         GeometryReader { _ in
@@ -409,7 +431,7 @@ struct LoginViewFour: View {
                 Button {
                     nameSurname = nameSurnameTemp
                     selectedColor = selectedColorTemp
-                    selectedNeighbourhood = selectedNeighbourhoodTemp
+                    selectedNeighbourhood = selectedNeighbourhoodStructTemp.name
                     showLogin = false
                 } label: {
                     Text("Entra nell'app!")
