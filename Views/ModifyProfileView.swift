@@ -139,6 +139,7 @@ struct ModifyProfileView: View {
                                 .shadow(color: .primary.opacity(0.1), radius: 10)
                             }
                             .padding(.vertical, 4)
+                            .contentShape(.rect)
                             .onTapGesture {
                                 isNeighbourhoodSelectorPresented = true
                             }
