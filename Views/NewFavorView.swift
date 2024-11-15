@@ -44,16 +44,36 @@ struct NewFavorSheet: View {
                     // Title and Description
                     Section(
                         content: {
-                            TextField("Titolo", text: $newFavor.title)
-                                .padding(.vertical, 8)
-                                .font(.title3.bold())
-                                .textInputAutocapitalization(.sentences)
+                            HStack(spacing: 8) {
+                                TextField("Titolo", text: $newFavor.title)
+                                    .font(.title3.bold())
+                                    .textInputAutocapitalization(.sentences)
+                                
+                                if !newFavor.title.isEmpty {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.red, .red.opacity(0.2))
+                                        .onTapGesture {
+                                            newFavor.title = ""
+                                        }
+                                }
+                            }
+                            .padding(.vertical, 8)
                             
-                            TextField("Descrizione", text: $newFavor.description, axis: .vertical)
-                                .padding(.vertical, 6)
-                                .font(.callout)
-                                .textInputAutocapitalization(.sentences)
-                                .lineLimit(5 ... 5)
+                            HStack(alignment: .top, spacing: 8) {
+                                TextField("Descrizione", text: $newFavor.description, axis: .vertical)
+                                    .font(.callout)
+                                    .textInputAutocapitalization(.sentences)
+                                    .lineLimit(5 ... 5)
+                                
+                                if !newFavor.description.isEmpty {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.red, .red.opacity(0.2))
+                                        .onTapGesture {
+                                            newFavor.description = ""
+                                        }
+                                }
+                            }
+                            .padding(.vertical, 6)
                         },
                         header: {
                             Text("TITOLO E DESCRIZIONE")
@@ -159,7 +179,7 @@ struct NewFavorSheet: View {
                         content: {
                             VStack(spacing: 12) {
                                 HStack(spacing: 0) {
-                                    Text("Luogo")
+                                    Text("Seleziona il luogo")
                                     
                                     Spacer()
                                     
@@ -183,8 +203,10 @@ struct NewFavorSheet: View {
                                 .frame(height: 200)
                                 .cornerRadius(10)
                                 .hoverEffect(.lift)
+                                .shadow(color: .primary.opacity(0.1), radius: 10)
                             }
                             .padding(.vertical, 4)
+                            .contentShape(.rect)
                             .onTapGesture {
                                 isLocationSelectorPresented = true
                             }
@@ -290,9 +312,6 @@ struct NewFavorSheet: View {
                 .onAppear() {
                     // Retrieves the User's current Location and sets it as the Favor's location
                     newFavor.location = mapViewModel.region.center
-                    
-                    // Writes the User's username as the Favor's Owner
-                    newFavor.author = database.userName
                 }
                 .onDisappear() {
                     isConfirmationDialogPresented = true
