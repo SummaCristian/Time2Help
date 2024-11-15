@@ -15,6 +15,10 @@ struct ProfileView: View {
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
     
+    @State private var nameSurnameTemp: String = ""
+    @State private var selectedColorTemp: String = ""
+    @State private var selectedNeighbourhoodStructTemp: Neighbourhood = .init(name: "", location: .init(latitude: 0.0, longitude: 0.0))
+        
     // Boolean value to handle the behavior of the "Export IPA" sheet
     @State private var isExportSheetPresented: Bool = false
     
@@ -22,9 +26,6 @@ struct ProfileView: View {
     
     @State private var newName: String = ""
     
-    @State private var nameSurnameTemp: String = ""
-    @State private var selectedColorTemp: String = ""
-    @State private var selectedNeighbourhoodTemp: String = ""
     @State private var errorNameSurnameEmpty: Bool = false
     
     var body: some View {
@@ -46,7 +47,7 @@ struct ProfileView: View {
                             
                             Circle()
                                 .frame(width: 100, height: 100)
-                                .foregroundStyle(selectedColor.toColor().gradient)
+                                .foregroundStyle(selectedColor.toColor()!.gradient)
                             
                             // Icon
                             Text(nameSurname.filter({ $0.isUppercase }))
@@ -79,7 +80,7 @@ struct ProfileView: View {
                         .foregroundStyle(.white)
                         .padding(.vertical, 15)
                         .frame(maxWidth: .infinity)
-                        .background(selectedColor.toColor(), in: .capsule)
+                        .background(selectedColor.toColor()!, in: .capsule)
                     }
                 }
                 .listRowBackground(Color.clear)
@@ -101,8 +102,7 @@ struct ProfileView: View {
                 Section(
                     content: {
                         // Favors
-                        //LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 30), count: 2), content: {
-                        LazyVGrid(columns: [.init(.adaptive(minimum: 140), spacing: 30)], spacing: 10) {
+                        LazyVGrid(columns: [.init(.adaptive(minimum: 140), spacing: 25)], spacing: 10) {
                             ForEach(database.favors) { favor in
                                 FavorBoxView(favor: favor)
                                     .onTapGesture {
@@ -126,13 +126,13 @@ struct ProfileView: View {
             ExportView()
         }
         .sheet(isPresented: $isModifySheetPresented, content: {
-            ModifyProfileView(isModifySheetPresented: $isModifySheetPresented, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodTemp: $selectedNeighbourhoodTemp)
+            ModifyProfileView(isModifySheetPresented: $isModifySheetPresented, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
                 .interactiveDismissDisabled()
         })
         .onAppear {
             nameSurnameTemp = nameSurname
             selectedColorTemp = selectedColor
-            selectedNeighbourhoodTemp = selectedNeighbourhood
+            selectedNeighbourhoodStructTemp = Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!
         }
     }
 }
