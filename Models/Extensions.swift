@@ -1,14 +1,7 @@
-//
-//  Extensions.swift
-//  AppTime2Help2
-//
-//  Created by Mattia Di Nardo on 12/11/24.
-//
-
 import SwiftUI
 
 extension Color {
-    func toString() -> String {
+    func toString() -> String? {
         switch self {
         case Color(.systemBlue):
             return "blue"
@@ -35,13 +28,13 @@ extension Color {
         case Color(.systemYellow):
             return "yellow"
         default:
-            return "primary"
+            return nil
         }
     }
 }
 
 extension String {
-    func toColor() -> Color {
+    func toColor() -> Color? {
         switch self {
         case "blue":
             return Color(.systemBlue)
@@ -68,7 +61,7 @@ extension String {
         case "yellow":
             return Color(.systemYellow)
         default:
-            return .primary
+            return nil
         }
     }
 }
