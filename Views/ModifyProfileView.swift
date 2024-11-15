@@ -1,11 +1,5 @@
-//
-//  ModifyProfileView.swift
-//  AppTime2Help2
-//
-//  Created by Mattia Di Nardo on 09/11/24.
-//
-
 import SwiftUI
+import MapKit
 
 struct ModifyProfileView: View {
     
@@ -17,13 +11,18 @@ struct ModifyProfileView: View {
     
     @Binding var nameSurnameTemp: String
     @Binding var selectedColorTemp: String
-    @Binding var selectedNeighbourhoodTemp: String
+    @Binding var selectedNeighbourhoodStructTemp: Neighbourhood
     
     @State private var errorNameSurnameEmpty: Bool = false
     
     @State private var isConfirmationDialogPresented: Bool = false
     
     @State private var canBeModified: Bool = true
+    
+    // Boolean value that controls the appearing of the second sheet, used to edit the user's neighbourhood
+    @State private var isNeighbourhoodSelectorPresented: Bool = false
+    
+    @State private var selectedNeighbourhoodStructTempTwo: Neighbourhood = .init(name: "", location: .init())
     
     var body: some View {
         NavigationStack {
@@ -43,12 +42,6 @@ struct ModifyProfileView: View {
                                                 .onTapGesture {
                                                     nameSurnameTemp = ""
                                                 }
-                                            //                                        Button {
-                                            //                                            nameSurnameTemp = ""
-                                            //                                        } label: {
-                                            //                                            Image(systemName: "xmark.circle.fill")
-                                            //                                                .foregroundStyle(.red, .red.opacity(0.2))
-                                            //                                        }
                                         }
                                     }
                                     .frame(height: 50)
@@ -69,7 +62,7 @@ struct ModifyProfileView: View {
                                         
                                         Circle()
                                             .frame(width: 60, height: 60)
-                                            .foregroundStyle(selectedColorTemp.toColor().gradient)
+                                            .foregroundStyle(selectedColorTemp.toColor()!.gradient)
                                         
                                         Text(nameSurnameTemp.filter({ $0.isUppercase }))
                                             .font(.custom("Futura-bold", size: nameSurnameTemp.filter({ $0.isUppercase }).count == 1 ? 25 : nameSurnameTemp.filter({ $0.isUppercase }).count == 2 ? 20 : 15))
@@ -79,10 +72,10 @@ struct ModifyProfileView: View {
                                 
                                 VStack(alignment: .center, spacing: 16) {
                                     Text("Seleziona il colore per la tua immagine")
-                                    
+                            
                                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 6), content: {
                                         ForEach(FavorColor.allCases) { colorCase in
-                                            //                                            // The color itself
+//                                            // The color itself
                                             Circle()
                                                 .frame(width: 35, height: 35)
                                                 .foregroundStyle(Color(colorCase.color))
@@ -90,12 +83,12 @@ struct ModifyProfileView: View {
                                                 .background {
                                                     Circle()
                                                         .stroke(.primary, lineWidth: 2)
-                                                        .opacity(selectedColorTemp.toColor() == colorCase.color ? 1 : 0)
+                                                        .opacity(selectedColorTemp.toColor()! == colorCase.color ? 1 : 0)
                                                 }
                                                 .onTapGesture() {
                                                     // Sets the color inside the Favor
                                                     withAnimation {
-                                                        selectedColorTemp = colorCase.color.toString()
+                                                        selectedColorTemp = colorCase.color.toString()!
                                                     }
                                                 }
                                         }
@@ -106,28 +99,54 @@ struct ModifyProfileView: View {
                         },
                         header: {
                             Text("Nome e cognome")
-                        })
+                    })
                     
                     Section(
                         content: {
-                            VStack(spacing: 16) {
-                                Text("Seleziona il tuo quartiere")
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                                
-                                Picker("", selection: $selectedNeighbourhoodTemp) {
-                                    ForEach(neighbourhoods, id: \.self) { neighbourhood in
-                                        Text(neighbourhood)
+                            VStack(spacing: 12) {
+                                HStack(spacing: 0) {
+                                    Text("Seleziona il tuo quartiere")
+                                    
+                                    Spacer()
+                                    
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "pin.fill")
+                                            .font(.subheadline)
+                                        Text("Scegli")
                                     }
+                                    .foregroundColor(.green)
                                 }
-                                .pickerStyle(.wheel)
-                                .frame(height: 150)
-                                //                            .tint(.clear)
-                                //                            .background(.blue.opacity(0.2), in: .rect(cornerRadius: 10))
+                                
+                                Map(
+                                    bounds: MapCameraBounds(minimumDistance: 800, maximumDistance: 800),
+                                    interactionModes: [] // No interactions allowed
+                                ) {
+                                    Annotation("", coordinate: selectedNeighbourhoodStructTemp.location, content: {
+                                        // Only this Neighbourhood is shown in this mini-Map
+                                        NeighbourhoodMarker(isSelected: .constant(true), neighbourhood: selectedNeighbourhoodStructTemp)
+                                    })
+                                }
+                                .mapStyle(
+                                    .standard(
+                                        elevation: .realistic,
+                                        emphasis: .automatic,
+                                        pointsOfInterest: .excludingAll
+                                    )
+                                )
+                                .frame(height: 200)
+                                .cornerRadius(10)
+                                .hoverEffect(.lift)
+                                .shadow(color: .primary.opacity(0.1), radius: 10)
+                            }
+                            .padding(.vertical, 4)
+                            .onTapGesture {
+                                isNeighbourhoodSelectorPresented = true
                             }
                         },
                         header: {
                             Text("Quartiere")
-                        })
+                        }
+                    )
                     
                     Text("") // To leave space for popup button
                         .frame(height: 0)
@@ -163,7 +182,7 @@ struct ModifyProfileView: View {
                         Button(action: {
                             nameSurname = nameSurnameTemp
                             selectedColor = selectedColorTemp
-                            selectedNeighbourhood = selectedNeighbourhoodTemp
+                            selectedNeighbourhood = selectedNeighbourhoodStructTemp.name
                             isModifySheetPresented = false
                         }) {
                             Label("Modifica", systemImage: "pencil")
@@ -202,119 +221,14 @@ struct ModifyProfileView: View {
         } message: {
             Text("I dettagli che hai inserito andranno persi")
         }
+        .sheet(isPresented: $isNeighbourhoodSelectorPresented, onDismiss: {
+            selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
+        }, content: {
+            // Shows the Location Selector sheet
+            NeighbourhoodSelector(selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+        })
+        .onAppear {
+            selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
+        }
     }
 }
-
-//VStack(spacing: 20) {
-//    HStack(spacing: 16) {
-//        HStack {
-//            TextField("Nome e Cognome", text: $nameSurnameTemp)
-//                .textInputAutocapitalization(.words)
-//            
-//            if !nameSurnameTemp.isEmpty {
-//                Button {
-//                    nameSurnameTemp = ""
-//                } label: {
-//                    Image(systemName: "xmark.circle.fill")
-//                        .foregroundStyle(.red, .red.opacity(0.2))
-//                }
-//            }
-//        }
-//        .frame(height: 50)
-//        .padding(.horizontal, 20)
-//        .overlay {
-//            RoundedRectangle(cornerRadius: 12)
-//                .stroke(errorNameSurnameEmpty ? .red : .gray, lineWidth: 0.5)
-//        }
-//        ZStack {
-//            Circle()
-//                .frame(width: 70, height: 70)
-//                .foregroundStyle(.background)
-//                .overlay {
-//                    Circle()
-//                        .stroke(.gray, lineWidth: 0.5)
-//                }
-//            
-//            Circle()
-//                .frame(width: 60, height: 60)
-//                .foregroundStyle(selectedColorTemp.toColor().gradient)
-//            
-//            Text(nameSurnameTemp.filter({ $0.isUppercase }))
-//                .font(.custom("Futura-bold", size: nameSurname.filter({ $0.isUppercase }).count == 1 ? 25 : nameSurnameTemp.filter({ $0.isUppercase }).count <= 2 ? 20 : 15))
-//                .foregroundStyle(.white)
-//        }
-//    }
-//    
-//    VStack(alignment: .center, spacing: 16) {
-//        Text("Seleziona il colore per la tua immagine")
-//        
-//        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 6), content: {
-//            ForEach(FavorColor.allCases) { colorCase in
-//                ZStack {
-//                    // The selector: is shown if this color is currently selected
-//                    Circle()
-//                        .frame(width: 42, height: 42)
-//                        .foregroundStyle(.gray)
-//                        .opacity(selectedColorTemp.toColor() == colorCase.color ? 0.4 : 0)
-//                    
-//                    // The color itself
-//                    Circle()
-//                        .frame(width: 35, height: 35)
-//                        .foregroundStyle(Color(colorCase.color))
-//                        .onTapGesture() {
-//                            // Sets the color inside the Favor
-//                            withAnimation {
-//                                selectedColorTemp = colorCase.color.toString()
-//                            }
-//                        }
-//                }
-//            }
-//        })
-//    }
-//    .padding(.all, 20)
-//    .overlay {
-//        RoundedRectangle(cornerRadius: 12)
-//            .stroke(.gray, lineWidth: 0.5)
-//    }
-//    
-//    VStack(spacing: 16) {
-//        Text("Seleziona il tuo quartiere")
-//            .frame(maxWidth: .infinity, alignment: .center)
-//        
-//        Picker("", selection: $selectedNeighbourhoodTemp) {
-//            ForEach(neighbourhoods, id: \.self) { neighbourhood in
-//                Text(neighbourhood)
-//            }
-//        }
-//        .pickerStyle(.menu)
-//        .background(.blue.opacity(0.2), in: .rect(cornerRadius: 10))
-//    }
-//    .padding(.all, 20)
-//    .overlay {
-//        RoundedRectangle(cornerRadius: 12)
-//            .stroke(.gray, lineWidth: 0.5)
-//    }
-//    
-//    Button {
-//        if nameSurnameTemp.isEmpty {
-//            if !errorNameSurnameEmpty {
-//                errorNameSurnameEmpty = true
-//            }
-//        } else {
-//            nameSurname = nameSurnameTemp
-//            selectedColor = selectedColorTemp
-//            selectedNeighbourhood = selectedNeighbourhoodTemp
-//            isModifySheetPresented = false
-//        }
-//    } label: {
-//        Text("Proseguiamo!")
-//            .font(.body.bold())
-//            .foregroundStyle(nameSurnameTemp.isEmpty ? .gray : .white)
-//            .padding(.vertical, 16)
-//            .frame(maxWidth: .infinity)
-//            .background(nameSurnameTemp.isEmpty ? Color(.systemGray5) : .black, in: .capsule)
-//    }
-//    .frame(maxHeight: .infinity, alignment: .bottom)
-//}
-//.padding(.top, 12)
-//.padding([.horizontal, .bottom], 20)
