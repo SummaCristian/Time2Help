@@ -15,6 +15,8 @@ struct FavorMarker: View {
     
     @State private var moveTitle = false
     
+    @State private var scale: Double = 0
+    
     // The UI
     var body: some View {
         ZStack(alignment: moveTitle ? .center : .leading) {
@@ -75,6 +77,25 @@ struct FavorMarker: View {
                     .opacity(moveTitle ? 1 : 0)
             }
         }
+        .scaleEffect(scale)
+        .onAppear() {
+            withAnimation {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation {
+                        scale = 1
+                    }
+                }
+            }
+        }
+        .contextMenu(menuItems: { 
+            if !isInFavorSheet {
+                // Only allows long pressing when used in a Map, and not inside sheets
+                Label("Accetta", systemImage: "mark")
+            }
+        }, preview: { 
+            FavorBoxView(favor: favor, roundedCorners: false)
+                .background(Color.clear)
+        })
         .onChange(of: isSelected) { _, newValue in
             if newValue {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -89,5 +110,6 @@ struct FavorMarker: View {
             }
         }
         .animation(.spring(duration: 0.4), value: isSelected)
+        .hoverEffect(.lift)
     }
 }
