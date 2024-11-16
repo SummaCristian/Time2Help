@@ -30,6 +30,8 @@ struct MapView: View {
     
     @State private var selectedCategories: [FavorCategory] = [.all]
     
+    @State private var currentSpan: MKCoordinateSpan?
+    
     // The UI
     var body: some View {
         // The Map, centered around ViewModel's region, and showing the User's position when possible
@@ -54,6 +56,7 @@ struct MapView: View {
                                         selectedFavor = favor
                                         selectedFavorID = favor.id
                                     }
+                                    .scaleEffect(((currentSpan?.latitudeDelta ?? 0) > 0.1) ? 0.5 : 1)
                             },
                             label: {
                                 //Label(favor.title, systemImage: favor.icon.icon)
@@ -61,6 +64,11 @@ struct MapView: View {
                         )
                         .mapOverlayLevel(level: .aboveLabels)
                     }
+                }
+            }
+            .onMapCameraChange { context in
+                withAnimation {
+                    currentSpan = context.region.span
                 }
             }
             .mapControlVisibility(.visible)
@@ -139,8 +147,8 @@ struct MapView: View {
                     .padding(.vertical, 16)
                     .padding(.horizontal, 20)
                     .background(
-//                        RoundedRectangle(cornerRadius: 12)
-//                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
+                        //                        RoundedRectangle(cornerRadius: 12)
+                        //                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
                         RoundedRectangle(cornerRadius: 20)
                             .foregroundStyle(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray4), Color(.systemGray5)] : [Color(.systemGray6), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing))
                             .overlay {
