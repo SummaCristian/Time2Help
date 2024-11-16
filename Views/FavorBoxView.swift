@@ -6,6 +6,8 @@ struct FavorBoxView: View {
     
     @State private var isBeingTapped = false
     
+    @State var roundedCorners: Bool = true
+    
     var body: some View {
         VStack(spacing: 10) {
             // Top Portion
@@ -69,7 +71,7 @@ struct FavorBoxView: View {
                 }
             }
         }
-        .frame(width: 124, height: 164)
+        .frame(width: 134, height: 164)
         .padding(16)
         .background(
             GeometryReader { geometry in
@@ -78,9 +80,9 @@ struct FavorBoxView: View {
             }
         )
         .background(favor.color.gradient)
-        .cornerRadius(18)
         .shadow(radius: 5)
+        .clipShape(roundedCorners ? AnyShape(RoundedRectangle(cornerRadius: 25)) : AnyShape(.rect))
+        //.padding(.vertical, 4)
         .hoverEffect(.lift)
-        .padding(.vertical, 4)
     }
 }
