@@ -23,7 +23,7 @@ struct NeighbourhoodMarker: View {
                                 .stroke(isSelected ? LinearGradient(colors: [.white], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
                         }
                 )
-                
+            
             Text(neighbourhood.name)
                 .font(.subheadline.bold())
         }

@@ -11,7 +11,7 @@ struct NeighbourhoodSelector: View {
     @Binding var selectedNeighbourhoodStructTempTwo: Neighbourhood
     
     // The newly created favor, whose location is being edited in here
-//    @ObservedObject var newFavor: Favor
+    //    @ObservedObject var newFavor: Favor
     
     // The UI
     var body: some View {
@@ -38,12 +38,12 @@ struct NeighbourhoodSelector: View {
                     }
                 }
                 .mapControlVisibility(.visible)
-                    .mapControls {
-                        MapUserLocationButton()
-                        MapCompass()
-                        MapScaleView()
-                        MapPitchToggle()
-                    }
+                .mapControls {
+                    MapUserLocationButton()
+                    MapCompass()
+                    MapScaleView()
+                    MapPitchToggle()
+                }
                 .mapStyle(
                     .standard(
                         elevation: .realistic,
@@ -68,7 +68,7 @@ struct NeighbourhoodSelector: View {
                     HStack(spacing: 8) {
                         Text("Clicca sul marcatore per selezionare il tuo quartiere")
                             .font(.headline)
-                            
+                        
                         
                         Spacer()
                         
