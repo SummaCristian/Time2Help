@@ -9,7 +9,7 @@ class Favor: Identifiable, ObservableObject {
     // Primary details
     @Published var title: String
     @Published var description: String
-    @Published var author: String
+    @Published var author: User
     @Published var neighbourhood: String
     
     // Secondary details
@@ -27,15 +27,21 @@ class Favor: Identifiable, ObservableObject {
     @Published var color: Color
     
     // Category
-    @Published var category: FavorCategory
+    @Published var category: FavorCategory {
+        didSet {
+            color = category.color
+            icon = category.icon
+        }
+    }
     
     // Initializers
-    init() {
+    init(author: User) {
+        self.author = author
+        
         // Standard initializer
         self.id = UUID()
         self.title = ""
         self.description = ""
-        self.author = "Unknown"
         self.neighbourhood = ""
         self.startingDate = Date()
         self.endingDate = Date().addingTimeInterval(3600)
@@ -54,7 +60,7 @@ class Favor: Identifiable, ObservableObject {
     init (
         title: String, 
         description: String, 
-        author: String, 
+        author: User, 
         neighbourhood: String, 
         startingDate: Date, 
         endingDate: Date, 
@@ -84,5 +90,5 @@ class Favor: Identifiable, ObservableObject {
         
         self.color = category.color
         self.icon = category.icon
-        }    
+        }  
     }

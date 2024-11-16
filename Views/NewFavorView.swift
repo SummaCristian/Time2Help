@@ -6,11 +6,9 @@ import MapKit
 struct NewFavorSheet: View {
     // Used to control the dismissal mechanism from inside the sheet
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) var colorScheme
     
     @Binding var isPresented: Bool
-    
-    let nameSurname: String
-    let selectedNeighbourhood: String
     
     // Boolean value that controls the appearing of the second sheet, used to edit the Favor's Location
     @State private var isLocationSelectorPresented = false
@@ -30,7 +28,7 @@ struct NewFavorSheet: View {
     
     // New Favor: this is the Favor that the user is creating, whose details can be edited in here.
     // At the end of the creation process, if the User confirms it, it will be added to the Database
-    @StateObject private var newFavor: Favor = Favor()
+    @StateObject var newFavor: Favor
     
     // The UI
     var body: some View {
@@ -217,6 +215,7 @@ struct NewFavorSheet: View {
                     )
                     
                     // Reward
+                    /*
                     Section(
                         content: {
                             VStack(spacing: 20) {
@@ -301,7 +300,7 @@ struct NewFavorSheet: View {
                         header: {
                             Text("RICOMPENSA")
                         }
-                    )
+                    )*/
                     
                     Text("") // To leave space for popup button
                         .frame(height: 0)
@@ -351,8 +350,8 @@ struct NewFavorSheet: View {
                         Spacer()
                         
                         Button(action: {
-                            newFavor.author = nameSurname
-                            newFavor.neighbourhood = selectedNeighbourhood
+                            newFavor.neighbourhood = newFavor.author.neighbourhood
+                            
                             database.addFavor(favor: newFavor)
                             //dismiss()
                             isPresented = false
@@ -398,12 +397,12 @@ struct NewFavorSheet: View {
                     // Favor's Icon
                     ZStack {
                         Circle()
-                            .foregroundStyle(Color(newFavor.color).gradient)
+                            .foregroundStyle(newFavor.color.gradient)
                             .frame(width: 35, height: 35)
                             .shadow(radius: 3)
                         Image(systemName: newFavor.icon)
                             .resizable()
-                            .foregroundStyle(.white)
+                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
                             .scaledToFit()
                             .frame(width: 22, height: 22)
                     }

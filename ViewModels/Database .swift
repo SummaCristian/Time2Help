@@ -10,6 +10,9 @@ class Database: ObservableObject {
     // The List of Favors, accessible by others
     @Published var favors: [Favor] = []
     
+    // The List of Users
+    @Published var users: [User] = []
+    
     // The User's Name
     @Published var userName: String = "Nome Cognome"
     
@@ -613,13 +616,21 @@ class Database: ObservableObject {
         favors.append(favor)
     }
     
-    // Appends some pre-determined Favors inside the List, allowing them to be seen in the Map (testing purposes)
+    // Appends some pre-determined Users and Favors inside the Lists, allowing them to be seen in the Map (testing purposes)
     func initialize() {
+        // Users
+        let mario = User(id: UUID(), nameSurname: .constant("Mario Rossi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("red"))
+        let giuseppe = User(id: UUID(), nameSurname: .constant("Giuseppe Verdi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("green"))
+        
+        users.append(mario)
+        users.append(giuseppe)
+        
+        // Favors
         favors.append(
             Favor(
                 title: "Test",
                 description: "This is a test",
-                author: "Name Surname",
+                author: mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -629,8 +640,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 5,
                 status: .notAcceptedYet,
-                /*icon: .people,
-                 color: .orange*/
                 category: .generic
             )
         )
@@ -639,7 +648,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test2",
                 description: "This is a test",
-                author: "Name Surname",
+                author: giuseppe,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -649,8 +658,6 @@ class Database: ObservableObject {
                 isHeavyTask: false,
                 reward: 3,
                 status: .halfwayThere,
-                /*icon: .hammer,
-                 color: .cyan*/
                 category: .babySitting
             )
         )
@@ -659,7 +666,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test3",
                 description: "This is a test",
-                author: "Name Surname",
+                author: mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -669,8 +676,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 8,
                 status: .completed,
-                /*icon: .football,
-                 color: .green*/
                 category: .gardening
             )
         )
@@ -679,7 +684,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test4",
                 description: "This is a test",
-                author: "Name Surname",
+                author: mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -689,8 +694,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 10,
                 status: .accepted,
-                /*icon: .cart,
-                 color: .red*/
                 category: .houseChores
             )
         )
@@ -699,7 +702,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test5",
                 description: "This is a test",
-                author: "Name Surname",
+                author: mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -709,8 +712,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 1,
                 status: .expired,
-                /*icon: .dog,
-                 color: .yellow*/
                 category: .manualJob
             )
         )
@@ -719,7 +720,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test6",
                 description: "This is a test",
-                author: "Name Surname",
+                author: giuseppe,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -729,8 +730,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 2,
                 status: .justStarted,
-                /*icon: .trash,
-                 color: .mint*/
                 category: .sport
             )
         )
@@ -739,7 +738,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test7",
                 description: "This is a test",
-                author: "Name Surname",
+                author: giuseppe,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -749,8 +748,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 12,
                 status: .notAcceptedYet,
-                /*icon: .book,
-                 color: .blue*/
                 category: .petSitting
             )
         )
@@ -759,7 +756,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test8",
                 description: "This is a test",
-                author: "Name Surname",
+                author: mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -769,8 +766,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 25,
                 status: .completed,
-                /*icon: .translate,
-                 color: .indigo*/
                 category: .school
             )
         )
@@ -779,7 +774,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test9",
                 description: "This is a test",
-                author: "Name Surname",
+                author: mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -789,10 +784,8 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 6,
                 status: .justStarted,
-                /*icon: .tag,
-                 color: .purple*/
                 category: .shopping
-            
+                
             )
         )
         
@@ -800,7 +793,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test10",
                 description: "This is a test",
-                author: "Name Surname",
+                author: giuseppe,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -810,8 +803,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 9,
                 status: .completed,
-                /*icon: .umbrella,
-                 color: .pink*/
                 category: .transport
             )
         )
@@ -820,7 +811,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test11",
                 description: "This is a test",
-                author: "Name Surname",
+                author: giuseppe,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -830,8 +821,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 4,
                 status: .completed,
-                /*icon: .stopwatch,
-                 color: .brown*/
                 category: .trash
             )
         )
@@ -840,7 +829,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test12",
                 description: "This is a test",
-                author: "Name Surname",
+                author: giuseppe,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -850,8 +839,6 @@ class Database: ObservableObject {
                 isHeavyTask: true,
                 reward: 11,
                 status: .completed,
-                /*icon: .videocamera,
-                 color: .teal*/
                 category: .weather
             )
         )

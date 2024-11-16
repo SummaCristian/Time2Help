@@ -9,39 +9,53 @@ struct FavorDetailsSheet: View {
     
     // The Favor whose details are being showed
     @State var favor: Favor
-    
+        
     // The UI
     var body: some View {
         // The GeometryReader is used to achieve a top alignment for the UI
         GeometryReader { _ in
             // The ScrollView is needed to be able to scroll through the UI
-            Form {
+             List {
                 Section {
                     HStack {
                         // The Favor's Title
-                        VStack(alignment: .leading) {
+                        VStack(alignment: .leading, spacing: 10) {
                             Text(favor.title)
                                 .font(.largeTitle)
                                 .bold()
                             
-                            // The Favor's Author's Name
-                            Text(favor.author)
-                                .fontWidth(.compressed)
-                                .font(.system(size: 10))
-                                .fontWeight(.bold)
-                                .textCase(.uppercase)
-                                .foregroundStyle(.secondary)
+                            HStack(spacing: 5) {
+                                ProfileIconView(username: favor.author.$nameSurname, color: favor.author.$profilePictureColor, size: .small)
+                                
+                                // The Favor's Author's Name
+                                Text(favor.author.nameSurname)
+                                    .fontWidth(.compressed)
+                                    .font(.system(size: 15))
+                                    .fontWeight(.bold)
+                                    .textCase(.uppercase)
+                            }
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .foregroundStyle(.primary)
+                                .background(
+                                    Capsule()
+                                        .foregroundStyle(favor.color.gradient.secondary)
+                                )
+                                .hoverEffect(.lift)
                         }
                         
                         Spacer()
                         
-                        // The Favor's Reward
-                        CreditNumberView(favor: favor)
+                        FavorMarker(favor: favor, isSelected: .constant(true), isInFavorSheet: true)
+                            .shadow(color: favor.color.opacity(0.65), radius: 15)
+                            .offset(x: -5, y: 45)
+                            .frame(width: 100, height: 120)
                     }
-                    .padding()
+                    //.padding()
                     .cornerRadius(10)
                 }
-                
+                .listRowBackground(Color.clear)
+                 
                 // The Favor's Description
                 Section(
                     content: {

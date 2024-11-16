@@ -5,9 +5,7 @@ struct ModifyProfileView: View {
     
     @Binding var isModifySheetPresented: Bool
     
-    @Binding var nameSurname: String
-    @Binding var selectedColor: String
-    @Binding var selectedNeighbourhood: String
+    @Binding var user: User
     
     @Binding var nameSurnameTemp: String
     @Binding var selectedColorTemp: String
@@ -51,31 +49,16 @@ struct ModifyProfileView: View {
                                             .stroke(errorNameSurnameEmpty ? .red : .gray, lineWidth: 0.5)
                                     }
                                     
-                                    ZStack {
-                                        Circle()
-                                            .frame(width: 70, height: 70)
-                                            .foregroundStyle(.background)
-                                            .overlay {
-                                                Circle()
-                                                    .stroke(.gray, lineWidth: 0.5)
-                                            }
-                                        
-                                        Circle()
-                                            .frame(width: 60, height: 60)
-                                            .foregroundStyle(selectedColorTemp.toColor()!.gradient)
-                                        
-                                        Text(nameSurnameTemp.filter({ $0.isUppercase }))
-                                            .font(.custom("Futura-bold", size: nameSurnameTemp.filter({ $0.isUppercase }).count == 1 ? 25 : nameSurnameTemp.filter({ $0.isUppercase }).count == 2 ? 20 : 15))
-                                            .foregroundStyle(.white)
-                                    }
+                                    ProfileIconView(username: $nameSurnameTemp, color: $selectedColorTemp, size: .medium)
+                                    
                                 }
                                 
                                 VStack(alignment: .center, spacing: 16) {
                                     Text("Seleziona il colore per la tua immagine")
-                            
+                                    
                                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 6), content: {
                                         ForEach(FavorColor.allCases) { colorCase in
-//                                            // The color itself
+                                            //                                            // The color itself
                                             Circle()
                                                 .frame(width: 35, height: 35)
                                                 .foregroundStyle(Color(colorCase.color))
@@ -99,7 +82,7 @@ struct ModifyProfileView: View {
                         },
                         header: {
                             Text("Nome e cognome")
-                    })
+                        })
                     
                     Section(
                         content: {
@@ -181,9 +164,10 @@ struct ModifyProfileView: View {
                         Spacer()
                         
                         Button(action: {
-                            nameSurname = nameSurnameTemp
-                            selectedColor = selectedColorTemp
-                            selectedNeighbourhood = selectedNeighbourhoodStructTemp.name
+                            user.nameSurname = nameSurnameTemp
+                            user.profilePictureColor = selectedColorTemp
+                            user.neighbourhood = selectedNeighbourhoodStructTemp.name
+                            
                             isModifySheetPresented = false
                         }) {
                             Label("Modifica", systemImage: "pencil")

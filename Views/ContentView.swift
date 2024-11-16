@@ -13,6 +13,8 @@ struct ContentView: View {
     // Connection to the Database that stores the Favors
     @StateObject private var database = Database.shared
     
+    @State private var user: User = User(id: UUID(), nameSurname: .constant("temp"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue"))
+    
     // An Optional<Favor> used as a selector for a Favor:
     // nil => no Favor selected
     // *something* => that Favor is selected
@@ -49,7 +51,7 @@ struct ContentView: View {
                             .disabled(true)
                         
                         // Tab 2: Profile
-                        ProfileView(database: database, selectedFavor: $selectedFavor, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
+                        ProfileView(database: database, selectedFavor: $selectedFavor, user: $user)
                             .tabItem {
                                 Label("Profilo", systemImage: "person.fill")
                             }
@@ -80,7 +82,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $isSheetPresented) {
-            NewFavorSheet(isPresented: $isSheetPresented, nameSurname: nameSurname, selectedNeighbourhood: selectedNeighbourhood, database: database, mapViewModel: viewModel)
+            NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel, newFavor: Favor(author: user))
                 .interactiveDismissDisabled()
         }
         .sheet(
@@ -96,9 +98,13 @@ struct ContentView: View {
         .ignoresSafeArea(.keyboard)
         .tint(.blue)
         .onAppear() {
+            // Creates the main User
+            user = User(id: UUID(), nameSurname: $nameSurname, neighbourhood: $selectedNeighbourhood, profilePictureColor: $selectedColor)
+            database.users.append(user)            
+            
             // Adds the template Markers to the Map
             database.initialize()
         }
         .sensoryFeedback(.selection, trigger: _selectedTab.wrappedValue)
-   }
+    }
 }
