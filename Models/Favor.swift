@@ -22,6 +22,8 @@ class Favor: Identifiable, ObservableObject {
     @Published var reward: Int
     @Published var status: FavorStatus
     
+    @Published var helper: User?
+    
     // Cosmetic details
     @Published var icon: String
     @Published var color: Color
