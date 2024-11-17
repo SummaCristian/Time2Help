@@ -25,6 +25,7 @@ struct ProfileIconView: View {
             Text(username.filter({ $0.isUppercase }))
                 .font(.custom("Futura-bold", size: username.filter({ $0.isUppercase }).count == 1 ? size.textSizeBig : username.filter({ $0.isUppercase }).count == 2 ? size.textSizeMedium : size.textSizeSmall))
                 .foregroundStyle(.white)
+                .shadow(radius: 5)
         }
     }
 }

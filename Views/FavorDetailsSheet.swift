@@ -7,8 +7,15 @@ struct FavorDetailsSheet: View {
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
     
+    @ObservedObject var database: Database
+    @Binding var selectedFavor: Favor?
+    @State var user: User
+    
     // The Favor whose details are being showed
     @State var favor: Favor
+    
+    @State private var isAuthorProfileSheetPresented = false
+    @State private var isHelperProfileSheetPresented = false
         
     // The UI
     var body: some View {
@@ -42,6 +49,9 @@ struct FavorDetailsSheet: View {
                                         .foregroundStyle(favor.color.gradient.secondary)
                                 )
                                 .hoverEffect(.lift)
+                                .onTapGesture {
+                                    isAuthorProfileSheetPresented = true
+                                }
                         }
                         
                         Spacer()
@@ -55,6 +65,40 @@ struct FavorDetailsSheet: View {
                     .cornerRadius(10)
                 }
                 .listRowBackground(Color.clear)
+                 
+                 // The User who accepted it
+                 if favor.helper != nil {
+                     Section(
+                        content: {
+                            HStack(spacing: 5) {
+                                ProfileIconView(username: favor.helper?.$nameSurname ?? .constant("Null"), color: favor.helper?.$profilePictureColor ?? .constant("blue"), size: .small)
+                                
+                                // The Favor's Author's Name
+                                Text(favor.helper?.nameSurname ?? "Null")
+                                    .fontWidth(.compressed)
+                                    .font(.system(size: 15))
+                                    .fontWeight(.bold)
+                                    .textCase(.uppercase)
+                            }
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .foregroundStyle(.primary)
+                            .background(
+                                Capsule()
+                                    .foregroundStyle(favor.color.gradient.secondary)
+                            )
+                            .hoverEffect(.lift)
+                            .onTapGesture {
+                                if favor.helper?.id != user.id {
+                                    isHelperProfileSheetPresented = true
+                                }
+                            }
+                        },
+                        header: {
+                            Text("Accettato da")
+                        }
+                     )
+                 }
                  
                 // The Favor's Description
                 Section(
@@ -209,33 +253,42 @@ struct FavorDetailsSheet: View {
             // The Accept Favor Button
             // it is outside the ScrollView, because it hovers on top of the rest of the UI.
             // This allows to have it always in the same spot, always accessible
-            VStack{
-                Spacer()
-                
-                HStack {
+            if favor.helper == nil && favor.author.id != user.id {
+                VStack{
                     Spacer()
                     
-                    Button(action: {
-                        // TODO: Accept Favor
-                        dismiss()
-                    }) {
-                        Label("Accetta Favore", systemImage: "checkmark")
-                            .font(.body.bold())
-                            .foregroundStyle(.white)
-                            .padding(.vertical, 15)
-                            .padding(.horizontal, 45)
-                            .background(.blue, in: .capsule)
+                    HStack {
+                        Spacer()
+                        
+                        Button(action: {
+                            // Accepting the Favor
+                            favor.helper = user
+                            
+                            dismiss()
+                        }) {
+                            Label("Accetta Favore", systemImage: "checkmark")
+                                .font(.body.bold())
+                                .foregroundStyle(.white)
+                                .padding(.vertical, 15)
+                                .padding(.horizontal, 45)
+                                .background(.blue, in: .capsule)
+                        }
+                        .shadow(radius: 10)
+                        .hoverEffect(.highlight)
+                        
+                        Spacer()
                     }
-                    .shadow(radius: 10)
-                    .hoverEffect(.highlight)
-                    
-                    Spacer()
                 }
             }
-            .padding(.all, 20)
-            .presentationDragIndicator(.visible)
-            .presentationDetents([.medium, .large])
         }
+        .presentationDragIndicator(.visible)
+        .presentationDetents([.medium, .large])
+        .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
+            ProfileView(database: database, selectedFavor: $selectedFavor, user: $favor.author)
+        })
+        /*.sheet(isPresented: $isHelperProfileSheetPresented, content: {
+            ProfileView(database: database, selectedFavor: $selectedFavor, user: favor.$helper ?? nil)
+        })*/
     }
 }
 

@@ -11,7 +11,7 @@ struct FavorBoxView: View {
     var body: some View {
         VStack(spacing: 10) {
             // Top Portion
-            HStack {
+            HStack (alignment: .top) {
                 // Progress Indicator + Icon
                 ZStack {
                     // Progress Indicator
@@ -26,23 +26,20 @@ struct FavorBoxView: View {
                 
                 // Completed Mark
                 if favor.status == .completed {
-                    VStack {
-                        ZStack {
-                            Circle()
-                                .frame(width: 35, height: 35)
-                                .foregroundStyle(Material.thin)
-                                .opacity(0.3)
-                            
-                            Image(systemName: "checkmark.seal.fill")
-                                .foregroundStyle(.white)
-                        }
-                        Spacer()
+                    ZStack {
+                        Circle()
+                            .frame(width: 35, height: 35)
+                            .foregroundStyle(Material.thin)
+                            .opacity(0.3)
+                        
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundStyle(.white)
                     }
                 }
             }
             
             // Title and Status (text)
-            HStack {
+            HStack (alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(favor.title)
                         .bold()
@@ -56,20 +53,6 @@ struct FavorBoxView: View {
             }
             
             Spacer()
-            
-            // Reward
-            HStack {
-                Spacer()
-                
-                ZStack {
-                    Circle()
-                        .frame(width: 40)
-                        .foregroundStyle(Material.ultraThick)
-                        .opacity(0.3)
-                    
-                    CreditNumberView(favor: favor, size: (favor.reward < 10) ? 30 : 25)
-                }
-            }
         }
         .frame(width: 134, height: 164)
         .padding(16)

@@ -75,6 +75,12 @@ struct FavorMarker: View {
                     .frame(width: 7, height: 7)
                     .foregroundStyle(favor.color.gradient)
                     .opacity(moveTitle ? 1 : 0)
+                
+                if (!isInFavorSheet && favor.helper != nil) {
+                    ProfileIconView(username: favor.helper?.$nameSurname ?? .constant("Null"), color: favor.helper?.$profilePictureColor ?? .constant("blue"), size: .small)
+                        .scaleEffect(moveTitle ? 1 : 0.8)
+                        .offset(x: moveTitle ? 16 : 12, y: moveTitle ? -20 : 16)
+                }
             }
         }
         .scaleEffect(scale)
