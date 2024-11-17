@@ -13,7 +13,7 @@ struct ContentView: View {
     // Connection to the Database that stores the Favors
     @StateObject private var database = Database.shared
     
-    @State private var user: User = User(id: UUID(), nameSurname: .constant("temp"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue"))
+    @State private var user: User = User(nameSurname: .constant("temp"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue"))
     
     // An Optional<Favor> used as a selector for a Favor:
     // nil => no Favor selected
@@ -51,7 +51,7 @@ struct ContentView: View {
                             .disabled(true)
                         
                         // Tab 2: Profile
-                        ProfileView(database: database, selectedFavor: $selectedFavor, user: $user)
+                        ProfileView(database: database, selectedFavor: $selectedFavor, user: $user, isEditable: true)
                             .tabItem {
                                 Label("Profilo", systemImage: "person.fill")
                             }
@@ -71,7 +71,7 @@ struct ContentView: View {
                 })
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .foregroundStyle(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray4), Color(.systemGray5)] : [Color(.systemGray6), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .foregroundStyle(.thinMaterial)
                         .overlay {
                             RoundedRectangle(cornerRadius: 20)
                                 .stroke(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
@@ -92,18 +92,31 @@ struct ContentView: View {
                 selectedFavorID = nil
             },
             content: { favor in
-                FavorDetailsSheet(favor: favor)
+                FavorDetailsSheet(database: database, selectedFavor: $selectedFavor, user: user, favor: favor)
             })
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         .ignoresSafeArea(.keyboard)
         .tint(.blue)
         .onAppear() {
             // Creates the main User
-            user = User(id: UUID(), nameSurname: $nameSurname, neighbourhood: $selectedNeighbourhood, profilePictureColor: $selectedColor)
+            user = User(nameSurname: $nameSurname, neighbourhood: $selectedNeighbourhood, profilePictureColor: $selectedColor)
             database.users.append(user)            
             
             // Adds the template Markers to the Map
             database.initialize()
+            
+            // Accepts a few Favors (for testing)
+            var count = 0
+            for favor in database.favors {
+                if count < 3 && favor.author.id != user.id && favor.helper == nil {
+                    favor.helper = user
+                    count += 1
+                }
+            }
+            
+            // Accept some Favors with other Users (for testing)
+            database.favors.last?.helper = database.users.filter({ $0.nameSurname == "Mario Rossi"}).first
+            database.favors.first(where: { $0.helper == nil })?.helper = database.users.filter({ $0.nameSurname == "Giuseppe Verdi"}).first
         }
         .sensoryFeedback(.selection, trigger: _selectedTab.wrappedValue)
     }

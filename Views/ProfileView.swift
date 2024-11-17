@@ -14,6 +14,8 @@ struct ProfileView: View {
     
     @Binding var user: User
     
+    @State var isEditable = false
+    
     @State private var selectedNameSurname: String = ""
     @State private var selectedColor: String = "blue"
     @State private var selectedNeighbourhood = "Città Studi"
@@ -33,41 +35,49 @@ struct ProfileView: View {
     
     var body: some View {
         NavigationStack {
-            Form { //
+            Form {
                 // Profile View
-                VStack(spacing: 20) {
-                    VStack(spacing: 16) {
-                        // Profile picture
-                        ProfileIconView(username: $selectedNameSurname, color: $selectedColor, size: .extraLarge)
-                        
-                        // Temporary: need a way to export an IPA file without XCode
-                        .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10) {
-                            isExportSheetPresented = true
+                HStack {
+                    Spacer()
+                    
+                    VStack(spacing: 20) {
+                        VStack(spacing: 16) {
+                            // Profile picture
+                            ProfileIconView(username: $selectedNameSurname, color: $selectedColor, size: .extraLarge)
+                            
+                            // Temporary: need a way to export an IPA file without XCode
+                                .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10) {
+                                    isExportSheetPresented = true
+                                }
+                            
+                            // Info
+                            Text(selectedNameSurname)
+                                .font(.title.bold())
+                            
+                            Text("Quartiere: " + selectedNeighbourhood)
+                                .font(.body)
+                                .foregroundStyle(.gray)
+                                .padding(.top, -12)
                         }
                         
-                        // Info
-                        Text(selectedNameSurname)
-                            .font(.title.bold())
-                        
-                        Text("Quartiere: " + selectedNeighbourhood)
-                            .font(.body)
-                            .foregroundStyle(.gray)
-                            .padding(.top, -12)
+                        if isEditable {
+                            Button {
+                                isModifySheetPresented = true
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "pencil")
+                                    Text("Modifica")
+                                }
+                                .font(.body.bold())
+                                .foregroundStyle(.white)
+                                .padding(.vertical, 15)
+                                .frame(maxWidth: .infinity)
+                                .background(selectedColor.toColor()!, in: .capsule)
+                            }
+                        }
                     }
                     
-                    Button {
-                        isModifySheetPresented = true
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "pencil")
-                            Text("Modifica")
-                        }
-                        .font(.body.bold())
-                        .foregroundStyle(.white)
-                        .padding(.vertical, 15)
-                        .frame(maxWidth: .infinity)
-                        .background(selectedColor.toColor()!, in: .capsule)
-                    }
+                    Spacer()
                 }
                 .listRowBackground(Color.clear)
                 
@@ -84,17 +94,50 @@ struct ProfileView: View {
                     }
                 )
                 
-                // My Favors
+                // Accepted Favors
                 Section(
                     content: {
                         // Favors
-                        //LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 30), count: 2), content: {
-                        LazyVGrid(columns: [.init(.adaptive(minimum: 140), spacing: 30)], spacing: 10) {
-                            ForEach(database.favors) { favor in
-                                FavorBoxView(favor: favor)
-                                    .onTapGesture {
-                                        selectedFavor = favor
+                        if (database.favors.filter{$0.helper?.id == user.id}.count) == 0 {
+                            Text("Nessun Favore accettato...")
+                        } else {
+                            LazyVGrid(columns: [.init(.adaptive(minimum: 140), spacing: 30)], spacing: 10) {
+                                ForEach(database.favors) { favor in
+                                    if favor.helper?.id == user.id {
+                                        FavorBoxView(favor: favor)
+                                            .onTapGesture {
+                                                selectedFavor = favor
+                                            }
                                     }
+                                }
+                            }
+                        }
+                    },
+                    header: {
+                        Text("Favori presi in carico")
+                    },
+                    footer: {
+                        Text("Controlla i Favori che hai accettato di svolgere")
+                            .safeAreaPadding(.bottom, 40)
+                    }
+                )
+                
+                // Requested Favors
+                Section(
+                    content: {
+                        // Favors
+                        if (database.favors.filter{$0.author.id == user.id}.count) == 0 {
+                            Text("Nessun Favore richiesto...")
+                        } else {
+                            LazyVGrid(columns: [.init(.adaptive(minimum: 140), spacing: 30)], spacing: 10) {
+                                ForEach(database.favors) { favor in
+                                    if favor.author.id == user.id {
+                                        FavorBoxView(favor: favor)
+                                            .onTapGesture {
+                                                selectedFavor = favor
+                                            }
+                                    }
+                                }
                             }
                         }
                     },
@@ -102,7 +145,7 @@ struct ProfileView: View {
                         Text("I tuoi favori")
                     },
                     footer: {
-                        Text("Monitora lo stato dei Tuoi Favori ancora in corso")
+                        Text("Monitora lo stato dei Favori che hai richiesto")
                             .safeAreaPadding(.bottom, 40)
                     }
                 )
