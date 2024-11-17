@@ -619,8 +619,8 @@ class Database: ObservableObject {
     // Appends some pre-determined Users and Favors inside the Lists, allowing them to be seen in the Map (testing purposes)
     func initialize() {
         // Users
-        let mario = User(id: UUID(), nameSurname: .constant("Mario Rossi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("red"))
-        let giuseppe = User(id: UUID(), nameSurname: .constant("Giuseppe Verdi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("green"))
+        let mario = User(nameSurname: .constant("Mario Rossi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("red"))
+        let giuseppe = User(nameSurname: .constant("Giuseppe Verdi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("green"))
         
         users.append(mario)
         users.append(giuseppe)
@@ -630,7 +630,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test",
                 description: "This is a test",
-                author: mario,
+                author: users.first ?? mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -648,7 +648,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test2",
                 description: "This is a test",
-                author: giuseppe,
+                author: users.first ?? giuseppe,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -666,7 +666,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test3",
                 description: "This is a test",
-                author: mario,
+                author: users.first ?? mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,

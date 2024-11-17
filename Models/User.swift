@@ -3,7 +3,7 @@ import SwiftUI
 
 struct User: Identifiable {
     // An ID to identify it
-    let id: UUID
+    let id: UUID = UUID()
     
     // Username
     @Binding var nameSurname: String

@@ -35,15 +35,9 @@ let package = Package(
             ]
         )
     ],
-    dependencies: [
-        .package(url: "https://github.com/nikstar/VariableBlur", "1.2.0"..<"2.0.0")
-    ],
     targets: [
         .executableTarget(
             name: "AppModule",
-            dependencies: [
-                .product(name: "VariableBlur", package: "VariableBlur")
-            ],
             path: ".",
             resources: [
                 .process("Resources")
