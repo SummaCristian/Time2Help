@@ -12,14 +12,6 @@ struct MapView: View {
     // The Database, where the Favors are stored
     @ObservedObject var database: Database
     
-    // The MapCameraPosition used to center around the User's Location
-    @State private var mapCameraPosition: MapCameraPosition = .userLocation(followsHeading: true, fallback: .automatic)
-    // The list of Map Elements from Apple's MapKit database
-    @State private var selection: MapFeature? = nil
-    
-    // A NameSpace needed for certain Map features
-    @Namespace private var mapNameSpace
-    
     // An Optional<Favor> used as a selector for a Favor:
     // nil => no Favor selected
     // *something* => that Favor is selected
@@ -28,9 +20,17 @@ struct MapView: View {
     // This is used to deselect the Favor once it's not selected anymore
     @Binding var selectedFavorID: UUID?
     
-    @State private var selectedCategories: [FavorCategory] = [.all]
+    let selectedNeighbourhood: String
     
-    @State private var currentSpan: MKCoordinateSpan?
+    // A NameSpace needed for certain Map features
+    @Namespace private var mapNameSpace
+    
+    // The MapCameraPosition used to center around the User's Location
+    @State private var mapCameraPosition: MapCameraPosition = .userLocation(followsHeading: true, fallback: .automatic)
+    // The list of Map Elements from Apple's MapKit database
+    @State private var selection: MapFeature? = nil
+    
+    @State private var selectedCategories: [FavorCategory] = [.all]
     
     // The UI
     var body: some View {
@@ -45,7 +45,7 @@ struct MapView: View {
                 UserAnnotation()
                 
                 // All the Favors
-                ForEach(database.favors) { favor in
+                ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood})) { favor in
                     if isCategorySelected(category: favor.category) {
                         Annotation(
                             coordinate: favor.location,
@@ -56,7 +56,6 @@ struct MapView: View {
                                         selectedFavor = favor
                                         selectedFavorID = favor.id
                                     }
-                                    .scaleEffect(((currentSpan?.latitudeDelta ?? 0) > 0.1) ? 0.5 : 1)
                             },
                             label: {
                                 //Label(favor.title, systemImage: favor.icon.icon)
@@ -64,11 +63,6 @@ struct MapView: View {
                         )
                         .mapOverlayLevel(level: .aboveLabels)
                     }
-                }
-            }
-            .onMapCameraChange { context in
-                withAnimation {
-                    currentSpan = context.region.span
                 }
             }
             .mapControlVisibility(.visible)
@@ -88,7 +82,8 @@ struct MapView: View {
             .edgesIgnoringSafeArea(.bottom)
             .tint(.blue)
             .safeAreaPadding(.top, 80)
-            .safeAreaPadding(.horizontal, 10)
+            .safeAreaPadding(.leading, 5)
+            .safeAreaPadding(.trailing, 10)
             .overlay {
                 VStack {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -147,8 +142,8 @@ struct MapView: View {
                     .padding(.vertical, 16)
                     .padding(.horizontal, 20)
                     .background(
-                        //                        RoundedRectangle(cornerRadius: 12)
-                        //                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
+//                        RoundedRectangle(cornerRadius: 12)
+//                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
                         RoundedRectangle(cornerRadius: 20)
                             .foregroundStyle(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray4), Color(.systemGray5)] : [Color(.systemGray6), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing))
                             .overlay {
