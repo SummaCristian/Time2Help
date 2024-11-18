@@ -60,17 +60,17 @@ class Favor: Identifiable, ObservableObject {
     }
     
     init (
-        title: String, 
-        description: String, 
-        author: User, 
-        neighbourhood: String, 
-        startingDate: Date, 
-        endingDate: Date, 
-        isAllDay: Bool, 
-        location: CLLocationCoordinate2D, 
-        isCarNecessary: Bool, 
-        isHeavyTask: Bool, 
-        reward: Int, 
+        title: String,
+        description: String,
+        author: User,
+        neighbourhood: String,
+        startingDate: Date,
+        endingDate: Date,
+        isAllDay: Bool,
+        location: CLLocationCoordinate2D,
+        isCarNecessary: Bool,
+        isHeavyTask: Bool,
+        reward: Int,
         status: FavorStatus,
         category: FavorCategory
     ) {
@@ -92,5 +92,5 @@ class Favor: Identifiable, ObservableObject {
         
         self.color = category.color
         self.icon = category.icon
-        }  
     }
+}

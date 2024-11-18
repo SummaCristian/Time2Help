@@ -350,14 +350,6 @@ class Database: ObservableObject {
             location: CLLocationCoordinate2D(latitude: 45.517077, longitude: 9.182404)
         ),
         Neighbourhood(
-            name: "Prato Centenaro",
-            location: CLLocationCoordinate2D(latitude: 45.510516, longitude: 9.200856)
-        ),
-        Neighbourhood(
-            name: "Precotto",
-            location: CLLocationCoordinate2D(latitude: 45.513414, longitude: 9.221667)
-        ),
-        Neighbourhood(
             name: "Ponte Lambro",
             location: CLLocationCoordinate2D(latitude: 45.440865, longitude: 9.261640)
         ),
@@ -432,6 +424,14 @@ class Database: ObservableObject {
         Neighbourhood(
             name: "Porto Di Mare",
             location: CLLocationCoordinate2D(latitude: 45.432539, longitude: 9.230305)
+        ),
+        Neighbourhood(
+            name: "Prato Centenaro",
+            location: CLLocationCoordinate2D(latitude: 45.510516, longitude: 9.200856)
+        ),
+        Neighbourhood(
+            name: "Precotto",
+            location: CLLocationCoordinate2D(latitude: 45.513414, longitude: 9.221667)
         ),
         Neighbourhood(
             name: "Primaticcio Corba",
@@ -621,16 +621,22 @@ class Database: ObservableObject {
         // Users
         let mario = User(nameSurname: .constant("Mario Rossi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("red"))
         let giuseppe = User(nameSurname: .constant("Giuseppe Verdi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("green"))
+        let grazia = User(nameSurname: .constant("Grazia Deledda"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("orange"))
+        let matilde = User(nameSurname: .constant("Matilde Di Leopardi"), neighbourhood: .constant("Bovisa"), profilePictureColor: .constant("pink"))
+        let piera = User(nameSurname: .constant("Piera Capuana"), neighbourhood: .constant("Bovisa"), profilePictureColor: .constant("brown"))
         
         users.append(mario)
         users.append(giuseppe)
+        users.append(grazia)
+        users.append(matilde)
+        users.append(piera)
         
         // Favors
         favors.append(
             Favor(
                 title: "Test",
                 description: "This is a test",
-                author: users.first ?? mario,
+                author: mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -648,12 +654,12 @@ class Database: ObservableObject {
             Favor(
                 title: "Test2",
                 description: "This is a test",
-                author: users.first ?? giuseppe,
+                author: giuseppe,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
-                location: CLLocationCoordinate2D(latitude: 45.4777234,longitude: 9.2279519),
+                location: CLLocationCoordinate2D(latitude: 45.4777234, longitude: 9.2279519),
                 isCarNecessary: true,
                 isHeavyTask: false,
                 reward: 3,
@@ -666,12 +672,12 @@ class Database: ObservableObject {
             Favor(
                 title: "Test3",
                 description: "This is a test",
-                author: users.first ?? mario,
+                author: mario,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
-                location: CLLocationCoordinate2D(latitude: 45.4781024,longitude: 9.2268771),
+                location: CLLocationCoordinate2D(latitude: 45.4781024, longitude: 9.2268771),
                 isCarNecessary: true,
                 isHeavyTask: true,
                 reward: 8,
@@ -689,7 +695,7 @@ class Database: ObservableObject {
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
-                location: CLLocationCoordinate2D(latitude: 45.4790747,longitude: 9.2284311),
+                location: CLLocationCoordinate2D(latitude: 45.4790747, longitude: 9.2284311),
                 isCarNecessary: true,
                 isHeavyTask: true,
                 reward: 10,
@@ -738,7 +744,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test7",
                 description: "This is a test",
-                author: giuseppe,
+                author: grazia,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -774,7 +780,7 @@ class Database: ObservableObject {
             Favor(
                 title: "Test9",
                 description: "This is a test",
-                author: mario,
+                author: grazia,
                 neighbourhood: "Città Studi",
                 startingDate: .now,
                 endingDate: .now,
@@ -834,12 +840,66 @@ class Database: ObservableObject {
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
-                location: CLLocationCoordinate2D(latitude: 45.4781624,longitude: 9.2259771),
+                location: CLLocationCoordinate2D(latitude: 45.4781624, longitude: 9.2259771),
                 isCarNecessary: true,
                 isHeavyTask: true,
                 reward: 11,
                 status: .completed,
                 category: .weather
+            )
+        )
+        
+        favors.append(
+            Favor(
+                title: "Test13",
+                description: "This is a test",
+                author: piera,
+                neighbourhood: "Bovisa",
+                startingDate: .now,
+                endingDate: .now,
+                isAllDay: false,
+                location: CLLocationCoordinate2D(latitude: 45.502856, longitude: 9.167285),
+                isCarNecessary: true,
+                isHeavyTask: true,
+                reward: 11,
+                status: .completed,
+                category: .weather
+            )
+        )
+        
+        favors.append(
+            Favor(
+                title: "Test14",
+                description: "This is a test",
+                author: piera,
+                neighbourhood: "Bovisa",
+                startingDate: .now,
+                endingDate: .now,
+                isAllDay: false,
+                location: CLLocationCoordinate2D(latitude: 45.503835, longitude: 9.162520),
+                isCarNecessary: true,
+                isHeavyTask: true,
+                reward: 11,
+                status: .justStarted,
+                category: .houseChores
+            )
+        )
+        
+        favors.append(
+            Favor(
+                title: "Test15",
+                description: "This is a test",
+                author: matilde,
+                neighbourhood: "Bovisa",
+                startingDate: .now,
+                endingDate: .now,
+                isAllDay: false,
+                location: CLLocationCoordinate2D(latitude: 45.503154, longitude: 9.171065),
+                isCarNecessary: false,
+                isHeavyTask: true,
+                reward: 11,
+                status: .ongoing,
+                category: .gardening
             )
         )
     }
