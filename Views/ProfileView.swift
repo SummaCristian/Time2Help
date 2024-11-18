@@ -99,18 +99,17 @@ struct ProfileView: View {
                     content: {
                         // Favors
                         if (database.favors.filter{$0.helper?.id == user.id}.count) == 0 {
-                            Text("Nessun Favore accettato...")
+                            Text("Nessun Favore accettato ...")
                         } else {
-                            LazyVGrid(columns: [.init(.adaptive(minimum: 140), spacing: 30)], spacing: 10) {
-                                ForEach(database.favors) { favor in
-                                    if favor.helper?.id == user.id {
-                                        FavorBoxView(favor: favor)
-                                            .onTapGesture {
-                                                selectedFavor = favor
-                                            }
-                                    }
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2)) {
+                                ForEach(database.favors.filter({ $0.helper?.id == user.id })) { favor in
+                                    FavorBoxView(favor: favor)
+                                        .onTapGesture {
+                                            selectedFavor = favor
+                                        }
                                 }
                             }
+                            .padding(.vertical, 2)
                         }
                     },
                     header: {
@@ -126,19 +125,18 @@ struct ProfileView: View {
                 Section(
                     content: {
                         // Favors
-                        if (database.favors.filter{$0.author.id == user.id}.count) == 0 {
-                            Text("Nessun Favore richiesto...")
+                        if (database.favors.filter{ $0.author.id == user.id }.count) == 0 {
+                            Text("Nessun Favore richiesto ...")
                         } else {
-                            LazyVGrid(columns: [.init(.adaptive(minimum: 140), spacing: 30)], spacing: 10) {
-                                ForEach(database.favors) { favor in
-                                    if favor.author.id == user.id {
-                                        FavorBoxView(favor: favor)
-                                            .onTapGesture {
-                                                selectedFavor = favor
-                                            }
-                                    }
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2)) {
+                                ForEach(database.favors.filter({ $0.author.id == user.id })) { favor in
+                                    FavorBoxView(favor: favor)
+                                        .onTapGesture {
+                                            selectedFavor = favor
+                                        }
                                 }
                             }
+                            .padding(.vertical, 2)
                         }
                     },
                     header: {
