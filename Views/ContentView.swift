@@ -35,7 +35,7 @@ struct ContentView: View {
                 TabView(selection: $selectedTab) {
                     Group {
                         // Tab 0: Map
-                        MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID)
+                        MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood)
                             .tabItem {
                                 Label("Mappa", systemImage: "map")
                             }
@@ -100,10 +100,24 @@ struct ContentView: View {
         .onAppear() {
             // Creates the main User
             user = User(nameSurname: $nameSurname, neighbourhood: $selectedNeighbourhood, profilePictureColor: $selectedColor)
-            database.users.append(user)            
+            database.users.append(user)
             
             // Adds the template Markers to the Map
             database.initialize()
+            
+            let mario = database.users.first(where: { $0.nameSurname == "Mario Rossi"})
+            database.favors[1].helper = mario
+            database.favors[11].helper = mario
+            let giuseppe = database.users.first(where: { $0.nameSurname == "Giuseppe Verdi"})
+            database.favors[0].helper = giuseppe
+            database.favors[7].helper = giuseppe
+            let grazia = database.users.first(where: { $0.nameSurname == "Grazia Deledda"})
+            database.favors[4].helper = grazia
+            database.favors[9].helper = grazia
+            let matilde = database.users.first(where: { $0.nameSurname == "Matilde Di Leopardi"})
+            database.favors[13].helper = matilde
+            let piera = database.users.first(where: { $0.nameSurname == "Piera Capuana"})
+            database.favors[14].helper = piera
             
             // Accepts a few Favors (for testing)
             var count = 0
@@ -111,12 +125,10 @@ struct ContentView: View {
                 if count < 3 && favor.author.id != user.id && favor.helper == nil {
                     favor.helper = user
                     count += 1
+                } else if count >= 3 {
+                    break
                 }
             }
-            
-            // Accept some Favors with other Users (for testing)
-            database.favors.last?.helper = database.users.filter({ $0.nameSurname == "Mario Rossi"}).first
-            database.favors.first(where: { $0.helper == nil })?.helper = database.users.filter({ $0.nameSurname == "Giuseppe Verdi"}).first
         }
         .sensoryFeedback(.selection, trigger: _selectedTab.wrappedValue)
     }
