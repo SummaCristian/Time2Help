@@ -40,12 +40,12 @@ enum ProfileIconSize {
         switch self {
             case .small:
                 return 30
-            case .medium: 
+            case .medium:
                 return 60
-            case .large: 
-                return 90
+            case .large:
+                return 80
             case .extraLarge:
-                return 110
+                return 115
         }
     }
     
@@ -53,10 +53,10 @@ enum ProfileIconSize {
         switch self {
             case .small:
                 return 20
-            case .medium: 
+            case .medium:
                 return 50
-            case .large: 
-                return 80
+            case .large:
+                return 70
             case .extraLarge:
                 return 100
         }
@@ -66,12 +66,12 @@ enum ProfileIconSize {
         switch self {
             case .small:
                 return 10
-            case .medium: 
-                return 25
-            case .large: 
-                return 45
+            case .medium:
+                return 22
+            case .large:
+                return 32
             case .extraLarge:
-                return 50
+                return 40
         }
     }
     
@@ -79,12 +79,12 @@ enum ProfileIconSize {
         switch self {
         case .small:
             return 8
-        case .medium: 
-            return 22
-        case .large: 
-            return 38
+        case .medium:
+            return 16
+        case .large:
+            return 26
         case .extraLarge:
-            return 45
+            return 35
         }
     }
     
@@ -92,12 +92,12 @@ enum ProfileIconSize {
         switch self {
         case .small:
             return 6
-        case .medium: 
-            return 15
-        case .large: 
-            return 30
+        case .medium:
+            return 12
+        case .large:
+            return 20
         case .extraLarge:
-            return 35
+            return 26
         }
     }
     
@@ -105,9 +105,9 @@ enum ProfileIconSize {
         switch self {
         case .small:
             return 0.7
-        case .medium: 
+        case .medium:
             return 0.5
-        case .large: 
+        case .large:
             return 0.5
         case .extraLarge:
             return 0.5
