@@ -17,7 +17,7 @@ struct LocationSelector: View {
             // The MapReader is needed to intercept the User's tap inputs
             MapReader { reader in
                 Map(
-                    initialPosition: .userLocation(fallback: .automatic),
+                    initialPosition: .automatic,
                     bounds: MapCameraBounds(minimumDistance: 500, maximumDistance: .infinity),
                     interactionModes: .all
                 ) {
@@ -30,11 +30,21 @@ struct LocationSelector: View {
                         FavorMarker(favor: newFavor, isSelected: .constant(true), isInFavorSheet: true)
                     }
                 }
-                .safeAreaPadding(.vertical, 65)
+                .mapControlVisibility(.visible)
+                .mapControls {
+                    MapUserLocationButton()
+                    MapCompass()
+                    MapScaleView()
+                    MapPitchToggle()
+                }
+                .safeAreaPadding(.top, 100)
+                .safeAreaPadding(.leading, 5)
+                .safeAreaPadding(.trailing, 10)
+                .safeAreaPadding(.bottom, 80)
                 .onTapGesture(perform: { screenCoord in
                     // Intercepted a tap made by the User
                     // Converts the tap position into Map's coordinates
-                    let screenCoordUpdated = CGPoint(x: screenCoord.x, y: screenCoord.y - 70)
+                    let screenCoordUpdated = CGPoint(x: screenCoord.x - 5, y: screenCoord.y - 100)
                     let location = reader.convert(screenCoordUpdated, from: .local)
                     // Saves these coordinates as the new selectedLocation.
                     // This value is also used for the Favor Marker: it's now moved to this location
@@ -42,27 +52,27 @@ struct LocationSelector: View {
                         selectedLocation = location
                     }
                 })
-                
             }
             
             // The Title bar
             VStack {
-                VStack {
+//                VStack {
                     // Some space at the top
-                    Spacer()
-                        .frame(height: 10)
+//                    Spacer()
+//                        .frame(height: 10)
                     
                     // The Text
-                    HStack {
-                        Spacer()
-                        
+                    HStack(spacing: 8) {
                         Text("Clicca sulla mappa per selezionare un luogo")
                             .font(.headline)
-                            .padding()
                         
                         Spacer()
+                        
+                        FavorMarker(favor: newFavor, isSelected: .constant(false), isInFavorSheet: true)
                     }
-                }
+                    .padding(.vertical, 25)
+                    .padding(.horizontal, 20)
+//                }
                 .background(.ultraThinMaterial)
                 
                 Spacer()
@@ -111,6 +121,6 @@ struct LocationSelector: View {
             }
             .padding(.all, 20)
         }
-        .presentationDragIndicator(.visible)
+        .presentationDragIndicator(.hidden)
     }
 }
