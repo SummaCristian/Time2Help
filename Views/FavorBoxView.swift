@@ -54,7 +54,7 @@ struct FavorBoxView: View {
             
             Spacer()
         }
-        .frame(width: 134, height: 164)
+        .frame(width: 124, height: 164)
         .padding(16)
         .background(
             GeometryReader { geometry in
@@ -65,7 +65,7 @@ struct FavorBoxView: View {
         .background(favor.color.gradient)
         .shadow(radius: 5)
         .clipShape(roundedCorners ? AnyShape(RoundedRectangle(cornerRadius: 25)) : AnyShape(.rect))
-        //.padding(.vertical, 4)
+        .padding(.vertical, 3)
         .hoverEffect(.lift)
     }
 }
