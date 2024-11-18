@@ -28,8 +28,8 @@ struct FavorDetailsSheet: View {
                         // The Favor's Title
                         VStack(alignment: .leading, spacing: 10) {
                             Text(favor.title)
-                                .font(.largeTitle)
-                                .bold()
+                                .font(.title)
+                                .fontWeight(.black)
                             
                             HStack(spacing: 5) {
                                 ProfileIconView(username: favor.author.$nameSurname, color: favor.author.$profilePictureColor, size: .small)
@@ -41,27 +41,26 @@ struct FavorDetailsSheet: View {
                                     .fontWeight(.bold)
                                     .textCase(.uppercase)
                             }
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 2)
-                                .foregroundStyle(.primary)
-                                .background(
-                                    Capsule()
-                                        .foregroundStyle(favor.color.gradient.secondary)
-                                )
-                                .hoverEffect(.lift)
-                                .onTapGesture {
-                                    isAuthorProfileSheetPresented = true
-                                }
+                            .padding(.vertical, 7)
+                            .padding(.leading, 8)
+                            .padding(.trailing, 11)
+                            .foregroundStyle(.primary)
+                            .background(
+                                Capsule()
+                                    .foregroundStyle(favor.author.profilePictureColor.toColor()!.opacity(0.2))
+                            )
+                            .hoverEffect(.lift)
+                            .onTapGesture {
+                                isAuthorProfileSheetPresented = true
+                            }
                         }
                         
                         Spacer()
                         
                         FavorMarker(favor: favor, isSelected: .constant(true), isInFavorSheet: true)
-                            .shadow(color: favor.color.opacity(0.65), radius: 15)
                             .offset(x: -5, y: 45)
                             .frame(width: 100, height: 120)
                     }
-                    //.padding()
                     .cornerRadius(10)
                 }
                 .listRowBackground(Color.clear)
@@ -80,12 +79,13 @@ struct FavorDetailsSheet: View {
                                     .fontWeight(.bold)
                                     .textCase(.uppercase)
                             }
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 2)
+                            .padding(.vertical, 7)
+                            .padding(.leading, 8)
+                            .padding(.trailing, 11)
                             .foregroundStyle(.primary)
                             .background(
                                 Capsule()
-                                    .foregroundStyle(favor.color.gradient.secondary)
+                                    .foregroundStyle(favor.helper!.profilePictureColor.toColor()!.opacity(0.2))
                             )
                             .hoverEffect(.lift)
                             .onTapGesture {
@@ -186,23 +186,24 @@ struct FavorDetailsSheet: View {
                         content: {
                             // Is Car Necessary
                             HStack() {
-                                if favor.isCarNecessary{
+                                if favor.isCarNecessary {
                                     HStack {
                                         Image(systemName: "car.fill")
                                             .foregroundStyle(.white)
                                             .bold()
                                         
-                                        Text("Auto necessaria")
+                                        Text("Auto")
                                             .foregroundStyle(.white)
                                             .bold()
                                     }
-                                    .padding()
+                                    .frame(height: 50)
+                                    .padding(.horizontal, 12)
                                     .background(Color(.systemRed).gradient)
                                     .cornerRadius(10)
                                 }
                                 
                                 // Is Heavy Task
-                                if favor.isHeavyTask{
+                                if favor.isHeavyTask {
                                     HStack {
                                         Image(systemName: "hammer.fill")
                                             .foregroundStyle(.white)
@@ -212,7 +213,8 @@ struct FavorDetailsSheet: View {
                                             .foregroundStyle(.white)
                                             .bold()
                                     }
-                                    .padding()
+                                    .frame(height: 50)
+                                    .padding(.horizontal, 12)
                                     .background(Color(.systemGreen).gradient)
                                     .cornerRadius(10)
                                 }
@@ -263,6 +265,7 @@ struct FavorDetailsSheet: View {
                         Button(action: {
                             // Accepting the Favor
                             favor.helper = user
+                            favor.status = .accepted
                             
                             dismiss()
                         }) {
