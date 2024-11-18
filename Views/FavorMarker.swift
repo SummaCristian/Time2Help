@@ -84,6 +84,7 @@ struct FavorMarker: View {
             }
         }
         .scaleEffect(scale)
+        .shadow(color: isSelected ? favor.color.opacity(0.1) : .clear, radius: 15)
         .onAppear() {
             withAnimation {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -93,12 +94,12 @@ struct FavorMarker: View {
                 }
             }
         }
-        .contextMenu(menuItems: { 
+        .contextMenu(menuItems: {
             if !isInFavorSheet {
                 // Only allows long pressing when used in a Map, and not inside sheets
-                Label("Accetta", systemImage: "mark")
+                Label("Accetta", systemImage: "checkmark")
             }
-        }, preview: { 
+        }, preview: {
             FavorBoxView(favor: favor, roundedCorners: false)
                 .background(Color.clear)
         })
