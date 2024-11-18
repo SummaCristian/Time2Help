@@ -46,9 +46,17 @@ struct NewFavorSheet: View {
                                 TextField("Titolo", text: $newFavor.title)
                                     .font(.title3.bold())
                                     .textInputAutocapitalization(.sentences)
+                                    .onChange(of: newFavor.title) { _, _ in
+                                        newFavor.title = String(newFavor.title.prefix(50))
+                                    }
+                                
+                                Text("\(newFavor.title.count)/50")
+                                    .font(.subheadline.bold())
+                                    .foregroundStyle(.gray)
                                 
                                 if !newFavor.title.isEmpty {
                                     Image(systemName: "xmark.circle.fill")
+                                        .font(.title3)
                                         .foregroundStyle(.red, .red.opacity(0.2))
                                         .onTapGesture {
                                             newFavor.title = ""
@@ -65,6 +73,7 @@ struct NewFavorSheet: View {
                                 
                                 if !newFavor.description.isEmpty {
                                     Image(systemName: "xmark.circle.fill")
+                                        .font(.title3)
                                         .foregroundStyle(.red, .red.opacity(0.2))
                                         .onTapGesture {
                                             newFavor.description = ""
@@ -318,6 +327,7 @@ struct NewFavorSheet: View {
                 .sheet(isPresented: $isLocationSelectorPresented, content: {
                     // Shows the Location Selector sheet
                     LocationSelector(newFavor: newFavor)
+                        .interactiveDismissDisabled()
                 })
                 .alert("Tornare indietro?", isPresented: $isConfirmationDialogPresented) {
                     Button("No", role: .cancel) {}
