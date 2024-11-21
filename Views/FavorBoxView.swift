@@ -65,7 +65,16 @@ struct FavorBoxView: View {
         .background(favor.color.gradient)
         .shadow(radius: 5)
         .clipShape(roundedCorners ? AnyShape(RoundedRectangle(cornerRadius: 25)) : AnyShape(.rect))
-        .padding(.vertical, 3)
         .hoverEffect(.lift)
+    }
+}
+
+#Preview {
+    ScrollView() {
+        LazyVGrid(columns: [.init(.adaptive(minimum: 150), spacing: 10)]) {
+            ForEach(FavorCategory.allCases) { category in
+                FavorBoxView(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: true, isHeavyTask: true, reward: 5, status: .completed, category: category))    
+            }
+        }
     }
 }

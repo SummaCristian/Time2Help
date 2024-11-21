@@ -97,7 +97,13 @@ struct FavorMarker: View {
         .contextMenu(menuItems: {
             if !isInFavorSheet {
                 // Only allows long pressing when used in a Map, and not inside sheets
-                Label("Accetta", systemImage: "checkmark")
+                if favor.helper == nil {
+                    Button("Accetta", systemImage: "checkmark") {
+                        // TODO
+                    }
+                } else {
+                    Label("Non disponibile...", systemImage: "xmark")
+                }
             }
         }, preview: {
             FavorBoxView(favor: favor, roundedCorners: false)
@@ -118,5 +124,31 @@ struct FavorMarker: View {
         }
         .animation(.spring(duration: 0.4), value: isSelected)
         .hoverEffect(.lift)
+        .sensoryFeedback(.selection, trigger: isSelected)
+    }
+}
+
+#Preview {
+    ScrollView() {
+        
+        // Selected Variant
+        LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
+            ForEach(FavorCategory.allCases) { category in
+                
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, reward: 5, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true)
+                    .padding(.bottom, 50)
+            }
+        }
+        .padding(.top, 50)
+        
+        // Unselected Variant
+        LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
+            ForEach(FavorCategory.allCases) { category in
+                
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, reward: 5, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true)
+                    .padding(.bottom, 50)
+
+            }
+        }
     }
 }

@@ -19,14 +19,33 @@ struct CategoryCapsule: View {
         }
         .frame(height: 40)
         .padding(.horizontal, 12)
-        .background(isCategorySelected(category: category) ? category.color.gradient : Color.gray.gradient)
+        .background((isCategorySelected(category: category) ? category.color : .gray).gradient)
         .shadow(radius: 3)
         .clipShape(Capsule())
         .scaleEffect(selectedCategories.contains(category) ? 1 : 0.95)
         .animation(.bouncy, value: selectedCategories)
+        .hoverEffect(.lift)
     }
     
     func isCategorySelected(category: FavorCategory) -> Bool {
         return (selectedCategories.contains(.all) || selectedCategories.contains(category))
+    }
+}
+
+#Preview {
+    VStack(spacing: 30) {
+        // Selected Variants
+        LazyVGrid(columns: [.init(.adaptive(minimum: 150), spacing: 10)]) {
+            ForEach(FavorCategory.allCases) { category in
+                CategoryCapsule(selectedCategories: .constant([.all]), category: category)
+            }
+        }
+        
+        // Unselected Variants
+        LazyVGrid(columns: [.init(.adaptive(minimum: 150), spacing: 10)]) {
+            ForEach(FavorCategory.allCases) { category in
+                CategoryCapsule(selectedCategories: .constant([]), category: category)
+            }
+        }   
     }
 }
