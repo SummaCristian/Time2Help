@@ -20,6 +20,8 @@ struct MapView: View {
     // This is used to deselect the Favor once it's not selected anymore
     @Binding var selectedFavorID: UUID?
     
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
+    
     let selectedNeighbourhood: String
     
     // A NameSpace needed for certain Map features
@@ -61,10 +63,10 @@ struct MapView: View {
                                 //Label(favor.title, systemImage: favor.icon.icon)
                             }
                         )
-                        .mapOverlayLevel(level: .aboveLabels)
                     }
                 }
             }
+
             .mapControlVisibility(.visible)
             .mapControls {
                 MapUserLocationButton()
@@ -72,18 +74,42 @@ struct MapView: View {
                 MapScaleView()
                 MapPitchToggle()
             }
+            .overlay {
+                VStack() {
+                    HStack {                        
+                        Button(action: {
+                            isSatelliteMode = !isSatelliteMode
+                        }) {
+                            MapStyleButton(isSatelliteSelected: $isSatelliteMode)
+                                .contextMenu(menuItems: {
+                                    Button("Semplificata", systemImage: isSatelliteMode ? "map" : "map.fill") {
+                                        isSatelliteMode = false  
+                                    }
+                                    
+                                    Button("Satellite", systemImage: isSatelliteMode ? "globe.europe.africa.fill" : "globe.europe.africa") {
+                                        isSatelliteMode = true  
+                                    }
+                                })
+                        }
+                        .frame(width: 44, height: 44)
+                        .offset(x: 5, y: 60)
+                        
+                        Spacer()
+                    }
+                    
+                    Spacer()
+                }
+            }
             .mapStyle(
-                .standard(
-                    elevation: .realistic,
-                    emphasis: .automatic,
-                    pointsOfInterest: .all
-                )
+                isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
             )
             .edgesIgnoringSafeArea(.bottom)
             .tint(.blue)
             .safeAreaPadding(.top, 80)
             .safeAreaPadding(.leading, 5)
             .safeAreaPadding(.trailing, 10)
+            .sensoryFeedback(.selection, trigger: selectedCategories)
+            .sensoryFeedback(.impact, trigger: selection)
             .overlay {
                 VStack {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -142,8 +168,8 @@ struct MapView: View {
                     .padding(.vertical, 16)
                     .padding(.horizontal, 20)
                     .background(
-//                        RoundedRectangle(cornerRadius: 12)
-//                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
+                        //                        RoundedRectangle(cornerRadius: 12)
+                        //                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
                         RoundedRectangle(cornerRadius: 20)
                             .foregroundStyle(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray4), Color(.systemGray5)] : [Color(.systemGray6), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing))
                             .overlay {
