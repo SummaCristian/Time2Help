@@ -5,6 +5,8 @@ struct LoginView: View {
     
     @Binding var showLogin: Bool
     
+    @ObservedObject var viewModel: MapViewModel
+    
     @Binding var nameSurname: String
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
@@ -12,7 +14,7 @@ struct LoginView: View {
     var body: some View {
         ZStack(alignment: .top) {
             NavigationStack {
-                LoginViewOne(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
+                LoginViewOne(showLogin: $showLogin, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
                     .toolbar(.hidden, for: .navigationBar)
             }
             
@@ -59,6 +61,8 @@ struct LoginViewOne: View {
     
     @Binding var showLogin: Bool
     
+    @ObservedObject var viewModel: MapViewModel
+    
     @Binding var nameSurname: String
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
@@ -87,7 +91,7 @@ struct LoginViewOne: View {
                 .frame(maxHeight: .infinity, alignment: .top)
                 
                 NavigationLink {
-                    LoginViewTwo(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
+                    LoginViewTwo(showLogin: $showLogin, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
                         .toolbar(.hidden, for: .navigationBar)
                 } label: {
                     Text("Sì, andiamo!")
@@ -109,6 +113,93 @@ struct LoginViewOne: View {
 struct LoginViewTwo: View {
     
     @Binding var showLogin: Bool
+    
+    @ObservedObject var viewModel: MapViewModel
+    
+    @Binding var nameSurname: String
+    @Binding var selectedColor: String
+    @Binding var selectedNeighbourhood: String
+    
+    @Environment(\.colorScheme) private var colorScheme
+    
+    var body: some View {
+        GeometryReader { _ in
+            VStack(spacing: 20) {
+                VStack(spacing: 12) {
+                    Text("Ci serve prima di tutto la tua posizione")
+                        .font(.custom("Futura-bold", size: 24))
+                        .foregroundStyle(.primary)
+                        .multilineTextAlignment(.center)
+                    
+                    Text("Psss! Non abbiamo accesso di alcun tipo ai tuoi dati, serve solo a te per vedere la tua posizione sulla mappa")
+                        .font(.body)
+                        .foregroundStyle(.gray)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(height: 150)
+                .padding([.horizontal, .bottom], 20)
+//
+                Button {
+                    viewModel.inizialize()
+                } label: {
+                    Text(viewModel.locationManager.authorizationStatus == .notDetermined ? "Attiva la localizzazione" : viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse ? "Attivata!" : "Non attivata")
+                        .font(.title3.bold())
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 20)
+                        .background(viewModel.locationManager.authorizationStatus == .notDetermined ? .blue : viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse ? .green : .red, in: .capsule)
+                }
+                .disabled(viewModel.locationManager.authorizationStatus != .notDetermined)
+                
+                Spacer()
+                
+                if !viewModel.message.isEmpty {
+                    Text(viewModel.message/*"Puoi sempre cambiare idea più tardi cliccando sul tasto a forma di aereoplanino di carta nella pagina del profilo"*/)
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .foregroundStyle(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray4), Color(.systemGray5)] : [Color(.systemGray6), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
+                                }
+                        )
+                }
+                
+                NavigationLink {
+                    LoginViewThree(showLogin: $showLogin, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
+                        .toolbar(.hidden, for: .navigationBar)
+                } label: {
+                    Text("Proseguiamo!")
+                        .font(.body.bold())
+                        .foregroundStyle(viewModel.locationManager.authorizationStatus == .notDetermined ? .gray : .white)
+                        .padding(.vertical, 16)
+                        .frame(maxWidth: .infinity)
+                        .background(viewModel.locationManager.authorizationStatus == .notDetermined ? Color(.systemGray5) : .black, in: .capsule)
+                }
+                .disabled(viewModel.locationManager.authorizationStatus == .notDetermined)
+            }
+        }
+        .padding(.all, 20)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemGray6))
+        .safeAreaPadding(.top, 60)
+        .onAppear {
+            viewModel.showMessage()
+        }
+    }
+}
+
+struct LoginViewThree: View {
+    
+    @Binding var showLogin: Bool
+    
+    @ObservedObject var viewModel: MapViewModel
     
     @Binding var nameSurname: String
     @Binding var selectedColor: String
@@ -220,7 +311,7 @@ struct LoginViewTwo: View {
                     }
                 } else {
                     NavigationLink {
-                        LoginViewThree(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+                        LoginViewFour(showLogin: $showLogin, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
                             .toolbar(.hidden, for: .navigationBar)
                     } label: {
                         Text("Proseguiamo!")
@@ -251,9 +342,11 @@ struct LoginViewTwo: View {
     }
 }
 
-struct LoginViewThree: View {
+struct LoginViewFour: View {
     
     @Binding var showLogin: Bool
+    
+    @ObservedObject var viewModel: MapViewModel
     
     @Binding var nameSurname: String
     @Binding var selectedColor: String
@@ -346,7 +439,7 @@ struct LoginViewThree: View {
                 .frame(maxHeight: .infinity, alignment: .bottom)
                 
                 NavigationLink {
-                    LoginViewFour(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
+                    LoginViewFive(showLogin: $showLogin, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
                         .toolbar(.hidden, for: .navigationBar)
                 } label: {
                     Text("Proseguiamo!")
@@ -373,12 +466,12 @@ struct LoginViewThree: View {
             selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
         }, content: {
             // Shows the Neighbourhood Selector sheet
-            NeighbourhoodSelector(selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+            NeighbourhoodSelector(viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
         })
     }
 }
 
-struct LoginViewFour: View {
+struct LoginViewFive: View {
     
     @Binding var showLogin: Bool
     
