@@ -4,12 +4,14 @@ import MapKit
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @ObservedObject var viewModel: MapViewModel
+    
     @Binding var nameSurname: String
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
     
     // Connection to the ViewModel for Data and Location Permissions
-    @StateObject private var viewModel = MapViewModel()
+    
     // Connection to the Database that stores the Favors
     @StateObject private var database = Database.shared
     
@@ -51,7 +53,7 @@ struct ContentView: View {
                             .disabled(true)
                         
                         // Tab 2: Profile
-                        ProfileView(database: database, selectedFavor: $selectedFavor, user: $user, isEditable: true)
+                        ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, isEditable: true)
                             .tabItem {
                                 Label("Profilo", systemImage: "person.fill")
                             }
@@ -82,7 +84,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $isSheetPresented) {
-            NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel, newFavor: Favor(author: user))
+            NewFavorSheet(isPresented: $isSheetPresented, database: database, viewModel: viewModel, newFavor: Favor(author: user))
                 .interactiveDismissDisabled()
         }
         .sheet(
@@ -92,7 +94,7 @@ struct ContentView: View {
                 selectedFavorID = nil
             },
             content: { favor in
-                FavorDetailsSheet(database: database, selectedFavor: $selectedFavor, user: user, favor: favor)
+                FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor)
             })
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         .ignoresSafeArea(.keyboard)
@@ -104,31 +106,6 @@ struct ContentView: View {
             
             // Adds the template Markers to the Map
             database.initialize()
-            
-            let mario = database.users.first(where: { $0.nameSurname == "Mario Rossi"})
-            database.favors[1].helper = mario
-            database.favors[11].helper = mario
-            let giuseppe = database.users.first(where: { $0.nameSurname == "Giuseppe Verdi"})
-            database.favors[0].helper = giuseppe
-            database.favors[7].helper = giuseppe
-            let grazia = database.users.first(where: { $0.nameSurname == "Grazia Deledda"})
-            database.favors[4].helper = grazia
-            database.favors[9].helper = grazia
-            let matilde = database.users.first(where: { $0.nameSurname == "Matilde Di Leopardi"})
-            database.favors[13].helper = matilde
-            let piera = database.users.first(where: { $0.nameSurname == "Piera Capuana"})
-            database.favors[14].helper = piera
-            
-            // Accepts a few Favors (for testing)
-            var count = 0
-            for favor in database.favors {
-                if count < 3 && favor.author.id != user.id && favor.helper == nil {
-                    favor.helper = user
-                    count += 1
-                } else if count >= 3 {
-                    break
-                }
-            }
         }
         .sensoryFeedback(.selection, trigger: _selectedTab.wrappedValue)
     }
