@@ -5,6 +5,8 @@ struct LocationSelector: View {
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
     
+    @ObservedObject var viewModel: MapViewModel
+    
     // The location selected by the User, nil if no selection has been made yet
     @State private var selectedLocation: CLLocationCoordinate2D? = nil
     
@@ -22,7 +24,9 @@ struct LocationSelector: View {
                     interactionModes: .all
                 ) {
                     // The User's Location
-                    UserAnnotation()
+                    if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
+                        UserAnnotation()
+                    }
                     
                     // The Favor's Marker
                     // Note: it's set in selectedLocation if possible, but if it's nil, it defaults to the Favor's old Location
@@ -32,7 +36,9 @@ struct LocationSelector: View {
                 }
                 .mapControlVisibility(.visible)
                 .mapControls {
-                    MapUserLocationButton()
+                    if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
+                        MapUserLocationButton()
+                    }
                     MapCompass()
                     MapScaleView()
                     MapPitchToggle()
