@@ -6,6 +6,8 @@ struct NeighbourhoodSelector: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     
+    @ObservedObject var viewModel: MapViewModel
+    
     // The location selected by the User, nil if no selection has been made yet
     @Binding var selectedNeighbourhoodStructTemp: Neighbourhood
     @Binding var selectedNeighbourhoodStructTempTwo: Neighbourhood
@@ -24,8 +26,10 @@ struct NeighbourhoodSelector: View {
                 bounds: MapCameraBounds(minimumDistance: 500, maximumDistance: .infinity),
                 interactionModes: .all
             ) {
-                // The User's Location
-                UserAnnotation()
+                if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
+                    // The User's Location
+                    UserAnnotation()
+                }
                 
                 // The Favor's Marker
                 // Note: it's set in selectedLocation if possible, but if it's nil, it defaults to the Favor's old Location
@@ -43,7 +47,9 @@ struct NeighbourhoodSelector: View {
             }
             .mapControlVisibility(.visible)
             .mapControls {
-                MapUserLocationButton()
+                if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
+                    MapUserLocationButton()
+                }
                 MapCompass()
                 MapScaleView()
                 MapPitchToggle()
@@ -78,7 +84,7 @@ struct NeighbourhoodSelector: View {
                         neighbourhoodsUpdated[j].big = false
                     }
                 }
-                self.camera = MapCameraPosition.camera(.init(centerCoordinate: .init(latitude: centerCoordinate.latitude, longitude: centerCoordinate.longitude), distance: camera.camera.distance))
+                self.camera = MapCameraPosition.camera(.init(centerCoordinate: .init(latitude: centerCoordinate.latitude, longitude: centerCoordinate.longitude), distance: camera.camera.distance, heading: camera.camera.heading, pitch: camera.camera.pitch))
             }
             .safeAreaPadding(.top, 110)
             .safeAreaPadding(.leading, 5)
