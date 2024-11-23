@@ -12,16 +12,16 @@ enum MapDetails {
 }
 
 // Temporary
-extension MKCoordinateRegion: Equatable {
-    public static func == (lhs: MKCoordinateRegion, rhs: MKCoordinateRegion) -> Bool {
-        lhs.center.latitude == rhs.center.latitude &&
-        lhs.center.longitude == rhs.center.longitude &&
-        lhs.span.latitudeDelta == rhs.span.latitudeDelta &&
-        lhs.span.longitudeDelta == rhs.span.longitudeDelta
-    }
-}
+//extension MKCoordinateRegion: Equatable {
+//    public static func == (lhs: MKCoordinateRegion, rhs: MKCoordinateRegion) -> Bool {
+//        lhs.center.latitude == rhs.center.latitude &&
+//        lhs.center.longitude == rhs.center.longitude &&
+//        lhs.span.latitudeDelta == rhs.span.latitudeDelta &&
+//        lhs.span.longitudeDelta == rhs.span.longitudeDelta
+//    }
+//}
 
-final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {    
+final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     // Data used to center the Map inside the UI.
     // When this changes, the Map changes accordingly.
     // If Location Permission is granted, the Map is centered on the User's position,
@@ -30,46 +30,43 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
         center: MapDetails.startingLocation,
         span: MapDetails.span
     )
-    @Published var error: Bool = false
-    @Published var errorMessage: String = ""
     
-    // iOS's Location Manager    
-    let locationManager: CLLocationManager = CLLocationManager()
+    @Published var message: String = ""
     
-    override init() {
-        super.init()
+    // iOS's Location Manager
+    @Published var locationManager: CLLocationManager = CLLocationManager()
+    
+    func inizialize() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         checkLocationAuthorization()
     }
     
     // Reads the actual Permission and decides what to do
-    func checkLocationAuthorization() {        
+    func checkLocationAuthorization() {
         switch locationManager.authorizationStatus {
         case .notDetermined:
             // The User hasn't been asked for Permission yet. Asking now...
             locationManager.requestWhenInUseAuthorization()
-        case .restricted:
-            // Permission Restricted: Something like Parental Controls or MDM doesn't allow it
-            presentError("La tua location è bloccata dal parental control")
-        case .denied:
-            // The User has denied the Permission. Showing error...
-            presentError("Non ci sono i permessi per accedere alla tua location, vai alle Impostazioni e attivali")
-            locationManager.requestWhenInUseAuthorization()
-        case .authorizedAlways, .authorizedWhenInUse:
-            // The User has granted one of the two levels of Permission. Both are ok.
-            // Saving the User's position inside the region value, so that the Map can be centered on it.
-            region = MKCoordinateRegion(center: locationManager.location!.coordinate, span: MapDetails.span)
-            errorMessage = ""
-            error = false
-        @unknown default:
-            break
+        default:
+            showMessage()
         }
     }
     
-    func presentError(_ message: String) {
-        errorMessage = message
-        error = true
+    func showMessage() {
+        switch locationManager.authorizationStatus {
+        case .restricted:
+            // Permission Restricted: Something like Parental Controls or MDM doesn't allow it
+            message = "La tua location è bloccata dal parental control.\nPuoi riprovare dopo che avrai finito la fase di login cliccando sul tasto a forma di ingranaggio nella pagina del profilo."
+        case .denied:
+            // The User has denied the Permission. Showing error...
+            message = "Puoi sempre cambiare idea, dopo che avrai finito la fase di login, cliccando sul tasto a forma di ingranaggio nella pagina del profilo."
+        case .authorizedAlways, .authorizedWhenInUse:
+            // The User has granted one of the two levels of Permission. Both are ok.
+            message = "Puoi cambiare la tua scelta, dopo che avrai finito la fase di login, cliccando sul tasto a forma di ingranaggio nella pagina del profilo."
+        default:
+            break
+        }
     }
     
     // Delegated function: iOS will automatically call it when the User changes the app's Location Permission.
