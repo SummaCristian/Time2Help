@@ -126,10 +126,6 @@ class Database: ObservableObject {
             location: CLLocationCoordinate2D(latitude: 45.443821, longitude: 9.231299)
         ),
         Neighbourhood(
-            name: "Città Studi",
-            location: CLLocationCoordinate2D(latitude: 45.476903, longitude: 9.230091)
-        ),
-        Neighbourhood(
             name: "Centrale",
             location: CLLocationCoordinate2D(latitude: 45.483997, longitude: 9.203955)
         ),
@@ -160,6 +156,10 @@ class Database: ObservableObject {
         Neighbourhood(
             name: "Cimiano",
             location: CLLocationCoordinate2D(latitude: 45.501228, longitude: 9.244629)
+        ),
+        Neighbourhood(
+            name: "Città Studi",
+            location: CLLocationCoordinate2D(latitude: 45.476903, longitude: 9.230091)
         ),
         Neighbourhood(
             name: "Comasina",
@@ -634,7 +634,7 @@ class Database: ObservableObject {
         // Favors
         favors.append(
             Favor(
-                title: "Test",
+                title: "Test1",
                 description: "This is a test",
                 author: mario,
                 neighbourhood: "Città Studi",
@@ -644,11 +644,11 @@ class Database: ObservableObject {
                 location: MapDetails.startingLocation,
                 isCarNecessary: false,
                 isHeavyTask: true,
-                reward: 5,
                 status: .notAcceptedYet,
                 category: .generic
             )
         )
+        favors.last!.helper = giuseppe
         
         favors.append(
             Favor(
@@ -662,11 +662,11 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4777234, longitude: 9.2279519),
                 isCarNecessary: true,
                 isHeavyTask: false,
-                reward: 3,
                 status: .halfwayThere,
                 category: .babySitting
             )
         )
+        favors.last!.helper = mario
         
         favors.append(
             Favor(
@@ -680,8 +680,7 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4781024, longitude: 9.2268771),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 8,
-                status: .completed,
+                status: .notAcceptedYet,
                 category: .gardening
             )
         )
@@ -698,7 +697,6 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4790747, longitude: 9.2284311),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 10,
                 status: .accepted,
                 category: .houseChores
             )
@@ -716,11 +714,12 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4769980, longitude: 9.2291438),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 1,
                 status: .expired,
                 category: .manualJob
             )
         )
+        favors.last!.helper = grazia
+        favors.last!.review = 0.0
         
         favors.append(
             Favor(
@@ -734,7 +733,6 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4792328, longitude: 9.2265965),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 2,
                 status: .justStarted,
                 category: .sport
             )
@@ -752,7 +750,6 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4815986, longitude: 9.2293555),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 12,
                 status: .notAcceptedYet,
                 category: .petSitting
             )
@@ -770,11 +767,12 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4800150, longitude: 9.2298333),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 25,
                 status: .completed,
                 category: .school
             )
         )
+        favors.last!.helper = giuseppe
+        favors.last!.review = 5.0
         
         favors.append(
             Favor(
@@ -788,7 +786,6 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4783722, longitude: 9.2305444),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 6,
                 status: .justStarted,
                 category: .shopping
                 
@@ -807,11 +804,12 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4764242, longitude: 9.2287484),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 9,
                 status: .completed,
                 category: .transport
             )
         )
+        favors.last!.helper = grazia
+        favors.last!.review = 3.0
         
         favors.append(
             Favor(
@@ -825,8 +823,7 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4778219, longitude: 9.2326831),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 4,
-                status: .completed,
+                status: .expired,
                 category: .trash
             )
         )
@@ -843,11 +840,12 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.4781624, longitude: 9.2259771),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 11,
                 status: .completed,
                 category: .weather
             )
         )
+        favors.last!.helper = mario
+        favors.last!.review = 5.0
         
         favors.append(
             Favor(
@@ -861,8 +859,7 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.502856, longitude: 9.167285),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 11,
-                status: .completed,
+                status: .notAcceptedYet,
                 category: .weather
             )
         )
@@ -879,11 +876,11 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.503835, longitude: 9.162520),
                 isCarNecessary: true,
                 isHeavyTask: true,
-                reward: 11,
                 status: .justStarted,
                 category: .houseChores
             )
         )
+        favors.last!.helper = matilde
         
         favors.append(
             Favor(
@@ -897,10 +894,52 @@ class Database: ObservableObject {
                 location: CLLocationCoordinate2D(latitude: 45.503154, longitude: 9.171065),
                 isCarNecessary: false,
                 isHeavyTask: true,
-                reward: 11,
                 status: .ongoing,
                 category: .gardening
             )
         )
+        favors.last!.helper = piera
+        
+        // Accepts a few Favors (for testing)
+        let user = users.first!
+        var count = 0
+        for favor in favors {
+            if count < 5 && favor.author.id != user.id && favor.helper == nil {
+                favor.helper = user
+                if (count == 0) {
+                    favor.status = .completed
+                    favor.review = 4.0
+                } else if (count == 1) { favor.status = .waitingForApprovation
+                } else if (count == 2) { favor.status = .halfwayThere
+                } else if (count == 3) {
+                    favor.status = .completed
+                    favor.review = 3.0
+                } else {
+                    favor.status = .completed
+                    favor.review = 4.0
+                }
+                count += 1
+            } else if count >= 5 {
+                break
+            }
+        }
+        
+        favors.append(
+            Favor(
+                title: "Test16",
+                description: "This is a test",
+                author: user,
+                neighbourhood: "Città Studi",
+                startingDate: .now,
+                endingDate: .now,
+                isAllDay: false,
+                location: CLLocationCoordinate2D(latitude: 45.480775, longitude: 9.224775),
+                isCarNecessary: false,
+                isHeavyTask: true,
+                status: .completed,
+                category: .gardening
+            )
+        )
+        favors.last!.helper = piera
     }
 }
