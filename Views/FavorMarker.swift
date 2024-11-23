@@ -135,7 +135,7 @@ struct FavorMarker: View {
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, reward: 5, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true)
                     .padding(.bottom, 50)
             }
         }
@@ -145,7 +145,7 @@ struct FavorMarker: View {
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, reward: 5, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true)
                     .padding(.bottom, 50)
 
             }
