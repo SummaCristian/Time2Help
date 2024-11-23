@@ -22,7 +22,7 @@ struct ProfileIconView: View {
                 .foregroundStyle(color.toColor()!.gradient)
             
             // Icon
-            Text(username.filter({ $0.isUppercase }))
+            Text(username.filter({ $0.isUppercase }).prefix(3))
                 .font(.custom("Futura-bold", size: username.filter({ $0.isUppercase }).count == 1 ? size.textSizeBig : username.filter({ $0.isUppercase }).count == 2 ? size.textSizeMedium : size.textSizeSmall))
                 .foregroundStyle(.white)
                 .shadow(radius: 5)
