@@ -3,6 +3,8 @@ import MapKit
 
 struct ModifyProfileView: View {
     
+    @ObservedObject var viewModel: MapViewModel
+    
     @Binding var isModifySheetPresented: Bool
     
     @Binding var user: User
@@ -33,6 +35,13 @@ struct ModifyProfileView: View {
                                     HStack(spacing: 8) {
                                         TextField("Nome e Cognome", text: $nameSurnameTemp)
                                             .textInputAutocapitalization(.words)
+                                            .onChange(of: nameSurnameTemp) { _, _ in
+                                                nameSurnameTemp = String(nameSurnameTemp.prefix(50))
+                                            }
+                                        
+                                        Text("\(nameSurnameTemp.count)/50")
+                                            .font(.subheadline.bold())
+                                            .foregroundStyle(.gray)
                                         
                                         if !nameSurnameTemp.isEmpty {
                                             Image(systemName: "xmark.circle.fill")
@@ -210,7 +219,7 @@ struct ModifyProfileView: View {
             selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
         }, content: {
             // Shows the Location Selector sheet
-            NeighbourhoodSelector(selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+            NeighbourhoodSelector(viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
         })
         .onAppear {
             selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
