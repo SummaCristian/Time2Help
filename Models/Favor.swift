@@ -19,7 +19,7 @@ class Favor: Identifiable, ObservableObject {
     @Published var location: CLLocationCoordinate2D
     @Published var isCarNecessary: Bool
     @Published var isHeavyTask: Bool
-    @Published var reward: Int
+    @Published var review: Double?
     @Published var status: FavorStatus
     
     @Published var helper: User?
@@ -51,7 +51,6 @@ class Favor: Identifiable, ObservableObject {
         self.location = CLLocationCoordinate2D()
         self.isCarNecessary = false
         self.isHeavyTask = false
-        self.reward = 0
         self.status = .notAcceptedYet
         self.category = .generic
         
@@ -59,7 +58,8 @@ class Favor: Identifiable, ObservableObject {
         self.icon = FavorCategory.generic.icon
     }
     
-    init (
+    // Favor for test
+    init(
         title: String,
         description: String,
         author: User,
@@ -70,7 +70,6 @@ class Favor: Identifiable, ObservableObject {
         location: CLLocationCoordinate2D,
         isCarNecessary: Bool,
         isHeavyTask: Bool,
-        reward: Int,
         status: FavorStatus,
         category: FavorCategory
     ) {
@@ -86,7 +85,6 @@ class Favor: Identifiable, ObservableObject {
         self.location = location
         self.isCarNecessary = isCarNecessary
         self.isHeavyTask = isHeavyTask
-        self.reward = reward
         self.status = status
         self.category = category
         
