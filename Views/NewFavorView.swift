@@ -24,7 +24,7 @@ struct NewFavorSheet: View {
     // Connection to the Database, where Favors are stored
     @ObservedObject var database: Database
     // Connection to the MapViewModel, used to retrieve the User's Location
-    @ObservedObject var mapViewModel: MapViewModel
+    @ObservedObject var viewModel: MapViewModel
     
     // New Favor: this is the Favor that the user is creating, whose details can be edited in here.
     // At the end of the creation process, if the User confirms it, it will be added to the Database
@@ -319,14 +319,14 @@ struct NewFavorSheet: View {
                 .scrollDismissesKeyboard(.immediately)
                 .onAppear() {
                     // Retrieves the User's current Location and sets it as the Favor's location
-                    newFavor.location = mapViewModel.region.center
+                    newFavor.location = viewModel.region.center
                 }
                 .onDisappear() {
                     isConfirmationDialogPresented = true
                 }
                 .sheet(isPresented: $isLocationSelectorPresented, content: {
                     // Shows the Location Selector sheet
-                    LocationSelector(newFavor: newFavor)
+                    LocationSelector(viewModel: viewModel, newFavor: newFavor)
                         .interactiveDismissDisabled()
                 })
                 .alert("Tornare indietro?", isPresented: $isConfirmationDialogPresented) {
