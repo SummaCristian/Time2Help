@@ -5,10 +5,10 @@ import MapKit
 
 struct MapView: View {
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.openURL) private var openURL
     
     // The ViewModel, where the Data and Permission are handled.
     @ObservedObject var viewModel: MapViewModel
+    
     // The Database, where the Favors are stored
     @ObservedObject var database: Database
     
@@ -28,7 +28,7 @@ struct MapView: View {
     @Namespace private var mapNameSpace
     
     // The MapCameraPosition used to center around the User's Location
-    @State private var mapCameraPosition: MapCameraPosition = .userLocation(followsHeading: true, fallback: .automatic)
+    @State private var mapCameraPosition: MapCameraPosition = MapCameraPosition.automatic
     // The list of Map Elements from Apple's MapKit database
     @State private var selection: MapFeature? = nil
     
@@ -38,148 +38,124 @@ struct MapView: View {
     var body: some View {
         // The Map, centered around ViewModel's region, and showing the User's position when possible
         Map(
-            initialPosition: mapCameraPosition,
+            position: $mapCameraPosition,
             bounds: MapCameraBounds(minimumDistance: 0.008, maximumDistance: .infinity),
             interactionModes: .all,
             selection: $selection,
-            scope: mapNameSpace) {
+            scope: mapNameSpace
+        ) {
+            if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
                 // The User's position
                 UserAnnotation()
-                
-                // All the Favors
-                ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood})) { favor in
-                    if isCategorySelected(category: favor.category) {
-                        Annotation(
-                            coordinate: favor.location,
-                            content: {
-                                FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: false)
-                                    .onTapGesture {
-                                        // Selects the Favor and triggers the showing of the sheet
-                                        selectedFavor = favor
-                                        selectedFavorID = favor.id
-                                    }
-                            },
-                            label: {
-                                //Label(favor.title, systemImage: favor.icon.icon)
-                            }
-                        )
-                    }
+            }
+            
+            // All the Favors
+            ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood})) { favor in
+                if isCategorySelected(category: favor.category) {
+                    Annotation(
+                        coordinate: favor.location,
+                        content: {
+                            FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: false)
+                                .onTapGesture {
+                                    // Selects the Favor and triggers the showing of the sheet
+                                    selectedFavor = favor
+                                    selectedFavorID = favor.id
+                                }
+                        },
+                        label: {
+                            //Label(favor.title, systemImage: favor.icon.icon)
+                        }
+                    )
                 }
             }
-
-            .mapControlVisibility(.visible)
-            .mapControls {
+        }
+        .mapControlVisibility(.visible)
+        .mapControls {
+            if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
                 MapUserLocationButton()
-                MapCompass()
-                MapScaleView()
-                MapPitchToggle()
             }
-            .overlay {
-                VStack() {
-                    HStack {                        
-                        Button(action: {
-                            isSatelliteMode = !isSatelliteMode
-                        }) {
-                            MapStyleButton(isSatelliteSelected: $isSatelliteMode)
-                                .contextMenu(menuItems: {
-                                    Button("Semplificata", systemImage: isSatelliteMode ? "map" : "map.fill") {
-                                        isSatelliteMode = false  
-                                    }
-                                    
-                                    Button("Satellite", systemImage: isSatelliteMode ? "globe.europe.africa.fill" : "globe.europe.africa") {
-                                        isSatelliteMode = true  
-                                    }
-                                })
-                        }
-                        .frame(width: 44, height: 44)
-                        .offset(x: 5, y: 60)
-                        
-                        Spacer()
+            MapCompass()
+            MapScaleView()
+            MapPitchToggle()
+        }
+        .overlay {
+            VStack() {
+                HStack {
+                    Button(action: {
+                        isSatelliteMode = !isSatelliteMode
+                    }) {
+                        MapStyleButton(isSatelliteSelected: $isSatelliteMode)
+                            .contextMenu(menuItems: {
+                                Button("Semplificata", systemImage: isSatelliteMode ? "map" : "map.fill") {
+                                    isSatelliteMode = false
+                                }
+                                
+                                Button("Satellite", systemImage: isSatelliteMode ? "globe.europe.africa.fill" : "globe.europe.africa") {
+                                    isSatelliteMode = true
+                                }
+                            })
                     }
+                    .frame(width: 44, height: 44)
+                    .offset(x: 5, y: 60)
                     
                     Spacer()
                 }
+                
+                Spacer()
             }
-            .mapStyle(
-                isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
-            )
-            .edgesIgnoringSafeArea(.bottom)
-            .tint(.blue)
-            .safeAreaPadding(.top, 80)
-            .safeAreaPadding(.leading, 5)
-            .safeAreaPadding(.trailing, 10)
-            .sensoryFeedback(.selection, trigger: selectedCategories)
-            .sensoryFeedback(.impact, trigger: selection)
-            .overlay {
-                VStack {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
-                            ForEach(FavorCategory.allCases) { category in
-                                CategoryCapsule(selectedCategories: $selectedCategories, category: category)
-                                    .onTapGesture {
-                                        if category == .all {
-                                            // The "Tutte" capsule
-                                            selectCategory(category: .all)
+        }
+        .mapStyle(
+            isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
+        )
+        .edgesIgnoringSafeArea(.bottom)
+        .tint(.blue)
+        .safeAreaPadding(.top, 80)
+        .safeAreaPadding(.leading, 5)
+        .safeAreaPadding(.trailing, 10)
+        .sensoryFeedback(.selection, trigger: selectedCategories)
+        .sensoryFeedback(.impact, trigger: selection)
+        .overlay {
+            VStack {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(FavorCategory.allCases) { category in
+                            CategoryCapsule(selectedCategories: $selectedCategories, category: category)
+                                .onTapGesture {
+                                    if category == .all {
+                                        // The "Tutte" capsule
+                                        selectCategory(category: .all)
+                                    } else {
+                                        // The real categories
+                                        if selectedCategories.contains(category) {
+                                            deselectCategory(category: category)
                                         } else {
-                                            // The real categories
-                                            if selectedCategories.contains(category) {
-                                                deselectCategory(category: category)
-                                            } else {
-                                                selectCategory(category: category)
-                                            }
+                                            selectCategory(category: category)
                                         }
                                     }
-                            }
+                                }
                         }
-                        .padding(.horizontal)
                     }
-                    
-                    Spacer()
+                    .padding(.horizontal)
                 }
-                .padding(.top, 20)
+                
+                Spacer()
             }
-            .blur(radius: viewModel.error ? 10 : 0)
-            .disabled(viewModel.error)
-            .overlay {
-                if viewModel.error {
-                    Rectangle()
-                        .foregroundStyle(.black)
-                        .opacity(0.2)
-                        .ignoresSafeArea()
-                    
-                    VStack(spacing: 16) {
-                        Text(viewModel.errorMessage)
-                            .fontWeight(.medium)
-                            .multilineTextAlignment(.center)
-                        
-                        Divider()
-                        
-                        Button(action: {
-                            let settingsString = UIApplication.openSettingsURLString
-                            if let settingsURL = URL (string: settingsString) {
-                                openURL(settingsURL)
-                            }
-                        }, label: {
-                            Text("Vai alle impostazioni")
-                                .bold()
-                                .foregroundStyle(.blue)
-                        })
-                    }
-                    .padding(.vertical, 16)
-                    .padding(.horizontal, 20)
-                    .background(
-                        //                        RoundedRectangle(cornerRadius: 12)
-                        //                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray6))
-                        RoundedRectangle(cornerRadius: 20)
-                            .foregroundStyle(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray4), Color(.systemGray5)] : [Color(.systemGray6), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
-                            }
-                    )
-                    .padding(.horizontal, 60)
-                }
-            }
+            .padding(.top, 20)
+        }
+        .onAppear {
+            verifyLocationStatus()
+        }
+        .onChange(of: viewModel.locationManager.authorizationStatus) {
+            verifyLocationStatus()
+        }
+    }
+    
+    func verifyLocationStatus() {
+        if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
+            mapCameraPosition = .userLocation(followsHeading: true, fallback: .automatic)
+        } else {
+            mapCameraPosition = MapCameraPosition.camera(.init(centerCoordinate: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location, distance: 3200))
+        }
     }
     
     func isCategorySelected(category: FavorCategory) -> Bool {
