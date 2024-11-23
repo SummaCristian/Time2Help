@@ -7,6 +7,8 @@ struct FavorDetailsSheet: View {
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
     
+    @ObservedObject var viewModel: MapViewModel
+    
     @ObservedObject var database: Database
     @Binding var selectedFavor: Favor?
     @State var user: User
@@ -16,13 +18,16 @@ struct FavorDetailsSheet: View {
     
     @State private var isAuthorProfileSheetPresented = false
     @State private var isHelperProfileSheetPresented = false
+    
+    @State private var value: Double = 0.0
+    @State private var clickOnGoing: Bool = false
         
     // The UI
     var body: some View {
         // The GeometryReader is used to achieve a top alignment for the UI
         GeometryReader { _ in
             // The ScrollView is needed to be able to scroll through the UI
-             List {
+            List {
                 Section {
                     HStack {
                         // The Favor's Title
@@ -66,8 +71,8 @@ struct FavorDetailsSheet: View {
                 .listRowBackground(Color.clear)
                  
                  // The User who accepted it
-                 if favor.helper != nil {
-                     Section(
+                if favor.helper != nil {
+                    Section(
                         content: {
                             HStack(spacing: 5) {
                                 ProfileIconView(username: favor.helper?.$nameSurname ?? .constant("Null"), color: favor.helper?.$profilePictureColor ?? .constant("blue"), size: .small)
@@ -97,8 +102,8 @@ struct FavorDetailsSheet: View {
                         header: {
                             Text("Accettato da")
                         }
-                     )
-                 }
+                    )
+                }
                  
                 // The Favor's Description
                 Section(
@@ -109,6 +114,25 @@ struct FavorDetailsSheet: View {
                         Text("DESCRIZIONE")
                     }
                 )
+                 
+                if favor.review != nil && favor.author.id != user.id || favor.author.id == user.id && favor.status == .completed {
+                    Section(
+                        content: {
+                            StarsView(value: $value, isInDetailsSheet: true, clickOnGoing: favor.review != nil && favor.author.id != user.id ? .constant(true) : $clickOnGoing)
+                                .onChange(of: value) { _, _ in
+                                    favor.review = value
+                                }
+                                .onAppear {
+                                    if favor.review != nil && favor.author.id != user.id {
+                                        value = favor.review!
+                                    }
+                                }
+                        },
+                        header: {
+                            Text("Recensione")
+                        }
+                    )
+                }
                 
                 Section(
                     content: {
@@ -287,7 +311,7 @@ struct FavorDetailsSheet: View {
         .presentationDragIndicator(.visible)
         .presentationDetents([.medium, .large])
         .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
-            ProfileView(database: database, selectedFavor: $selectedFavor, user: $favor.author)
+            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author)
         })
         /*.sheet(isPresented: $isHelperProfileSheetPresented, content: {
             ProfileView(database: database, selectedFavor: $selectedFavor, user: favor.$helper ?? nil)
