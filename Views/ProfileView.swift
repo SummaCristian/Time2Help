@@ -4,6 +4,11 @@ import MapKit
 // This file contains the UI for the Profile screen.
 
 struct ProfileView: View {
+    
+    @Environment(\.openURL) private var openURL
+    
+    @ObservedObject var viewModel: MapViewModel
+    
     // The Database, where the Favors are stored
     @ObservedObject var database: Database
     
@@ -33,6 +38,8 @@ struct ProfileView: View {
     
     @State private var errorNameSurnameEmpty: Bool = false
     
+    @State private var averageReviews: Double = 0.0
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -61,18 +68,17 @@ struct ProfileView: View {
                         }
                         
                         if isEditable {
-                            Button {
+                            HStack(spacing: 8) {
+                                Image(systemName: "pencil")
+                                Text("Modifica")
+                            }
+                            .font(.body.bold())
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 15)
+                            .frame(maxWidth: .infinity)
+                            .background(selectedColor.toColor()!, in: .capsule)
+                            .onTapGesture {
                                 isModifySheetPresented = true
-                            } label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "pencil")
-                                    Text("Modifica")
-                                }
-                                .font(.body.bold())
-                                .foregroundStyle(.white)
-                                .padding(.vertical, 15)
-                                .frame(maxWidth: .infinity)
-                                .background(selectedColor.toColor()!, in: .capsule)
                             }
                         }
                     }
@@ -80,6 +86,27 @@ struct ProfileView: View {
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
+                
+                // Average of reviews
+                Section(
+                    content: {
+                        if (database.favors.filter({ $0.helper?.id == user.id }).count) == 0 {
+                            Text("Nessuna recensione ricevuta ...")
+                        } else {
+//                            TestStarsView(value: .constant(averageReviews), font: .title2, showNumber: true, clickOnGoing: .constant(true))
+                            StarsView(value: .constant(averageReviews), isInDetailsSheet: false, clickOnGoing: .constant(true))
+                        }
+                    },
+                    header: {
+                        Text("Media delle recensione")
+                    }
+                )
+                .onAppear {
+                    let userFavors = database.favors.filter({ $0.helper?.id == user.id }).compactMap({ $0.review })
+                    if userFavors.count != 0 {
+                        averageReviews = userFavors.reduce(0, +) / Double(userFavors.count)
+                    }
+                }
                 
                 // Rewards Section
                 Section(
@@ -98,7 +125,7 @@ struct ProfileView: View {
                 Section(
                     content: {
                         // Favors
-                        if (database.favors.filter{$0.helper?.id == user.id}.count) == 0 {
+                        if (database.favors.filter({ $0.helper?.id == user.id }).count) == 0 {
                             Text("Nessun Favore accettato ...")
                         } else {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2)) {
@@ -125,7 +152,7 @@ struct ProfileView: View {
                 Section(
                     content: {
                         // Favors
-                        if (database.favors.filter{ $0.author.id == user.id }.count) == 0 {
+                        if (database.favors.filter({ $0.author.id == user.id }).count) == 0 {
                             Text("Nessun Favore richiesto ...")
                         } else {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2)) {
@@ -149,12 +176,26 @@ struct ProfileView: View {
                 )
             }
             .navigationTitle("Profilo")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        let settingsString = UIApplication.openSettingsURLString
+                        if let settingsURL = URL(string: settingsString) {
+                            openURL(settingsURL)
+                        }
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .font(.title3.bold())
+                            .foregroundStyle(.blue)
+                    }
+                }
+            }
         }
         .sheet(isPresented: $isExportSheetPresented, onDismiss: {}) {
             ExportView()
         }
         .sheet(isPresented: $isModifySheetPresented, content: {
-            ModifyProfileView(isModifySheetPresented: $isModifySheetPresented, user: $user, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
+            ModifyProfileView(viewModel: viewModel, isModifySheetPresented: $isModifySheetPresented, user: $user, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
                 .interactiveDismissDisabled()
         })
         .onAppear {
