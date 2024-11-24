@@ -47,11 +47,20 @@ struct MapView: View {
             if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
                 // The User's position
                 UserAnnotation()
+                    .mapOverlayLevel(level: .aboveRoads)
             }
             
             // All the Favors
             ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood})) { favor in
                 if isCategorySelected(category: favor.category) {
+                    
+                    if favor.type == .publicFavor {
+                        MapCircle(center: favor.location, radius: 35)
+                            .foregroundStyle(favor.category.color.opacity(0.2))
+                            .stroke(favor.category.color, lineWidth: 3)
+                            .mapOverlayLevel(level: .aboveRoads)
+                    }
+                    
                     Annotation(
                         coordinate: favor.location,
                         content: {
@@ -116,27 +125,7 @@ struct MapView: View {
         .sensoryFeedback(.impact, trigger: selection)
         .overlay {
             VStack {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        ForEach(FavorCategory.allCases) { category in
-                            CategoryCapsule(selectedCategories: $selectedCategories, category: category)
-                                .onTapGesture {
-                                    if category == .all {
-                                        // The "Tutte" capsule
-                                        selectCategory(category: .all)
-                                    } else {
-                                        // The real categories
-                                        if selectedCategories.contains(category) {
-                                            deselectCategory(category: category)
-                                        } else {
-                                            selectCategory(category: category)
-                                        }
-                                    }
-                                }
-                        }
-                    }
-                    .padding(.horizontal)
-                }
+                CategoryFiltersView(selectedCategories: $selectedCategories)
                 
                 Spacer()
             }
@@ -160,42 +149,5 @@ struct MapView: View {
     
     func isCategorySelected(category: FavorCategory) -> Bool {
         return (selectedCategories.contains(.all) || selectedCategories.contains(category))
-    }
-    
-    func selectCategory(category: FavorCategory) {
-        if category != .all {
-            if selectedCategories.contains(.all) {
-                // Selects onlt the clicked category
-                selectedCategories.removeAll()
-            }
-            if !selectedCategories.contains(category) {
-                if selectedCategories.count == FavorCategory.allCases.count - 2 {
-                    // All Categories have been selected, switch to .all
-                    selectedCategories.removeAll()
-                    selectedCategories.append(.all)
-                } else {
-                    // Adds the current category to the selection
-                    selectedCategories.append(category)
-                }
-            }
-        } else {
-            selectedCategories.removeAll()
-            selectedCategories.append(.all)
-        }
-    }
-    
-    func deselectCategory(category: FavorCategory) {
-        if category != .all {
-            if selectedCategories.contains(category) {
-                if selectedCategories.count > 1 {
-                    // There are still selected categories excluding this one
-                    selectedCategories.removeAll {$0 == category}
-                } else {
-                    // This one was the only one selected, returning to .all
-                    selectedCategories.removeAll()
-                    selectedCategories.append(.all)
-                }
-            }
-        }
     }
 }
