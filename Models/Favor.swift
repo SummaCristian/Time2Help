@@ -11,6 +11,7 @@ class Favor: Identifiable, ObservableObject {
     @Published var description: String
     @Published var author: User
     @Published var neighbourhood: String
+    @Published var type: FavorType
     
     // Secondary details
     @Published var startingDate: Date
@@ -22,7 +23,7 @@ class Favor: Identifiable, ObservableObject {
     @Published var review: Double?
     @Published var status: FavorStatus
     
-    @Published var helper: User?
+    @Published var helpers: [User] = []
     
     // Cosmetic details
     @Published var icon: String
@@ -45,6 +46,7 @@ class Favor: Identifiable, ObservableObject {
         self.title = ""
         self.description = ""
         self.neighbourhood = ""
+        self.type = .privateFavor
         self.startingDate = Date()
         self.endingDate = Date().addingTimeInterval(3600)
         self.isAllDay = false
@@ -53,17 +55,17 @@ class Favor: Identifiable, ObservableObject {
         self.isHeavyTask = false
         self.status = .notAcceptedYet
         self.category = .generic
-        
         self.color = FavorCategory.generic.color
         self.icon = FavorCategory.generic.icon
     }
     
     // Favor for test
-    init(
+    init (
         title: String,
         description: String,
         author: User,
         neighbourhood: String,
+        type: FavorType,
         startingDate: Date,
         endingDate: Date,
         isAllDay: Bool,
@@ -79,6 +81,7 @@ class Favor: Identifiable, ObservableObject {
         self.description = description
         self.author = author
         self.neighbourhood = neighbourhood
+        self.type = type
         self.startingDate = startingDate
         self.endingDate = endingDate
         self.isAllDay = isAllDay
@@ -90,5 +93,9 @@ class Favor: Identifiable, ObservableObject {
         
         self.color = category.color
         self.icon = category.icon
+    }
+    
+    func canBeAccepted(userID: UUID) -> Bool {
+        return (userID != author.id && ((type == .privateFavor && helpers.isEmpty) || (type == .publicFavor && !helpers.contains(where: { $0.id == userID }))))
     }
 }
