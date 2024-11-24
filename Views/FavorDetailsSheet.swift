@@ -21,7 +21,12 @@ struct FavorDetailsSheet: View {
     
     @State private var value: Double = 0.0
     @State private var clickOnGoing: Bool = false
-        
+    
+    @State private var isCarNeededAlertShowing = false
+    @State private var isHeavyTaskAlertShowing = false
+    
+    @State private var isHelpersMenuExpanded = false
+    
     // The UI
     var body: some View {
         // The GeometryReader is used to achieve a top alignment for the UI
@@ -29,9 +34,11 @@ struct FavorDetailsSheet: View {
             // The ScrollView is needed to be able to scroll through the UI
             List {
                 Section {
-                    HStack {
+                    HStack {                        
                         // The Favor's Title
                         VStack(alignment: .leading, spacing: 10) {
+                            Spacer().frame(height: 15)
+                            
                             Text(favor.title)
                                 .font(.title)
                                 .fontWeight(.black)
@@ -58,6 +65,15 @@ struct FavorDetailsSheet: View {
                             .onTapGesture {
                                 isAuthorProfileSheetPresented = true
                             }
+                            
+                            HStack {
+                                Image(systemName: favor.type.icon)
+                                    .font(.footnote)
+                                
+                                Text(favor.type.string)
+                                    .font(.footnote)
+                            }
+                            .offset(x: 10)
                         }
                         
                         Spacer()
@@ -69,33 +85,72 @@ struct FavorDetailsSheet: View {
                     .cornerRadius(10)
                 }
                 .listRowBackground(Color.clear)
-                 
-                 // The User who accepted it
-                if favor.helper != nil {
+                
+                // The User who accepted it
+                if !favor.helpers.isEmpty {
                     Section(
                         content: {
-                            HStack(spacing: 5) {
-                                ProfileIconView(username: favor.helper?.$nameSurname ?? .constant("Null"), color: favor.helper?.$profilePictureColor ?? .constant("blue"), size: .small)
-                                
-                                // The Favor's Author's Name
-                                Text(favor.helper?.nameSurname ?? "Null")
-                                    .fontWidth(.compressed)
-                                    .font(.system(size: 15))
-                                    .fontWeight(.bold)
-                                    .textCase(.uppercase)
-                            }
-                            .padding(.vertical, 7)
-                            .padding(.leading, 8)
-                            .padding(.trailing, 11)
-                            .foregroundStyle(.primary)
-                            .background(
-                                Capsule()
-                                    .foregroundStyle(favor.helper!.profilePictureColor.toColor()!.opacity(0.2))
-                            )
-                            .hoverEffect(.lift)
-                            .onTapGesture {
-                                if favor.helper?.id != user.id {
-                                    isHelperProfileSheetPresented = true
+                            if favor.helpers.count > 1 {
+                                DisclosureGroup(String(favor.helpers.count) + " utenti", isExpanded: $isHelpersMenuExpanded) {
+                                    ForEach(favor.helpers) { helper in
+                                        HStack(spacing: 5) {
+                                            ProfileIconView(
+                                                username: helper.$nameSurname, 
+                                                color: helper.$profilePictureColor, 
+                                                size: .small
+                                            )
+                                            
+                                            // The Favor's Helper's Name
+                                            Text(helper.nameSurname)
+                                                .fontWidth(.compressed)
+                                                .font(.system(size: 15))
+                                                .fontWeight(.bold)
+                                                .textCase(.uppercase)
+                                        }
+                                        .padding(.vertical, 7)
+                                        .padding(.leading, 8)
+                                        .padding(.trailing, 11)
+                                        .foregroundStyle(.primary)
+                                        .background(
+                                            Capsule()
+                                                .foregroundStyle(helper.profilePictureColor.toColor()!.opacity(0.2))
+                                        )
+                                        .hoverEffect(.lift)
+                                        .onTapGesture {
+                                            if helper.id != user.id {
+                                                isHelperProfileSheetPresented = true
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                HStack(spacing: 5) {
+                                    ProfileIconView(
+                                        username: favor.helpers.first!.$nameSurname, 
+                                        color: favor.helpers.first!.$profilePictureColor, 
+                                        size: .small
+                                    )
+                                    
+                                    // The Favor's Helper's Name
+                                    Text(favor.helpers.first!.nameSurname)
+                                        .fontWidth(.compressed)
+                                        .font(.system(size: 15))
+                                        .fontWeight(.bold)
+                                        .textCase(.uppercase)
+                                }
+                                .padding(.vertical, 7)
+                                .padding(.leading, 8)
+                                .padding(.trailing, 11)
+                                .foregroundStyle(.primary)
+                                .background(
+                                    Capsule()
+                                        .foregroundStyle(favor.helpers.first!.profilePictureColor.toColor()!.opacity(0.2))
+                                )
+                                .hoverEffect(.lift)
+                                .onTapGesture {
+                                    if favor.helpers.first!.id != user.id {
+                                        isHelperProfileSheetPresented = true
+                                    }
                                 }
                             }
                         },
@@ -104,7 +159,7 @@ struct FavorDetailsSheet: View {
                         }
                     )
                 }
-                 
+                
                 // The Favor's Description
                 Section(
                     content: {
@@ -114,19 +169,23 @@ struct FavorDetailsSheet: View {
                         Text("DESCRIZIONE")
                     }
                 )
-                 
+                
                 if favor.review != nil && favor.author.id != user.id || favor.author.id == user.id && favor.status == .completed {
                     Section(
                         content: {
-                            StarsView(value: $value, isInDetailsSheet: true, clickOnGoing: favor.review != nil && favor.author.id != user.id ? .constant(true) : $clickOnGoing)
-                                .onChange(of: value) { _, _ in
-                                    favor.review = value
+                            StarsView(
+                                value: $value, 
+                                isInDetailsSheet: true, 
+                                clickOnGoing: favor.review != nil && favor.author.id != user.id ? .constant(true) : $clickOnGoing
+                            )
+                            .onAppear {
+                                if favor.review != nil && favor.author.id != user.id {
+                                    value = favor.review!
                                 }
-                                .onAppear {
-                                    if favor.review != nil && favor.author.id != user.id {
-                                        value = favor.review!
-                                    }
-                                }
+                            }
+                            .onChange(of: value) {_, _ in
+                                favor.review = value
+                            }
                         },
                         header: {
                             Text("Recensione")
@@ -224,6 +283,9 @@ struct FavorDetailsSheet: View {
                                     .padding(.horizontal, 12)
                                     .background(Color(.systemRed).gradient)
                                     .cornerRadius(10)
+                                    .onTapGesture {
+                                        isCarNeededAlertShowing = true
+                                    }
                                 }
                                 
                                 // Is Heavy Task
@@ -241,6 +303,9 @@ struct FavorDetailsSheet: View {
                                     .padding(.horizontal, 12)
                                     .background(Color(.systemGreen).gradient)
                                     .cornerRadius(10)
+                                    .onTapGesture {
+                                        isHeavyTaskAlertShowing = true
+                                    }
                                 }
                             }
                         },
@@ -279,7 +344,7 @@ struct FavorDetailsSheet: View {
             // The Accept Favor Button
             // it is outside the ScrollView, because it hovers on top of the rest of the UI.
             // This allows to have it always in the same spot, always accessible
-            if favor.helper == nil && favor.author.id != user.id {
+            if favor.canBeAccepted(userID: user.id){
                 VStack{
                     Spacer()
                     
@@ -288,7 +353,7 @@ struct FavorDetailsSheet: View {
                         
                         Button(action: {
                             // Accepting the Favor
-                            favor.helper = user
+                            favor.helpers.append(user)
                             favor.status = .accepted
                             
                             dismiss()
@@ -310,12 +375,33 @@ struct FavorDetailsSheet: View {
         }
         .presentationDragIndicator(.visible)
         .presentationDetents([.medium, .large])
+        .alert(
+            "Auto Necessaria", 
+            isPresented: $isCarNeededAlertShowing, 
+            actions: {
+                Button("Chiudi", role: .cancel, action: {})
+            }, 
+            message: {
+                Text("L'utente che ha richiesto questo Favore ha segnalato la necessità di possedere un'auto e di essere abilitati alla guida.\nTime2Help ricorda l'importanza di mettersi alla guida solo se si è in condizioni di guidare, ovvero non in stato di ebbrezza e/o sotto effetto di sostanze stupefacenti, nonchè l'obbligo di rispettare il Codice della Strada.")
+            })
+        .alert(
+            "Lavoro Faticoso", 
+            isPresented: $isHeavyTaskAlertShowing, 
+            actions: {
+                Button("Chiudi", role: .cancel, action: {})
+            }, 
+            message: {
+                Text("L'utente che ha richiesto questo Favore ha segnalato che si tratta di un lavoro fisico potenzialmente pesante.\nAccetta questo Favore solo se ritieni di poterlo fare.\nTime2Help non è responsabile per alcun danno diretto o indiretto causato dall'esecuzione di un Favore.")
+            })
         .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
             ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author)
         })
         /*.sheet(isPresented: $isHelperProfileSheetPresented, content: {
-            ProfileView(database: database, selectedFavor: $selectedFavor, user: favor.$helper ?? nil)
-        })*/
+         ProfileView(database: database, selectedFavor: $selectedFavor, user: favor.$helper ?? nil)
+         })*/
+        .sensoryFeedback(.impact, trigger: isHelpersMenuExpanded)
+        .sensoryFeedback(.impact, trigger: isHeavyTaskAlertShowing)
+        .sensoryFeedback(.impact, trigger: isCarNeededAlertShowing)
     }
 }
 
