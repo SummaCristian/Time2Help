@@ -86,10 +86,38 @@ struct NewFavorSheet: View {
                             Text("TITOLO E DESCRIZIONE")
                         })
                     
+                    // Private vs Public selector
+                    Section(
+                        content: {
+                            Picker(
+                                selection: $newFavor.type, 
+                                content: {
+                                    ForEach(FavorType.allCases) { type in
+                                        Label(type.string, systemImage: type.icon)
+                                            .tag(type)
+                                    }
+                                }, 
+                                label: {
+                                    //Text("Tipo di Favore")
+                                })
+                            .pickerStyle(.inline)
+                            .listItemTint(newFavor.color)
+                            
+                        },
+                        header: {
+                            Text("Tipo di Favore")
+                        }
+                    )
+                    
                     // Category
                     Section(
                         content: {
-                            Picker(selection: $newFavor.category, label: Text("Categoria")) {
+                            Picker(
+                                selection: $newFavor.category, 
+                                label: 
+                                    Text(newFavor.category.description)
+                                        .font(.subheadline)
+                            ) {
                                 ForEach(FavorCategory.allCases.filter({$0 != .all})) { category in
                                     Label(category.name, systemImage: category.icon).tag(category)
                                 }
@@ -225,91 +253,91 @@ struct NewFavorSheet: View {
                     
                     // Reward
                     /*
-                    Section(
-                        content: {
-                            VStack(spacing: 20) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "dollarsign.circle.fill")
-                                        .foregroundStyle(Color(.white))
-                                        .frame(width: 30, height: 30)
-                                        .background {
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .foregroundStyle(Color(.systemYellow))
-                                        }
-                                    
-                                    Text("Ricompensa")
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "info.circle")
-                                        .onTapGesture {
-                                            isRewardInfoDialogPresented = true
-                                        }
-                                }
-                                
-                                HStack(spacing: 12) {
-                                    ZStack {
-                                        Circle()
-                                            .frame(width: 50, height: 50)
-                                            .foregroundStyle(newFavor.reward > 0 ? Color(.systemYellow) : Color(.systemGray2))
-                                            .opacity(0.6)
-                                        
-                                        Image(systemName: "minus")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .foregroundStyle(newFavor.reward > 0 ? .white : Color(.systemGray))
-                                            .frame(width: 20, height: 20)
-                                            .bold()
-                                    }
-                                    .hoverEffect(.lift)
-                                    .onTapGesture {
-                                        if newFavor.reward > 0 {
-                                            lastRewardValue = newFavor.reward
-                                            withAnimation {
-                                                newFavor.reward -= 1
-                                            }
-                                        }
-                                    }
-                                    
-                                    ZStack {
-                                        Circle()
-                                            .frame(width: 120, height: 120)
-                                            .foregroundStyle(Color(.systemYellow))
-                                            .opacity(0.3)
-                                        
-                                        CreditNumberView(favor: newFavor)
-                                            .contentTransition(.numericText(countsDown: newFavor.reward > lastRewardValue))
-                                            .sensoryFeedback(.impact, trigger: newFavor.reward)
-                                    }
-                                    
-                                    ZStack {
-                                        Circle()
-                                            .frame(width: 50, height: 50)
-                                            .foregroundStyle(Color(.systemYellow))
-                                            .opacity(0.6)
-                                        
-                                        Image(systemName: "plus")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .foregroundStyle(.white)
-                                            .frame(width: 20, height: 20)
-                                            .bold()
-                                    }
-                                    .hoverEffect(.lift)
-                                    .onTapGesture {
-                                        lastRewardValue = newFavor.reward
-                                        withAnimation {
-                                            newFavor.reward += 1
-                                        }
-                                    }
-                                }
-                            }
-                            .padding(.vertical, 4)
-                        },
-                        header: {
-                            Text("RICOMPENSA")
-                        }
-                    )*/
+                     Section(
+                     content: {
+                     VStack(spacing: 20) {
+                     HStack(spacing: 8) {
+                     Image(systemName: "dollarsign.circle.fill")
+                     .foregroundStyle(Color(.white))
+                     .frame(width: 30, height: 30)
+                     .background {
+                     RoundedRectangle(cornerRadius: 5)
+                     .foregroundStyle(Color(.systemYellow))
+                     }
+                     
+                     Text("Ricompensa")
+                     
+                     Spacer()
+                     
+                     Image(systemName: "info.circle")
+                     .onTapGesture {
+                     isRewardInfoDialogPresented = true
+                     }
+                     }
+                     
+                     HStack(spacing: 12) {
+                     ZStack {
+                     Circle()
+                     .frame(width: 50, height: 50)
+                     .foregroundStyle(newFavor.reward > 0 ? Color(.systemYellow) : Color(.systemGray2))
+                     .opacity(0.6)
+                     
+                     Image(systemName: "minus")
+                     .resizable()
+                     .scaledToFit()
+                     .foregroundStyle(newFavor.reward > 0 ? .white : Color(.systemGray))
+                     .frame(width: 20, height: 20)
+                     .bold()
+                     }
+                     .hoverEffect(.lift)
+                     .onTapGesture {
+                     if newFavor.reward > 0 {
+                     lastRewardValue = newFavor.reward
+                     withAnimation {
+                     newFavor.reward -= 1
+                     }
+                     }
+                     }
+                     
+                     ZStack {
+                     Circle()
+                     .frame(width: 120, height: 120)
+                     .foregroundStyle(Color(.systemYellow))
+                     .opacity(0.3)
+                     
+                     CreditNumberView(favor: newFavor)
+                     .contentTransition(.numericText(countsDown: newFavor.reward > lastRewardValue))
+                     .sensoryFeedback(.impact, trigger: newFavor.reward)
+                     }
+                     
+                     ZStack {
+                     Circle()
+                     .frame(width: 50, height: 50)
+                     .foregroundStyle(Color(.systemYellow))
+                     .opacity(0.6)
+                     
+                     Image(systemName: "plus")
+                     .resizable()
+                     .scaledToFit()
+                     .foregroundStyle(.white)
+                     .frame(width: 20, height: 20)
+                     .bold()
+                     }
+                     .hoverEffect(.lift)
+                     .onTapGesture {
+                     lastRewardValue = newFavor.reward
+                     withAnimation {
+                     newFavor.reward += 1
+                     }
+                     }
+                     }
+                     }
+                     .padding(.vertical, 4)
+                     },
+                     header: {
+                     Text("RICOMPENSA")
+                     }
+                     )*/
                     
                     Text("") // To leave space for popup button
                         .frame(height: 0)
@@ -317,9 +345,14 @@ struct NewFavorSheet: View {
                         .safeAreaPadding(.bottom, 34)
                 }
                 .scrollDismissesKeyboard(.immediately)
-                .onAppear() {
-                    // Retrieves the User's current Location and sets it as the Favor's location
-                    newFavor.location = viewModel.region.center
+                .onAppear {
+                    if let location = viewModel.locationManager.location?.coordinate {
+                        newFavor.location = location
+                    } else {
+                        // Handle the case where the location is unavailable
+                        print("Location not available yet.")
+                        // Optionally show an alert to the user
+                    }
                 }
                 .onDisappear() {
                     isConfirmationDialogPresented = true
@@ -420,5 +453,11 @@ struct NewFavorSheet: View {
                 }
             })
         }
+        .sensoryFeedback(.selection, trigger: newFavor.category)
+        .sensoryFeedback(.selection, trigger: newFavor.type)
     }
+}
+
+#Preview {    
+    NewFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), newFavor: Favor(author: User(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue"))))
 }
