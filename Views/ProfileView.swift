@@ -68,17 +68,18 @@ struct ProfileView: View {
                         }
                         
                         if isEditable {
-                            HStack(spacing: 8) {
-                                Image(systemName: "pencil")
-                                Text("Modifica")
-                            }
-                            .font(.body.bold())
-                            .foregroundStyle(.white)
-                            .padding(.vertical, 15)
-                            .frame(maxWidth: .infinity)
-                            .background(selectedColor.toColor()!, in: .capsule)
-                            .onTapGesture {
+                            Button {
                                 isModifySheetPresented = true
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "pencil")
+                                    Text("Modifica")
+                                }
+                                .font(.body.bold())
+                                .foregroundStyle(.white)
+                                .padding(.vertical, 15)
+                                .frame(maxWidth: .infinity)
+                                .background(selectedColor.toColor()!, in: .capsule)
                             }
                         }
                     }
@@ -90,19 +91,18 @@ struct ProfileView: View {
                 // Average of reviews
                 Section(
                     content: {
-                        if (database.favors.filter({ $0.helper?.id == user.id }).count) == 0 {
-                            Text("Nessuna recensione ricevuta ...")
+                        if (database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) }).count == 0) {
+                            Text("Nessuna recensione ricevuta...")
                         } else {
-//                            TestStarsView(value: .constant(averageReviews), font: .title2, showNumber: true, clickOnGoing: .constant(true))
                             StarsView(value: .constant(averageReviews), isInDetailsSheet: false, clickOnGoing: .constant(true))
                         }
                     },
                     header: {
-                        Text("Media delle recensione")
+                        Text("Media delle recensioni")
                     }
                 )
                 .onAppear {
-                    let userFavors = database.favors.filter({ $0.helper?.id == user.id }).compactMap({ $0.review })
+                    let userFavors = database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) }).compactMap({ $0.review })
                     if userFavors.count != 0 {
                         averageReviews = userFavors.reduce(0, +) / Double(userFavors.count)
                     }
@@ -125,11 +125,11 @@ struct ProfileView: View {
                 Section(
                     content: {
                         // Favors
-                        if (database.favors.filter({ $0.helper?.id == user.id }).count) == 0 {
+                        if (database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) }).count) == 0 {
                             Text("Nessun Favore accettato ...")
                         } else {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2)) {
-                                ForEach(database.favors.filter({ $0.helper?.id == user.id })) { favor in
+                                ForEach(database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) })) { favor in
                                     FavorBoxView(favor: favor)
                                         .onTapGesture {
                                             selectedFavor = favor
