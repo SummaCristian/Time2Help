@@ -20,11 +20,11 @@ struct StrokeTextModifier: ViewModifier {
     }
     
     func outline(context: Content) -> some View {
-        Canvas { context, size in
+        Canvas {context, size in
             context.addFilter(.alphaThreshold(min: 0.01))
             context.drawLayer { layer in
                 if let text = context.resolveSymbol(id: id) {
-                    layer.draw(text, at: .init(x: size.width/2, y: size.height/2))
+                    layer.draw(text, at: .init(x: size.width / 2, y: size.height / 2))
                 }
             }
         } symbols: {

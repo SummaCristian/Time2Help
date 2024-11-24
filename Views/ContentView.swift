@@ -4,13 +4,12 @@ import MapKit
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    // Connection to the ViewModel for Data and Location Permissions
     @ObservedObject var viewModel: MapViewModel
     
     @Binding var nameSurname: String
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
-    
-    // Connection to the ViewModel for Data and Location Permissions
     
     // Connection to the Database that stores the Favors
     @StateObject private var database = Database.shared
@@ -45,7 +44,6 @@ struct ContentView: View {
                         
                         // Tab 1: New Favor (opens sheet)
                         Text("Nuovo Favore") // A placeholder just for the tab label
-                        //NewFavorSheet(isPresented: $isSheetPresented, database: database, mapViewModel: viewModel)
                             .tabItem {
                                 Label("Nuovo Favore", systemImage: "plus.rectangle")
                             }

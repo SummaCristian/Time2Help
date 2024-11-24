@@ -23,8 +23,8 @@ struct LocationSelector: View {
                     bounds: MapCameraBounds(minimumDistance: 500, maximumDistance: .infinity),
                     interactionModes: .all
                 ) {
-                    // The User's Location
                     if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
+                        // The User's Location
                         UserAnnotation()
                     }
                     
@@ -62,23 +62,23 @@ struct LocationSelector: View {
             
             // The Title bar
             VStack {
-//                VStack {
-                    // Some space at the top
-//                    Spacer()
-//                        .frame(height: 10)
+                //                VStack {
+                // Some space at the top
+                //                    Spacer()
+                //                        .frame(height: 10)
+                
+                // The Text
+                HStack(spacing: 8) {
+                    Text("Clicca sulla mappa per selezionare un luogo")
+                        .font(.headline)
                     
-                    // The Text
-                    HStack(spacing: 8) {
-                        Text("Clicca sulla mappa per selezionare un luogo")
-                            .font(.headline)
-                        
-                        Spacer()
-                        
-                        FavorMarker(favor: newFavor, isSelected: .constant(false), isInFavorSheet: true)
-                    }
-                    .padding(.vertical, 25)
-                    .padding(.horizontal, 20)
-//                }
+                    Spacer()
+                    
+                    FavorMarker(favor: newFavor, isSelected: .constant(false), isInFavorSheet: true)
+                }
+                .padding(.vertical, 25)
+                .padding(.horizontal, 20)
+                //                }
                 .background(.ultraThinMaterial)
                 
                 Spacer()
