@@ -53,6 +53,20 @@ struct FavorBoxView: View {
             }
             
             Spacer()
+            
+            // Author and Helper(s)
+            HStack(alignment: .bottom) {
+                // Author
+                ProfileIconView(username: favor.author.$nameSurname, color: favor.author.$profilePictureColor, size: .small)
+                    .scaleEffect(0.8)
+                
+                Spacer()
+                
+                // Helper(s)
+                if !favor.helpers.isEmpty {
+                    MultiProfileIconView(config: .constant(.box), users: $favor.helpers)
+                }
+            }
         }
         .frame(width: 124, height: 164)
         .padding(16)
@@ -67,13 +81,14 @@ struct FavorBoxView: View {
         .clipShape(roundedCorners ? AnyShape(RoundedRectangle(cornerRadius: 25)) : AnyShape(.rect))
         .hoverEffect(.lift)
     }
+        
 }
 
 #Preview {
     ScrollView() {
         LazyVGrid(columns: [.init(.adaptive(minimum: 150), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
-                FavorBoxView(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: true, isHeavyTask: true, status: .completed, category: category))
+                FavorBoxView(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: true, isHeavyTask: true, status: .completed, category: category))
             }
         }
     }
