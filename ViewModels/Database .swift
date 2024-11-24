@@ -638,6 +638,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: mario,
                 neighbourhood: "Città Studi",
+                type: .publicFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -648,7 +649,8 @@ class Database: ObservableObject {
                 category: .generic
             )
         )
-        favors.last!.helper = giuseppe
+        favors.last!.helpers.append(giuseppe)
+        favors.last!.helpers.append(mario)
         
         favors.append(
             Favor(
@@ -656,6 +658,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: giuseppe,
                 neighbourhood: "Città Studi",
+                type: .privateFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -666,7 +669,7 @@ class Database: ObservableObject {
                 category: .babySitting
             )
         )
-        favors.last!.helper = mario
+        favors.last!.helpers.append(mario)
         
         favors.append(
             Favor(
@@ -674,6 +677,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: mario,
                 neighbourhood: "Città Studi",
+                type: .publicFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -685,12 +689,15 @@ class Database: ObservableObject {
             )
         )
         
+        favors.last!.helpers.append(giuseppe)
+        
         favors.append(
             Favor(
                 title: "Test4",
                 description: "This is a test",
                 author: mario,
                 neighbourhood: "Città Studi",
+                type: .privateFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -708,6 +715,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: mario,
                 neighbourhood: "Città Studi",
+                type: .publicFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -718,7 +726,9 @@ class Database: ObservableObject {
                 category: .manualJob
             )
         )
-        favors.last!.helper = grazia
+        favors.last!.helpers.append(grazia)
+        favors.last?.helpers.append(mario)
+        favors.last?.helpers.append(giuseppe)
         favors.last!.review = 0.0
         
         favors.append(
@@ -727,6 +737,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: giuseppe,
                 neighbourhood: "Città Studi",
+                type: .publicFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -738,12 +749,16 @@ class Database: ObservableObject {
             )
         )
         
+        favors.last!.helpers.append(giuseppe)
+        favors.last!.helpers.append(mario)
+        
         favors.append(
             Favor(
                 title: "Test7",
                 description: "This is a test",
                 author: grazia,
                 neighbourhood: "Città Studi",
+                type: .privateFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -761,6 +776,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: mario,
                 neighbourhood: "Città Studi",
+                type: .privateFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -771,7 +787,7 @@ class Database: ObservableObject {
                 category: .school
             )
         )
-        favors.last!.helper = giuseppe
+        favors.last!.helpers.append(giuseppe)
         favors.last!.review = 5.0
         
         favors.append(
@@ -780,6 +796,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: grazia,
                 neighbourhood: "Città Studi",
+                type: .privateFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -798,6 +815,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: giuseppe,
                 neighbourhood: "Città Studi",
+                type: .publicFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -808,7 +826,7 @@ class Database: ObservableObject {
                 category: .transport
             )
         )
-        favors.last!.helper = grazia
+        favors.last!.helpers.append(grazia)
         favors.last!.review = 3.0
         
         favors.append(
@@ -817,6 +835,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: giuseppe,
                 neighbourhood: "Città Studi",
+                type: .publicFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -828,12 +847,17 @@ class Database: ObservableObject {
             )
         )
         
+        favors.last!.helpers.append(giuseppe)
+        favors.last!.helpers.append(mario)
+        favors.last!.helpers.append(grazia)
+        
         favors.append(
             Favor(
                 title: "Test12",
                 description: "This is a test",
                 author: giuseppe,
                 neighbourhood: "Città Studi",
+                type: .publicFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -844,7 +868,7 @@ class Database: ObservableObject {
                 category: .weather
             )
         )
-        favors.last!.helper = mario
+        favors.last!.helpers.append(mario)
         favors.last!.review = 5.0
         
         favors.append(
@@ -853,6 +877,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: piera,
                 neighbourhood: "Bovisa",
+                type: .privateFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -870,6 +895,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: piera,
                 neighbourhood: "Bovisa",
+                type: .privateFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -880,7 +906,7 @@ class Database: ObservableObject {
                 category: .houseChores
             )
         )
-        favors.last!.helper = matilde
+        favors.last!.helpers.append(matilde)
         
         favors.append(
             Favor(
@@ -888,6 +914,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: matilde,
                 neighbourhood: "Bovisa",
+                type: .publicFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -898,14 +925,14 @@ class Database: ObservableObject {
                 category: .gardening
             )
         )
-        favors.last!.helper = piera
+        favors.last!.helpers.append(piera)
         
         // Accepts a few Favors (for testing)
         let user = users.first!
         var count = 0
         for favor in favors {
-            if count < 5 && favor.author.id != user.id && favor.helper == nil {
-                favor.helper = user
+            if count < 5 && favor.canBeAccepted(userID: user.id) {
+                favor.helpers.append(user)
                 if (count == 0) {
                     favor.status = .completed
                     favor.review = 4.0
@@ -930,6 +957,7 @@ class Database: ObservableObject {
                 description: "This is a test",
                 author: user,
                 neighbourhood: "Città Studi",
+                type: .publicFavor,
                 startingDate: .now,
                 endingDate: .now,
                 isAllDay: false,
@@ -940,6 +968,46 @@ class Database: ObservableObject {
                 category: .gardening
             )
         )
-        favors.last!.helper = piera
+        favors.last!.helpers.append(piera)
+        
+        favors.append(
+            Favor(
+                title: "Test17",
+                description: "This is a test",
+                author: user,
+                neighbourhood: "Città Studi",
+                type: .publicFavor,
+                startingDate: .now,
+                endingDate: .now,
+                isAllDay: false,
+                location: CLLocationCoordinate2D(latitude: 45.484795, longitude: 9.224675),
+                isCarNecessary: false,
+                isHeavyTask: true,
+                status: .completed,
+                category: .transport
+            )
+        )
+        
+        favors.append(
+            Favor(
+                title: "Test18",
+                description: "This is a test",
+                author: user,
+                neighbourhood: "Città Studi",
+                type: .publicFavor,
+                startingDate: .now,
+                endingDate: .now,
+                isAllDay: false,
+                location: CLLocationCoordinate2D(latitude: 45.482725, longitude: 9.234755),
+                isCarNecessary: false,
+                isHeavyTask: true,
+                status: .completed,
+                category: .houseChores
+            )
+        )
+        favors.last!.helpers.append(piera)
+        favors.last!.helpers.append(giuseppe)
+        favors.last!.helpers.append(mario)
+        favors.last!.helpers.append(grazia)
     }
 }
