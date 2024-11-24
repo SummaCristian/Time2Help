@@ -1,6 +1,31 @@
 import Foundation
 import SwiftUI
 
+enum FavorType: Identifiable, CaseIterable {
+    case privateFavor
+    case publicFavor
+    
+    var id : Self {self}
+    
+    var string: String {
+        switch self {
+        case .privateFavor:
+            return "Privato"
+        case .publicFavor:
+            return "Pubblico"
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .privateFavor:
+            return "person.fill"
+        case .publicFavor:
+            return "person.3.fill"
+        }
+    }
+}
+
 enum FavorColor: Identifiable, CaseIterable {
     case red
     case orange
@@ -153,6 +178,37 @@ enum FavorCategory: Identifiable, CaseIterable {
             return "Sport"
         case .weather:
             return "Meteo"
+        case .all:
+            return "Tutte"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .generic:
+            return "Una categoria adatta un po' a tutti i Favori, senza specificarne il tipo"
+        case .gardening:
+            return "Favori legati alla natura e al giardinaggio, come prendersi cura di un parco o di un giardino"
+        case .transport:
+            return "Favori legati a mezzi di trasporto, come chiedere un passaggio, o fare car-sharing"
+        case .petSitting:
+            return "Favori legati agli animali domestici, come fare dog-sitting o simili"
+        case .manualJob:
+            return "Svolgere dei lavori che possono richiedere delle skill un po' più specifiche, come riparare un lavandino o aggiustare qualcosa"
+        case .shopping:
+            return "Favori legati allo shopping, come aiutare a portare la spesa, oppure anche fare compagnia durante lo shopping"
+        case .school:
+            return "Favori legati all'istruzione, come aiutare nello studio, oppure svolgere attività di dopo-scuola"
+        case .babySitting:
+            return "Favori relativi ai bambini, come fare baby-sitting o simili"
+        case .houseChores:
+            return "Svolgere delle attività \"casalinghe\", come aiutare con il bucato, o in cucina"
+        case .trash:
+            return "Favori di aiuto alla comunità legati al tema della spazzatura o della raccolta differenziata"
+        case .sport:
+            return "Favori legati allo sport, come cercare persone per una partita di calcio, o cercare qualcuno che insegni a giocare"
+        case .weather:
+            return "Favori legati al meteo e agli imprevisti derivanti, ad esempio chiedere in prestito un ombrello o dei guanti"
         case .all:
             return "Tutte"
         }
