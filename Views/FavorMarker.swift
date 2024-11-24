@@ -17,6 +17,8 @@ struct FavorMarker: View {
     
     @State private var scale: Double = 0
     
+    @State private var iconConfig: MultiProfileIconConfig = .markerSmall
+    
     // The UI
     var body: some View {
         ZStack(alignment: moveTitle ? .center : .leading) {
@@ -76,11 +78,15 @@ struct FavorMarker: View {
                     .foregroundStyle(favor.color.gradient)
                     .opacity(moveTitle ? 1 : 0)
                 
-                if (!isInFavorSheet && favor.helper != nil) {
-                    ProfileIconView(username: favor.helper?.$nameSurname ?? .constant("Null"), color: favor.helper?.$profilePictureColor ?? .constant("blue"), size: .small)
-                        .scaleEffect(moveTitle ? 1 : 0.8)
-                        .offset(x: moveTitle ? 16 : 12, y: moveTitle ? -20 : 16)
+                if (!isInFavorSheet && !favor.helpers.isEmpty) {
+                    MultiProfileIconView(config: $iconConfig, users: $favor.helpers)
+                        .offset(x: moveTitle ? 4 : 0, y: moveTitle ? -40 : 0)                        
                 }
+            }
+        }
+        .onChange(of: moveTitle) { old, new in
+            withAnimation {
+                iconConfig = moveTitle ? .markerBig : .markerSmall
             }
         }
         .scaleEffect(scale)
@@ -97,7 +103,7 @@ struct FavorMarker: View {
         .contextMenu(menuItems: {
             if !isInFavorSheet {
                 // Only allows long pressing when used in a Map, and not inside sheets
-                if favor.helper == nil {
+                if favor.helpers.isEmpty {
                     Button("Accetta", systemImage: "checkmark") {
                         // TODO
                     }
@@ -135,7 +141,7 @@ struct FavorMarker: View {
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true)
                     .padding(.bottom, 50)
             }
         }
@@ -145,7 +151,7 @@ struct FavorMarker: View {
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true)
                     .padding(.bottom, 50)
 
             }
