@@ -93,7 +93,12 @@ struct NewFavorSheet: View {
                                 selection: $newFavor.type, 
                                 content: {
                                     ForEach(FavorType.allCases) { type in
-                                        Label(type.string, systemImage: type.icon)
+                                        VStack (alignment: .leading, spacing: 5) {
+                                            Label(type.string, systemImage: type.icon)
+                                            Text(type.description)
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                        }
                                             .tag(type)
                                     }
                                 }, 

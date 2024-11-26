@@ -24,6 +24,15 @@ enum FavorType: Identifiable, CaseIterable {
             return "person.3.fill"
         }
     }
+    
+    var description: String {
+        switch self {
+        case .privateFavor:
+            return "Soltanto un utente portà accettarlo, ideale per Favori personali"
+        case .publicFavor:
+            return "Più utenti potranno accettarlo, ideale per Favori a beneficio della comunità"
+        }
+    }
 }
 
 enum FavorColor: Identifiable, CaseIterable {
