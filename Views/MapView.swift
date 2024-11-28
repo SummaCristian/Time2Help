@@ -32,8 +32,8 @@ struct MapView: View {
     // The list of Map Elements from Apple's MapKit database
     @State private var selection: MapFeature? = nil
     
-    @State private var selectedCategories: [FavorCategory] = [.all]
-    
+    @StateObject private var filter: FilterModel = FilterModel()
+        
     // The UI
     var body: some View {
         // The Map, centered around ViewModel's region, and showing the User's position when possible
@@ -52,8 +52,9 @@ struct MapView: View {
             
             // All the Favors
             ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood})) { favor in
-                if isCategorySelected(category: favor.category) {
-                    
+                if (
+                    filter.isFavorIncluded(favor: favor)
+                ) {
                     if favor.type == .publicFavor {
                         MapCircle(center: favor.location, radius: 35)
                             .foregroundStyle(favor.category.color.opacity(0.2))
@@ -121,11 +122,11 @@ struct MapView: View {
         .safeAreaPadding(.top, 80)
         .safeAreaPadding(.leading, 5)
         .safeAreaPadding(.trailing, 10)
-        .sensoryFeedback(.selection, trigger: selectedCategories)
+        .sensoryFeedback(.selection, trigger: filter.selectedCategories)
         .sensoryFeedback(.impact, trigger: selection)
         .overlay {
             VStack {
-                CategoryFiltersView(selectedCategories: $selectedCategories)
+                CategoryFiltersView(filter: filter)
                 
                 Spacer()
             }
@@ -133,6 +134,10 @@ struct MapView: View {
         }
         .onAppear {
             verifyLocationStatus()
+            
+            // Set endingDate (for filtering) to 23.59 today
+            filter.endingDate = Calendar.current.startOfDay(for: filter.startingDate)
+            filter.endingDate = Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: filter.endingDate) ?? Calendar.current.startOfDay(for: filter.endingDate)
         }
         .onChange(of: viewModel.locationManager.authorizationStatus) {
             verifyLocationStatus()
@@ -145,9 +150,5 @@ struct MapView: View {
         } else {
             mapCameraPosition = MapCameraPosition.camera(.init(centerCoordinate: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location, distance: 3200))
         }
-    }
-    
-    func isCategorySelected(category: FavorCategory) -> Bool {
-        return (selectedCategories.contains(.all) || selectedCategories.contains(category))
     }
 }

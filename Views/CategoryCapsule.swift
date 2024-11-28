@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CategoryCapsule: View {
-    @Binding var selectedCategories: [FavorCategory]
+    @ObservedObject var filter: FilterModel
     
     @State var category: FavorCategory
     
@@ -19,16 +19,16 @@ struct CategoryCapsule: View {
         }
         .frame(height: 40)
         .padding(.horizontal, 12)
-        .background((isCategorySelected(category: category) ? category.color : .gray).gradient)
+        .background((isCategorySelected() ? category.color : .gray).gradient)
         .shadow(radius: 3)
         .clipShape(Capsule())
-        .scaleEffect(selectedCategories.contains(category) ? 1 : 0.95)
-        .animation(.bouncy, value: selectedCategories)
+        .scaleEffect(filter.selectedCategories.contains(category) ? 1 : 0.95)
+        .animation(.bouncy, value: filter.selectedCategories)
         .hoverEffect(.lift)
     }
     
-    func isCategorySelected(category: FavorCategory) -> Bool {
-        return (selectedCategories.contains(.all) || selectedCategories.contains(category))
+    func isCategorySelected() -> Bool {
+        return (filter.selectedCategories.contains(.all) || filter.selectedCategories.contains(category))
     }
 }
 
@@ -37,14 +37,14 @@ struct CategoryCapsule: View {
         // Selected Variants
         LazyVGrid(columns: [.init(.adaptive(minimum: 150), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
-                CategoryCapsule(selectedCategories: .constant([.all]), category: category)
+                CategoryCapsule(filter: FilterModel(), category: category)
             }
         }
         
         // Unselected Variants
         LazyVGrid(columns: [.init(.adaptive(minimum: 150), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
-                CategoryCapsule(selectedCategories: .constant([]), category: category)
+                CategoryCapsule(filter: FilterModel(selectedCategories: []), category: category)
             }
         }   
     }
