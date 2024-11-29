@@ -95,7 +95,7 @@ struct CategoryFiltersView: View {
                     .padding(.vertical, 8)
                 }
                 .padding(.horizontal)
-                .frame(minHeight: 500, alignment: .top)
+                .frame(alignment: .top)
             }
             .scrollDisabled(isAdvancedFiltersViewShowing)
         }
