@@ -21,25 +21,14 @@ struct CategoryFiltersView: View {
                     // Advanced Filters Button
                     ZStack {
                         if !isAdvancedFiltersViewShowing {
-                            Button {
-                                var transaction = Transaction(animation: .smooth)
-                                transaction.disablesAnimations = false
-                                
-                                withTransaction(transaction) {
-                                    moveToCenter = true
+                            Menu {
+                                Button ("Filtri avanzati", systemImage: "line.3.horizontal.decrease") {
+                                    openAdvancedFilters()
                                 }
                                 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    withTransaction(transaction) {
-                                        moveToCenter = false
-                                        isAdvancedFiltersViewShowing.toggle()
-                                    }
-                                }
                                 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    withTransaction(transaction) {
-                                        blurContainer = false
-                                    }
+                                Button("Reset", systemImage: "arrow.counterclockwise", role: .destructive) {
+                                    filter.reset()
                                 }
                                 
                             } label: {
@@ -47,6 +36,9 @@ struct CategoryFiltersView: View {
                                     .font(.system(size: 20, weight: .medium))
                                     .padding(10)
                                     .foregroundStyle(.primary)
+                            }
+                            primaryAction: {
+                                openAdvancedFilters()
                             }
                             .scaleEffect(moveToCenter ? 1.5 : 1)
                             .clipShape(Circle())
@@ -132,6 +124,30 @@ struct CategoryFiltersView: View {
             }
         }
     }
+    
+    
+    func openAdvancedFilters() {
+        var transaction = Transaction(animation: .smooth)
+        transaction.disablesAnimations = false
+        
+        withTransaction(transaction) {
+            moveToCenter = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withTransaction(transaction) {
+                moveToCenter = false
+                isAdvancedFiltersViewShowing.toggle()
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withTransaction(transaction) {
+                blurContainer = false
+            }
+        }
+    }
+    
 }
 
 #Preview {
