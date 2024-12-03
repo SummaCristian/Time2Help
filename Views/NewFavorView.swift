@@ -237,7 +237,7 @@ struct NewFavorSheet: View {
                                 ) {
                                     Annotation("", coordinate: newFavor.location, content: {
                                         // Only this Favor is shown in this mini-Map
-                                        FavorMarker(favor: newFavor, isSelected: .constant(true), isInFavorSheet: true)
+                                        FavorMarker(favor: newFavor, isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
                                     })
                                 }
                                 .frame(height: 200)
@@ -255,94 +255,6 @@ struct NewFavorSheet: View {
                             Text("POSIZIONE")
                         }
                     )
-                    
-                    // Reward
-                    /*
-                     Section(
-                     content: {
-                     VStack(spacing: 20) {
-                     HStack(spacing: 8) {
-                     Image(systemName: "dollarsign.circle.fill")
-                     .foregroundStyle(Color(.white))
-                     .frame(width: 30, height: 30)
-                     .background {
-                     RoundedRectangle(cornerRadius: 5)
-                     .foregroundStyle(Color(.systemYellow))
-                     }
-                     
-                     Text("Ricompensa")
-                     
-                     Spacer()
-                     
-                     Image(systemName: "info.circle")
-                     .onTapGesture {
-                     isRewardInfoDialogPresented = true
-                     }
-                     }
-                     
-                     HStack(spacing: 12) {
-                     ZStack {
-                     Circle()
-                     .frame(width: 50, height: 50)
-                     .foregroundStyle(newFavor.reward > 0 ? Color(.systemYellow) : Color(.systemGray2))
-                     .opacity(0.6)
-                     
-                     Image(systemName: "minus")
-                     .resizable()
-                     .scaledToFit()
-                     .foregroundStyle(newFavor.reward > 0 ? .white : Color(.systemGray))
-                     .frame(width: 20, height: 20)
-                     .bold()
-                     }
-                     .hoverEffect(.lift)
-                     .onTapGesture {
-                     if newFavor.reward > 0 {
-                     lastRewardValue = newFavor.reward
-                     withAnimation {
-                     newFavor.reward -= 1
-                     }
-                     }
-                     }
-                     
-                     ZStack {
-                     Circle()
-                     .frame(width: 120, height: 120)
-                     .foregroundStyle(Color(.systemYellow))
-                     .opacity(0.3)
-                     
-                     CreditNumberView(favor: newFavor)
-                     .contentTransition(.numericText(countsDown: newFavor.reward > lastRewardValue))
-                     .sensoryFeedback(.impact, trigger: newFavor.reward)
-                     }
-                     
-                     ZStack {
-                     Circle()
-                     .frame(width: 50, height: 50)
-                     .foregroundStyle(Color(.systemYellow))
-                     .opacity(0.6)
-                     
-                     Image(systemName: "plus")
-                     .resizable()
-                     .scaledToFit()
-                     .foregroundStyle(.white)
-                     .frame(width: 20, height: 20)
-                     .bold()
-                     }
-                     .hoverEffect(.lift)
-                     .onTapGesture {
-                     lastRewardValue = newFavor.reward
-                     withAnimation {
-                     newFavor.reward += 1
-                     }
-                     }
-                     }
-                     }
-                     .padding(.vertical, 4)
-                     },
-                     header: {
-                     Text("RICOMPENSA")
-                     }
-                     )*/
                     
                     Text("") // To leave space for popup button
                         .frame(height: 0)
