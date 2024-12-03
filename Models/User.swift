@@ -13,4 +13,6 @@ struct User: Identifiable {
     
     // Profile picture color
     @Binding var profilePictureColor: String
+    
+    var rewards: [Reward] = []
 }

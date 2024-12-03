@@ -619,11 +619,32 @@ class Database: ObservableObject {
     // Appends some pre-determined Users and Favors inside the Lists, allowing them to be seen in the Map (testing purposes)
     func initialize() {
         // Users
-        let mario = User(nameSurname: .constant("Mario Rossi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("red"))
-        let giuseppe = User(nameSurname: .constant("Giuseppe Verdi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("green"))
-        let grazia = User(nameSurname: .constant("Grazia Deledda"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("orange"))
+        var mario = User(nameSurname: .constant("Mario Rossi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("red"))
+        var giuseppe = User(nameSurname: .constant("Giuseppe Verdi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("green"))
+        var grazia = User(nameSurname: .constant("Grazia Deledda"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("orange"))
         let matilde = User(nameSurname: .constant("Matilde Di Leopardi"), neighbourhood: .constant("Bovisa"), profilePictureColor: .constant("pink"))
         let piera = User(nameSurname: .constant("Piera Capuana"), neighbourhood: .constant("Bovisa"), profilePictureColor: .constant("brown"))
+        
+        mario.rewards.append(.numberTen)
+        mario.rewards.append(.numberTwenty)
+        mario.rewards.append(.numberFifty)
+        mario.rewards.append(.numberHundred)
+        mario.rewards.append(.gardeningCategory)
+        mario.rewards.append(.trashCategory)
+        
+        giuseppe.rewards.append(.numberTen)
+        giuseppe.rewards.append(.numberTwenty)
+        giuseppe.rewards.append(.numberFifty)
+        giuseppe.rewards.append(.schoolCategory)
+        giuseppe.rewards.append(.jobCategory)
+        giuseppe.rewards.append(.housechoresCategory)
+        
+        grazia.rewards.append(.numberTen)
+        grazia.rewards.append(.numberTwenty)
+        grazia.rewards.append(.kidsCategory)
+        grazia.rewards.append(.petsCategory)
+        grazia.rewards.append(.gardeningCategory)
+        grazia.rewards.append(.housechoresCategory)
         
         users.append(mario)
         users.append(giuseppe)
