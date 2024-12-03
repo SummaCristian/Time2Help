@@ -31,7 +31,7 @@ struct LocationSelector: View {
                     // The Favor's Marker
                     // Note: it's set in selectedLocation if possible, but if it's nil, it defaults to the Favor's old Location
                     Annotation("", coordinate: selectedLocation ?? newFavor.location) {
-                        FavorMarker(favor: newFavor, isSelected: .constant(true), isInFavorSheet: true)
+                        FavorMarker(favor: newFavor, isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
                     }
                 }
                 .mapControlVisibility(.visible)
@@ -62,11 +62,6 @@ struct LocationSelector: View {
             
             // The Title bar
             VStack {
-                //                VStack {
-                // Some space at the top
-                //                    Spacer()
-                //                        .frame(height: 10)
-                
                 // The Text
                 HStack(spacing: 8) {
                     Text("Clicca sulla mappa per selezionare un luogo")
@@ -74,11 +69,10 @@ struct LocationSelector: View {
                     
                     Spacer()
                     
-                    FavorMarker(favor: newFavor, isSelected: .constant(false), isInFavorSheet: true)
+                    FavorMarker(favor: newFavor, isSelected: .constant(false), isInFavorSheet: true, isOwner: true)
                 }
                 .padding(.vertical, 25)
                 .padding(.horizontal, 20)
-                //                }
                 .background(.ultraThinMaterial)
                 
                 Spacer()
