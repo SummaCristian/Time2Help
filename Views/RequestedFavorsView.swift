@@ -13,6 +13,9 @@ struct RequestedFavorsView: View {
     // *something* => that Favor is selected
     @State var selectedFavor: Favor? = nil
     
+    @Binding var selectedReward: Reward?
+    var rewardNameSpace: Namespace.ID
+    
     
     var body: some View {
         NavigationStack {
@@ -47,7 +50,7 @@ struct RequestedFavorsView: View {
         }
         .navigationTitle("I tuoi Favori")
         .navigationDestination(item: $selectedFavor) { favor in
-            FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor)
+            FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace)
         }
     }
 }
