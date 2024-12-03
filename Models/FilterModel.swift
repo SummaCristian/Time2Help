@@ -39,6 +39,15 @@ class FilterModel: ObservableObject {
         setTime(of: [.endingTime], hour: 23, minute: 59, second: 59)
     }
     
+    func clone(source: FilterModel) {
+        self.selectedCategories = source.selectedCategories
+        self.isCarNeededSelected = source.isCarNeededSelected
+        self.isHeavyTaskSelected = source.isHeavyTaskSelected
+        self.startingDate = source.startingDate
+        self.endingDate = source.endingDate
+        self.maxDuration = source.maxDuration
+    } 
+    
     enum SettableTime {
         case startingTime
         case endingTime
