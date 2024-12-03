@@ -16,6 +16,9 @@ struct FavorDetailsSheet: View {
     // The Favor whose details are being showed
     @State var favor: Favor
     
+    @Binding var selectedReward: Reward?
+    var rewardNameSpace: Namespace.ID
+    
     @State private var isAuthorProfileSheetPresented = false
     @State private var isHelperProfileSheetPresented = false
     
@@ -81,7 +84,7 @@ struct FavorDetailsSheet: View {
                             
                             Spacer()
                             
-                            FavorMarker(favor: favor, isSelected: .constant(true), isInFavorSheet: true)
+                            FavorMarker(favor: favor, isSelected: .constant(true), isInFavorSheet: true, isOwner: user.id == favor.author.id)
                                 .offset(x: -5, y: 45)
                                 .frame(width: 100, height: 120)
                         }
@@ -327,7 +330,7 @@ struct FavorDetailsSheet: View {
                             ) {
                                 Annotation("", coordinate: favor.location, content: {
                                     // Only this Favor is shown in this mini-Map
-                                    FavorMarker(favor: favor, isSelected: .constant(true), isInFavorSheet: true)
+                                    FavorMarker(favor: favor, isSelected: .constant(true), isInFavorSheet: true, isOwner: user.id == favor.author.id)
                                 })
                             }
                             .frame(height: 300)
@@ -398,7 +401,7 @@ struct FavorDetailsSheet: View {
                 Text("L'utente che ha richiesto questo Favore ha segnalato che si tratta di un lavoro fisico potenzialmente pesante.\nAccetta questo Favore solo se ritieni di poterlo fare.\nTime2Help non è responsabile per alcun danno diretto o indiretto causato dall'esecuzione di un Favore.")
             })
         .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
-            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author)
+            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace)
         })
         /*.sheet(isPresented: $isHelperProfileSheetPresented, content: {
          ProfileView(database: database, selectedFavor: $selectedFavor, user: favor.$helper ?? nil)
