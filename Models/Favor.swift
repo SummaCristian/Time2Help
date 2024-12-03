@@ -2,7 +2,7 @@ import Foundation
 import MapKit
 import SwiftUI
 
-class Favor: Identifiable, ObservableObject {
+class Favor: Identifiable, ObservableObject, Hashable {
     // An ID to identify it
     let id: UUID
     
@@ -97,5 +97,15 @@ class Favor: Identifiable, ObservableObject {
     
     func canBeAccepted(userID: UUID) -> Bool {
         return (userID != author.id && ((type == .privateFavor && helpers.isEmpty) || (type == .publicFavor && !helpers.contains(where: { $0.id == userID }))))
+    }
+    
+    // MARK: - Hashable Conformance
+    
+    static func ==(lhs: Favor, rhs: Favor) -> Bool {
+        return lhs.id == rhs.id  // Assuming `id` is the unique identifier
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)  // Use `id` for hashing
     }
 }
