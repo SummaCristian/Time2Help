@@ -40,9 +40,14 @@ struct ProfileView: View {
     
     @State private var averageReviews: Double = 0.0
     
+    @State private var showRequestedFavors = false
+    @State private var showAcceptedFavors = false
+    
+    @State private var destination: String? = nil
+    
     var body: some View {
         NavigationStack {
-            Form {
+            List {
                 // Profile View
                 HStack {
                     Spacer()
@@ -121,61 +126,74 @@ struct ProfileView: View {
                     }
                 )
                 
-                // Accepted Favors
                 Section(
                     content: {
-                        // Favors
-                        if (database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) }).count) == 0 {
-                            Text("Nessun Favore accettato ...")
-                        } else {
-                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2)) {
-                                ForEach(database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) })) { favor in
-                                    FavorBoxView(favor: favor)
-                                        .onTapGesture {
-                                            selectedFavor = favor
-                                        }
+                        HStack(spacing: 16) {
+                            // Requested Favors
+                            VStack(alignment: .leading, spacing: 16) {
+                                HStack {
+                                    Image("RequestedFavorsIcon")
+                                    Spacer()
                                 }
+                                
+                                Text("I tuoi Favori")
+                                    .font(.caption.bold())
                             }
-                            .padding(.vertical, 2)
+                            .padding()
+                            .background {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .foregroundStyle(Color(.secondarySystemBackground))
+                                    .shadow(radius: 3)
+                            }
+                            .hoverEffect(.lift)
+                            .onTapGesture {
+                                //showRequestedFavors = true
+                                destination = "Requested Favors"
+                            }
+                            
+                            // Accepted Favors
+                            VStack(alignment: .leading, spacing: 16) {
+                                HStack {
+                                    Image("AcceptedFavorsIcon")
+                                    Spacer()
+                                }
+                                
+                                Text("Favori accettati")
+                                    .font(.caption.bold())
+                            }
+                            .padding()
+                            .background {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .foregroundStyle(Color(.secondarySystemBackground))
+                                    .shadow(radius: 3)
+                            }
+                            .hoverEffect(.lift)
+                            .onTapGesture {
+                                //showAcceptedFavors = true
+                                destination = "Accepted Favors"
+                            }
                         }
                     },
                     header: {
-                        Text("Favori presi in carico")
+                        Text("Favori")
                     },
                     footer: {
-                        Text("Controlla i Favori che hai accettato di svolgere")
-                            .safeAreaPadding(.bottom, 40)
-                    }
-                )
-                
-                // Requested Favors
-                Section(
-                    content: {
-                        // Favors
-                        if (database.favors.filter({ $0.author.id == user.id }).count) == 0 {
-                            Text("Nessun Favore richiesto ...")
-                        } else {
-                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2)) {
-                                ForEach(database.favors.filter({ $0.author.id == user.id })) { favor in
-                                    FavorBoxView(favor: favor)
-                                        .onTapGesture {
-                                            selectedFavor = favor
-                                        }
-                                }
-                            }
-                            .padding(.vertical, 2)
-                        }
-                    },
-                    header: {
-                        Text("I tuoi favori")
-                    },
-                    footer: {
-                        Text("Monitora lo stato dei Favori che hai richiesto")
-                            .safeAreaPadding(.bottom, 40)
+                        Text("Controlla i Favori che hai richiesto e che hai accettato")
                     }
                 )
             }
             .navigationTitle("Profilo")
+            .navigationDestination(item: $destination) { destination in
+                switch destination {
+                case "Requested Favors":
+                    RequestedFavorsView(viewModel: viewModel, database: database, user: $user)
+                case "Accepted Favors": 
+                    AcceptedFavorsView(viewModel: viewModel, database: database, user: $user)
+                default: 
+                    Text("Unknown")
+                }
+                
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
