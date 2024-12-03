@@ -24,6 +24,8 @@ struct MapView: View {
     
     let selectedNeighbourhood: String
     
+    @Binding var user: User
+    
     // A NameSpace needed for certain Map features
     @Namespace private var mapNameSpace
     
@@ -65,7 +67,7 @@ struct MapView: View {
                     Annotation(
                         coordinate: favor.location,
                         content: {
-                            FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: false)
+                            FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: false, isOwner: user.id == favor.author.id)
                                 .onTapGesture {
                                     // Selects the Favor and triggers the showing of the sheet
                                     selectedFavor = favor
