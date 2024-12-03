@@ -13,6 +13,8 @@ struct FavorMarker: View {
     
     var isInFavorSheet: Bool
     
+    var isOwner: Bool
+    
     @State private var moveTitle = false
     
     @State private var scale: Double = 0
@@ -23,9 +25,15 @@ struct FavorMarker: View {
     var body: some View {
         ZStack(alignment: moveTitle ? .center : .leading) {
             ZStack(alignment: .center) {
-                Circle()
-                    .frame(width: 7, height: 7)
-                    .foregroundStyle(favor.color.gradient)
+                if isOwner {
+                    Hexagon()
+                        .frame(width: 7, height: 7)
+                        .foregroundStyle(favor.color.gradient)
+                } else {
+                    Circle()
+                        .frame(width: 7, height: 7)
+                        .foregroundStyle(favor.color.gradient)
+                }
                 
                 Image(systemName: "triangle.fill")
                     .resizable()
@@ -36,22 +44,41 @@ struct FavorMarker: View {
                     .offset(y: isSelected ? -15 : 7)
                 
                 // Inner Circle
-                Circle()
-                    .foregroundStyle(favor.color.gradient)
-                    .frame(
-                        width: isSelected ? 50 : 30,
-                        height: isSelected ? 50 : 30)
-                    .padding(.all, 2.5)
-                    .background {
-                        Circle() // RoundedRectangle(cornerRadius: 8)
-                            .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
-                    }
-                    .padding(.all, isSelected ? -1 : 1.5)
-                    .background {
-                        Circle() // RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(favor.color.gradient)
-                    }
-                    .offset(y: isSelected ? -45 : 0)
+                if isOwner {
+                    Hexagon()
+                        .foregroundStyle(favor.color.gradient)
+                        .frame(
+                            width: isSelected ? 50 : 30,
+                            height: isSelected ? 50 : 30)
+                        .padding(.all, 2.5)
+                        .background {
+                            Hexagon()
+                                .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
+                        }
+                        .padding(.all, isSelected ? -1 : 1.5)
+                        .background {
+                            Hexagon()
+                                .foregroundStyle(favor.color.gradient)
+                        }
+                        .offset(y: isSelected ? -45 : 0)
+                } else {
+                    Circle()
+                        .foregroundStyle(favor.color.gradient)
+                        .frame(
+                            width: isSelected ? 50 : 30,
+                            height: isSelected ? 50 : 30)
+                        .padding(.all, 2.5)
+                        .background {
+                            Circle()
+                                .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
+                        }
+                        .padding(.all, isSelected ? -1 : 1.5)
+                        .background {
+                            Circle()
+                                .foregroundStyle(favor.color.gradient)
+                        }
+                        .offset(y: isSelected ? -45 : 0)
+                }
                 
                 // Icon inside the Circle
                 Image(systemName: favor.icon)
@@ -135,25 +162,45 @@ struct FavorMarker: View {
 }
 
 #Preview {
-    ScrollView() {
+    ScrollView {
         
-        // Selected Variant
+        // Selected Non-Owner Variant
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true, isOwner: false)
                     .padding(.bottom, 50)
             }
         }
         .padding(.top, 50)
         
-        // Unselected Variant
+        // Unselected Non-Owner Variant
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true, isOwner: false)
                     .padding(.bottom, 50)
 
+            }
+        }
+        
+        // Selected Owner Variant
+        LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
+            ForEach(FavorCategory.allCases) { category in
+                
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
+                    .padding(.bottom, 50)
+            }
+        }
+        .padding(.top, 50)
+        
+        // Unselected Owner Variant
+        LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
+            ForEach(FavorCategory.allCases) { category in
+                
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: Date.now, endingDate: Date.now, isAllDay: false, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true, isOwner: true)
+                    .padding(.bottom, 50)
+                
             }
         }
     }
