@@ -19,6 +19,9 @@ struct ProfileView: View {
     
     @Binding var user: User
     
+    @Binding var selectedReward: Reward?
+    var rewardNameSpace: Namespace.ID
+    
     @State var isEditable = false
     
     @State private var selectedNameSurname: String = ""
@@ -44,6 +47,11 @@ struct ProfileView: View {
     @State private var showAcceptedFavors = false
     
     @State private var destination: String? = nil
+    
+    @State private var isShowingRewardDetails = false
+    
+    // Anti-Spam for Rewards (animations can break)
+    @State private var canTapOnRewards = true
     
     var body: some View {
         NavigationStack {
@@ -116,7 +124,24 @@ struct ProfileView: View {
                 // Rewards Section
                 Section(
                     content: {
-                        HStack { }
+                        if user.rewards.isEmpty {
+                            Text("Ancora nessun riconoscimento...")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                                ForEach(user.rewards) { reward in
+                                    reward.rewardView
+                                        .matchedGeometryEffect(id: reward.id, in: rewardNameSpace)
+                                        .onTapGesture {
+                                            if canTapOnRewards && isEditable {
+                                                withAnimation(.interpolatingSpring) {
+                                                    selectedReward = reward
+                                                }
+                                            }
+                                        }
+                                }
+                            }
+                        }
                     },
                     header: {
                         Text("Riconoscimenti")
@@ -142,7 +167,7 @@ struct ProfileView: View {
                             .padding()
                             .background {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .foregroundStyle(Color(.secondarySystemBackground))
+                                    .foregroundStyle(Color(.systemGray6))
                                     .shadow(radius: 3)
                             }
                             .hoverEffect(.lift)
@@ -164,7 +189,7 @@ struct ProfileView: View {
                             .padding()
                             .background {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .foregroundStyle(Color(.secondarySystemBackground))
+                                    .foregroundStyle(Color(.systemGray6))
                                     .shadow(radius: 3)
                             }
                             .hoverEffect(.lift)
@@ -186,28 +211,41 @@ struct ProfileView: View {
             .navigationDestination(item: $destination) { destination in
                 switch destination {
                 case "Requested Favors":
-                    RequestedFavorsView(viewModel: viewModel, database: database, user: $user)
+                    RequestedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace)
                 case "Accepted Favors": 
-                    AcceptedFavorsView(viewModel: viewModel, database: database, user: $user)
+                    AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace)
                 default: 
                     Text("Unknown")
                 }
                 
             }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        let settingsString = UIApplication.openSettingsURLString
-                        if let settingsURL = URL(string: settingsString) {
-                            openURL(settingsURL)
+                if isEditable {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            let settingsString = UIApplication.openSettingsURLString
+                            if let settingsURL = URL(string: settingsString) {
+                                openURL(settingsURL)
+                            }
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .font(.title3.bold())
+                                .foregroundStyle(.blue)
                         }
-                    } label: {
-                        Image(systemName: "gearshape.fill")
-                            .font(.title3.bold())
-                            .foregroundStyle(.blue)
                     }
                 }
             }
+        }
+        .onChange(of: selectedReward) { _, _ in
+                if selectedReward == nil {
+                    // Set a delay before a new Reward can be tapped
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        canTapOnRewards = true
+                    }
+                } else {
+                    // Blocks tap gesture on Rewards
+                    canTapOnRewards = false
+                }
         }
         .sheet(isPresented: $isExportSheetPresented, onDismiss: {}) {
             ExportView()
