@@ -101,56 +101,7 @@ struct ProfileView: View {
                 }
                 .listRowBackground(Color.clear)
                 
-                // Average of reviews
-                Section(
-                    content: {
-                        if (database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) }).count == 0) {
-                            Text("Nessuna recensione ricevuta...")
-                        } else {
-                            StarsView(value: .constant(averageReviews), isInDetailsSheet: false, clickOnGoing: .constant(true))
-                        }
-                    },
-                    header: {
-                        Text("Media delle recensioni")
-                    }
-                )
-                .onAppear {
-                    let userFavors = database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) }).compactMap({ $0.review })
-                    if userFavors.count != 0 {
-                        averageReviews = userFavors.reduce(0, +) / Double(userFavors.count)
-                    }
-                }
-                
-                // Rewards Section
-                Section(
-                    content: {
-                        if user.rewards.isEmpty {
-                            Text("Ancora nessun riconoscimento...")
-                                .foregroundStyle(.secondary)
-                        } else {
-                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                                ForEach(user.rewards) { reward in
-                                    reward.rewardView
-                                        .matchedGeometryEffect(id: reward.id, in: rewardNameSpace)
-                                        .onTapGesture {
-                                            if canTapOnRewards && isEditable {
-                                                withAnimation(.interpolatingSpring) {
-                                                    selectedReward = reward
-                                                }
-                                            }
-                                        }
-                                }
-                            }
-                        }
-                    },
-                    header: {
-                        Text("Riconoscimenti")
-                    },
-                    footer: {
-                        Text("Colleziona le medaglie completando dei Favori")
-                    }
-                )
-                
+                // Buttons
                 Section(
                     content: {
                         HStack(spacing: 16) {
@@ -161,7 +112,7 @@ struct ProfileView: View {
                                     Spacer()
                                 }
                                 
-                                Text("I tuoi Favori")
+                                Text(isEditable ? "I tuoi Favori" : "I suoi Favori")
                                     .font(.caption.bold())
                             }
                             .padding()
@@ -206,6 +157,58 @@ struct ProfileView: View {
                         Text("Controlla i Favori che hai richiesto e che hai accettato")
                     }
                 )
+                
+                // Average of reviews
+                Section(
+                    content: {
+                        if (database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) }).count == 0) {
+                            Text("Nessuna recensione ricevuta...")
+                        } else {
+                            StarsView(value: .constant(averageReviews), isInDetailsSheet: false, clickOnGoing: .constant(true))
+                        }
+                    },
+                    header: {
+                        Text("Media delle recensioni")
+                    }
+                )
+                .onAppear {
+                    let userFavors = database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) }).compactMap({ $0.review })
+                    if userFavors.count != 0 {
+                        averageReviews = userFavors.reduce(0, +) / Double(userFavors.count)
+                    }
+                }
+                
+                // Rewards Section
+                if isEditable {
+                    Section(
+                        content: {
+                            if user.rewards.isEmpty {
+                                Text("Ancora nessun riconoscimento...")
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                                    ForEach(user.rewards) { reward in
+                                        reward.rewardView
+                                            .matchedGeometryEffect(id: reward.id, in: rewardNameSpace)
+                                            .onTapGesture {
+                                                if canTapOnRewards && isEditable {
+                                                    withAnimation(.interpolatingSpring) {
+                                                        selectedReward = reward
+                                                    }
+                                                }
+                                            }
+                                    }
+                                }
+                            }
+                        },
+                        header: {
+                            Text("Riconoscimenti")
+                        },
+                        footer: {
+                            Text("Colleziona le medaglie completando dei Favori")
+                        }
+                    )
+                }
             }
             .navigationTitle("Profilo")
             .navigationDestination(item: $destination) { destination in
