@@ -127,6 +127,7 @@ struct RewardMedal: View {
                     .font(.system(size: 8, weight: .black, design: .rounded))
                     .offset(y: 2)
                     .shadow(radius: 3)
+                    .foregroundStyle(.white)
                 
                 
             } else {
@@ -158,12 +159,14 @@ struct RewardMedal: View {
             ForEach(RewardNumberVariant.allCases) { number in
                 RewardMedal(variant: .numberOfFavors, numberVariant: number)
                     .scaleEffect(2.2)
+                    .padding(.vertical, 60)
             }
             
             // Large Category Variants
             ForEach(FavorCategory.allCases.filter({$0 != .all})) { category in
                 RewardMedal(variant: .categoryOfFavors, categoryVariant: category)
                     .scaleEffect(2.2)
+                    .padding(.vertical, 60)
             }
         }
     }
