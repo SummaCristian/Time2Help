@@ -4,8 +4,6 @@ import MapKit
 // This file contains the UI for the Favor's Details sheet, that appears when clicking on an existing Favor
 
 struct FavorDetailsSheet: View {
-    // Used to control the dismissal from inside the sheet
-    //@Environment(\.dismiss) var dismiss
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -30,7 +28,11 @@ struct FavorDetailsSheet: View {
     
     @State private var isHelpersMenuExpanded = false
     
-    @State private var selectedUser: User? = nil 
+    @State private var selectedUser: User? = nil
+    
+    @Binding var showInteractedFavorOverlay: Bool
+    @Binding var lastFavorInteracted: Favor?
+    @Binding var lastInteraction: FavorInteraction?
     
     // The UI
     var body: some View {
@@ -360,7 +362,11 @@ struct FavorDetailsSheet: View {
                             favor.helpers.append(user)
                             favor.status = .accepted
                             
-                            //dismiss()
+                            lastInteraction = .accepted
+                            lastFavorInteracted = favor
+                            showInteractedFavorOverlay = true
+                            
+                            selectedFavor = nil
                         }) {
                             Label("Accetta Favore", systemImage: "checkmark")
                                 .font(.body.bold())
@@ -398,7 +404,7 @@ struct FavorDetailsSheet: View {
                 Text("L'utente che ha richiesto questo Favore ha segnalato che si tratta di un lavoro fisico potenzialmente pesante.\nAccetta questo Favore solo se ritieni di poterlo fare.\nTime2Help non è responsabile per alcun danno diretto o indiretto causato dall'esecuzione di un Favore.")
             })
         .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
-            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace)
+            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
         })
         /*.sheet(isPresented: $isHelperProfileSheetPresented, content: {
          ProfileView(database: database, selectedFavor: $selectedFavor, user: favor.$helper ?? nil)
