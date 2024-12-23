@@ -16,6 +16,10 @@ struct RequestedFavorsView: View {
     @Binding var selectedReward: Reward?
     var rewardNameSpace: Namespace.ID
     
+    @Binding var showInteractedFavorOverlay: Bool
+    @Binding var lastFavorInteracted: Favor?
+    @Binding var lastInteraction: FavorInteraction?
+    
     
     var body: some View {
         NavigationStack {
@@ -39,7 +43,7 @@ struct RequestedFavorsView: View {
                         }
                     },
                     header: {
-                        Text("I tuoi favori")
+                        Text("Favori richiesti")
                     },
                     footer: {
                         Text("Monitora lo stato dei Favori che hai richiesto")
@@ -50,7 +54,7 @@ struct RequestedFavorsView: View {
         }
         .navigationTitle("I tuoi Favori")
         .navigationDestination(item: $selectedFavor) { favor in
-            FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace)
+            FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
         }
     }
 }
