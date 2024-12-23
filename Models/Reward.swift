@@ -124,29 +124,29 @@ enum Reward: Identifiable {
             return "250 Favori completati!"
             
         case .genericCategory:
-            return "Campione di Generico"
+            return "Eroe Generico"
         case .gardeningCategory:
-            return "Campione di Giardinaggio"
+            return "Eroe del Giardinaggio"
         case .transportationCategory:
-            return "Campione di Trasporto"
+            return "Eroe dei Trasporti"
         case .petsCategory:
-            return "Campione di Animali"
+            return "Eroe degli Animali"
         case .jobCategory:
-            return "Campione di Lavoro"
+            return "Eroe dei Lavori"
         case .shoppingCategory:
-            return "Campione di Shopping"
+            return "Eroe dello Shopping"
         case .schoolCategory:
-            return "Campione di Scuola"
+            return "Eroe della Scuola"
         case .kidsCategory:
-            return "Campione di Bambini"
+            return "Eroe dei Bambini"
         case .housechoresCategory:
-            return "Campione di Faccende"
+            return "Eroe delle Faccende"
         case .trashCategory:
-            return "Campione di Spazzatura"
+            return "Eroe della Spazzatura"
         case .sportCategory:
-            return "Campione di Sport"
+            return "Eroe dello Sport"
         case .weatherCategory:
-            return "Campione di Meteo"
+            return "Eroe del Meteo"
         }
     }
     
