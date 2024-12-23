@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct CategoryBoxView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     @State var category: FavorCategory
     
     @ObservedObject var filter: FilterModel
@@ -12,11 +14,15 @@ struct CategoryBoxView: View {
     var body: some View {
         VStack(spacing: 5) {
             Image(systemName: category.icon)
-                .foregroundStyle(filter.isCategorySelected(category: category) ? .white : .primary)
+                .foregroundStyle(category == .all 
+                                 ? (filter.isCategorySelected(category: .all) ? .black : .primary) 
+                                 : (filter.isCategorySelected(category: category) ? .white : .primary))
             
             Text(category.name)
                 .font(.caption2.bold())
-                .foregroundStyle(filter.isCategorySelected(category: category) ? .white : .primary)
+                .foregroundStyle(category == .all 
+                                 ? (filter.isCategorySelected(category: .all) ? .black : .primary) 
+                                 : (filter.isCategorySelected(category: category) ? .white : .primary))
         }
         .frame(width: 80, height: 80)
         .background {
