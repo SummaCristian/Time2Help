@@ -14,6 +14,10 @@ struct AdvancedFiltersView: View {
     
     @State private var temporaryFilter: FilterModel = FilterModel()
     
+    @State private var isAllTypesSelectedTemp: Bool = true
+    @State private var isPrivateTypeSelectedTemp: Bool = true
+    @State private var isPublicTypeSelectedTemp: Bool = true
+    
     var body: some View {
             ScrollView {
                 VStack {
@@ -152,6 +156,83 @@ struct AdvancedFiltersView: View {
                             .fill(.thickMaterial)
                     }
                     .tint(.yellow)
+                    
+                    // Public and Private types
+                    HStack(spacing: 5) {
+                        Image(systemName: "person.2.fill")
+                        
+                        VStack(alignment: .leading) {
+                            Text("Tipo di Favore")
+                                .font(.title3.bold())
+                            
+                            Text("Filtra in base alla tua preferenza sul tipo")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(.top, 10)
+                    
+                    VStack {
+                        Toggle(isOn: $isAllTypesSelectedTemp, label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "person.2.fill")
+                                    .foregroundStyle(Color(.white))
+                                    .frame(width: 30, height: 30)
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 5)
+                                            .foregroundStyle(Color(.blue))
+                                    }
+                                
+                                Text("Tutti")
+                            }
+                        })
+                        .tint(.blue)
+                        
+                        if !isAllTypesSelectedTemp {
+                            
+                            Divider()
+                            
+                            Toggle(isOn: $isPrivateTypeSelectedTemp, label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: FavorType.privateFavor.icon)
+                                        .foregroundStyle(Color(.white))
+                                        .frame(width: 30, height: 30)
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .foregroundStyle(Color(.blue))
+                                        }
+                                    
+                                    Text("Singolo")
+                                }
+                            })
+                            .tint(.blue)
+                            
+                            Divider()
+                            
+                            Toggle(isOn: $isPublicTypeSelectedTemp, label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: FavorType.publicFavor.icon)
+                                        .font(.subheadline)
+                                        .foregroundStyle(Color(.white))
+                                        .frame(width: 30, height: 30)
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .foregroundStyle(Color(.blue))
+                                        }
+                                    
+                                    Text("Gruppo")
+                                }
+                            })
+                            .tint(.blue)
+                        }
+                    }
+                    .padding()
+                    .background {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.thickMaterial)
+                    }
                     
                     // Car Needed and Heavy Task Filters
                     HStack(spacing: 5) {
@@ -327,6 +408,10 @@ struct AdvancedFiltersView: View {
             ) {
                 isAllDaySelected = true
             }
+            
+            isAllTypesSelectedTemp = temporaryFilter.isAllTypesSelected
+            isPrivateTypeSelectedTemp = temporaryFilter.isPrivateTypeSelected
+            isPublicTypeSelectedTemp = temporaryFilter.isPublicTypeSelected
         }
         .onChange(of: internalMaxDuration) {_, _ in
             withAnimation {
@@ -351,6 +436,64 @@ struct AdvancedFiltersView: View {
                     showTimePickers = false
                 }
             }
+        }
+        .onChange(of: isAllTypesSelectedTemp) { old, new in
+            if new {
+                withAnimation {
+                    temporaryFilter.selectType(type: .all)
+                }
+            } else {
+                withAnimation {
+                    temporaryFilter.selectType(type: .privateFavor)
+                }
+            }
+        }
+        .onChange(of: isPrivateTypeSelectedTemp) {old, new in
+            if new {
+                withAnimation {
+                    if isPublicTypeSelectedTemp {
+                        temporaryFilter.selectType(type: .all)
+                    } else {
+                        temporaryFilter.selectType(type: .publicFavor)
+                    }
+                }
+            } else {
+                withAnimation {
+                    if isPublicTypeSelectedTemp {
+                        temporaryFilter.selectType(type: .publicFavor)
+                    } else {
+                        temporaryFilter.selectType(type: .privateFavor)
+                    }
+                }
+            }
+        }
+        .onChange(of: isPublicTypeSelectedTemp) {old, new in
+            if new {
+                withAnimation {
+                    if isPrivateTypeSelectedTemp {
+                        temporaryFilter.selectType(type: .all)
+                    } else {
+                        temporaryFilter.selectType(type: .privateFavor)
+                    }
+                }
+            } else {
+                withAnimation {
+                    if isPrivateTypeSelectedTemp {
+                        temporaryFilter.selectType(type: .privateFavor)
+                    } else {
+                        temporaryFilter.selectType(type: .publicFavor)
+                    }
+                }
+            }
+        }
+        .onChange(of: temporaryFilter.isAllTypesSelected) { _, _ in
+            isAllTypesSelectedTemp = temporaryFilter.isAllTypesSelected
+        }
+        .onChange(of: temporaryFilter.isPrivateTypeSelected) { _, _ in
+            isPrivateTypeSelectedTemp = temporaryFilter.isPrivateTypeSelected    
+        }
+        .onChange(of: temporaryFilter.isPublicTypeSelected) { _, _ in
+            isPublicTypeSelectedTemp = temporaryFilter.isPublicTypeSelected
         }
         .sensoryFeedback(.levelChange, trigger: internalMaxDuration)
         .sensoryFeedback(.levelChange, trigger: temporaryFilter.selectedCategories)
