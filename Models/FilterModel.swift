@@ -7,6 +7,9 @@ class FilterModel: ObservableObject {
     @Published var startingDate: Date
     @Published var endingDate: Date
     @Published var maxDuration: Int
+    @Published var isAllTypesSelected: Bool
+    @Published var isPrivateTypeSelected: Bool
+    @Published var isPublicTypeSelected: Bool
     
     // Init with default values, that can also be Overridden if needed
     init(
@@ -15,7 +18,10 @@ class FilterModel: ObservableObject {
         isHeavyTaskSelected: Bool = true,
         startingDate: Date = .now,
         endingDate: Date = .now,
-        maxDuration: Int = 24
+        maxDuration: Int = 24,
+        isAllTypesSelected: Bool = true,
+        isPrivateTypeSelected: Bool = true,
+        isPublicTypeSelected: Bool = true
     ) {
         self.selectedCategories = selectedCategories
         self.isCarNeededSelected = isCarNeededSelected
@@ -23,6 +29,9 @@ class FilterModel: ObservableObject {
         self.startingDate = startingDate
         self.endingDate = endingDate
         self.maxDuration = maxDuration
+        self.isAllTypesSelected = isAllTypesSelected
+        self.isPrivateTypeSelected = isPrivateTypeSelected
+        self.isPublicTypeSelected = isPublicTypeSelected
         
         setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
     }
@@ -34,6 +43,7 @@ class FilterModel: ObservableObject {
         startingDate = .now
         endingDate = .now
         maxDuration = 24
+        selectType(type: .all)
         
         setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
         setTime(of: [.endingTime], hour: 23, minute: 59, second: 59)
@@ -46,7 +56,33 @@ class FilterModel: ObservableObject {
         self.startingDate = source.startingDate
         self.endingDate = source.endingDate
         self.maxDuration = source.maxDuration
-    } 
+        self.isAllTypesSelected = source.isAllTypesSelected
+        self.isPublicTypeSelected = source.isPublicTypeSelected
+        self.isPrivateTypeSelected = source.isPrivateTypeSelected
+    }
+    
+    enum SettableType {
+        case all
+        case privateFavor
+        case publicFavor
+    }
+    
+    func selectType(type: SettableType) {
+        switch type {
+        case .all:
+            isAllTypesSelected = true
+            isPrivateTypeSelected = true
+            isPublicTypeSelected = true
+        case .privateFavor:
+            isAllTypesSelected = false
+            isPrivateTypeSelected = true
+            isPublicTypeSelected = false
+        case .publicFavor:
+            isAllTypesSelected = false
+            isPrivateTypeSelected = false
+            isPublicTypeSelected = true
+        }
+    }
     
     enum SettableTime {
         case startingTime
@@ -69,7 +105,8 @@ class FilterModel: ObservableObject {
         (isCarNeededSelected || !favor.isCarNecessary)  &&
         (isHeavyTaskSelected || !favor.isHeavyTask) &&
         (startingDate <= favor.startingDate && favor.endingDate <= endingDate) &&
-        (favor.endingDate.timeIntervalSince(favor.startingDate) <= Double(maxDuration * 3600))
+        (favor.endingDate.timeIntervalSince(favor.startingDate) <= Double(maxDuration * 3600)) &&
+        (favor.type == .privateFavor ? isPrivateTypeSelected : isPublicTypeSelected)
     }
     
     // Checks if the Category is selected in the current Filter
