@@ -17,7 +17,7 @@ struct CategoryFiltersView: View {
     var body: some View {
         GeometryReader { geometry in
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: isAdvancedFiltersViewShowing ? .top : .center, spacing: 10) {
                     // Advanced Filters Button
                     ZStack {
                         if !isAdvancedFiltersViewShowing {
@@ -68,20 +68,22 @@ struct CategoryFiltersView: View {
                     HStack(spacing: 10) {
                         // Real Categories
                         ForEach(FavorCategory.allCases) { category in
-                            CategoryCapsule(filter: filter, category: category)
-                                .onTapGesture {
-                                    if category == .all {
-                                        // The "Tutte" capsule
-                                        filter.selectCategory(category: .all)
-                                    } else {
-                                        // The real categories
-                                        if filter.selectedCategories.contains(category) {
-                                            filter.deselectCategory(category: category)
+                            if (category == .all ? true : filter.selectedCategories.contains(category)) {
+                                CategoryCapsule(filter: filter, category: category)
+                                    .onTapGesture {
+                                        if category == .all {
+                                            // The "Tutte" capsule
+                                            filter.selectCategory(category: .all)
                                         } else {
-                                            filter.selectCategory(category: category)
+                                            // The real categories
+                                            if filter.selectedCategories.contains(category) {
+                                                filter.deselectCategory(category: category)
+                                            } else {
+                                                filter.selectCategory(category: category)
+                                            }
                                         }
                                     }
-                                }
+                            }
                         }
                     }
                     .padding(.vertical, 8)
