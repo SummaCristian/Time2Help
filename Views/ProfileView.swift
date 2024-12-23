@@ -24,6 +24,10 @@ struct ProfileView: View {
     
     @State var isEditable = false
     
+    @Binding var showInteractedFavorOverlay: Bool
+    @Binding var lastFavorInteracted: Favor?
+    @Binding var lastInteraction: FavorInteraction?
+    
     @State private var selectedNameSurname: String = ""
     @State private var selectedColor: String = "blue"
     @State private var selectedNeighbourhood = "Città Studi"
@@ -112,7 +116,7 @@ struct ProfileView: View {
                                     Spacer()
                                 }
                                 
-                                Text(isEditable ? "I tuoi Favori" : "I suoi Favori")
+                                Text("Favori richiesti")
                                     .font(.caption.bold())
                             }
                             .padding()
@@ -209,14 +213,34 @@ struct ProfileView: View {
                         }
                     )
                 }
+                
+                // Chat Button
+                if !isEditable {
+                    Button {
+                        // TODO: Open Chat
+                    } label: {
+                        Label("Chat", systemImage: "paperplane.fill")
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .foregroundColor(.white)
+                            .background {
+                                Capsule()
+                                    .foregroundStyle(user.profilePictureColor.toColor()!.gradient)
+                            }
+                    }
+                    .listRowBackground(Color.clear)
+                }
+                
+                
             }
             .navigationTitle("Profilo")
             .navigationDestination(item: $destination) { destination in
                 switch destination {
                 case "Requested Favors":
-                    RequestedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace)
+                    RequestedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
                 case "Accepted Favors": 
-                    AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace)
+                    AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
                 default: 
                     Text("Unknown")
                 }
