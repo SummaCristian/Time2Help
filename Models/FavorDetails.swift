@@ -250,7 +250,7 @@ enum FavorCategory: Identifiable, CaseIterable {
         case .weather:
             return FavorColor.cyan.color
         case .all:
-            return FavorColor.yellow.color
+            return Color.white
         }
     }
     
