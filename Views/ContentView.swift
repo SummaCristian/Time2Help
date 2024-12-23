@@ -33,6 +33,10 @@ struct ContentView: View {
     @State private var reduceRewardBadge = false
     @State private var showRewardTexts = false
     
+    @State private var lastInteractedFavor: Favor?
+    @State private var showInteractionOverlay = false
+    @State private var lastFavorInteraction: FavorInteraction?
+    
     // Main View
     var body: some View {
         // The main UI of this app is composed of a TabView, meaning the the UI is divided
@@ -58,7 +62,7 @@ struct ContentView: View {
                             .disabled(true)
                         
                         // Tab 2: Profile
-                        ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true)
+                        ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
                             .tabItem {
                                 Label("Profilo", systemImage: "person.fill")
                             }
@@ -89,7 +93,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $isSheetPresented) {
-            NewFavorSheet(isPresented: $isSheetPresented, database: database, viewModel: viewModel, newFavor: Favor(author: user))
+            NewFavorSheet(isPresented: $isSheetPresented, database: database, viewModel: viewModel, newFavor: Favor(author: user), showCreatedFavorOverlay: $showInteractionOverlay, lastFavorCreated: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
                 .interactiveDismissDisabled()
         }
         .sheet(
@@ -99,7 +103,7 @@ struct ContentView: View {
                 selectedFavorID = nil
             },
             content: { favor in
-                FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace)
+                FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
             })
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         // Reward Details Overlay
@@ -110,7 +114,11 @@ struct ContentView: View {
                         .foregroundStyle(.ultraThinMaterial)
                         .overlay {
                             // Background Gradient
-                            LinearGradient(colors: [selectedReward!.color.opacity(0.4), selectedReward!.color], startPoint: .topLeading, endPoint: .bottomTrailing)
+                            LinearGradient(
+                                gradient: Gradient( colors: [.indigo, .purple, .pink, .red, .orange, .yellow, .green, .cyan]), 
+                                startPoint: .topLeading, 
+                                endPoint: .bottomTrailing
+                            )
                                 .opacity(0.4)
                         }
                         .ignoresSafeArea()
@@ -122,26 +130,36 @@ struct ContentView: View {
                         selectedReward!.rewardView
                             .matchedGeometryEffect(id: selectedReward!.id, in: rewardNameSpace)
                             .scaleEffect(reduceRewardBadge ? 0.5 : 2.2)
-                            .padding(.bottom, 50)
+                            .padding(.bottom, 20)
+                            .zIndex(1)
                         
-                        // Reward Title
-                        Text(selectedReward!.title)
-                            .font(.title)
-                            .fontWeight(.heavy)
-                            .fontDesign(.rounded)
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient( colors: [.indigo, .purple, .pink, .red, .orange, .yellow, .green, .cyan]), 
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 25)
+                                .frame(height: 300)
+                                .foregroundStyle(LinearGradient(
+                                    gradient: Gradient( colors: [selectedReward?.color.opacity(0.3) ?? .white, selectedReward?.color ?? .white]), 
                                     startPoint: .topLeading, 
                                     endPoint: .bottomTrailing
-                                )
-                            )
-                            .shadow(radius: 5)
-                            .scaleEffect(showRewardTexts ? 1 : 0)
-                        
-                        // Reward description
-                        Text(selectedReward!.description)
-                            .scaleEffect(showRewardTexts ? 1 : 0)
+                                ))
+                            
+                            VStack(spacing: 50) {
+                                // Reward Title
+                                Text(selectedReward!.title)
+                                    .font(.title)
+                                    .fontWeight(.heavy)
+                                    .fontDesign(.rounded)
+                                    .foregroundStyle(.white)
+                                    .shadow(radius: 5)
+                                    .scaleEffect(showRewardTexts ? 1 : 0)
+                                
+                                // Reward description
+                                Text(selectedReward!.description)
+                                    .scaleEffect(showRewardTexts ? 1 : 0)
+                            }
+                            .padding()
+                        }
+                        .offset(y: -90)
+                        .padding()
                         
                         Spacer()
                     }
@@ -167,6 +185,16 @@ struct ContentView: View {
                         reduceRewardBadge = false
                     }
                 }
+            }
+        }
+        .overlay {
+            if showInteractionOverlay {
+                FavorFeedbackOverlay(favor: lastInteractedFavor!, type: lastFavorInteraction ?? .created)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                            showInteractionOverlay = false
+                        }
+                    }
             }
         }
         .ignoresSafeArea(.keyboard)
