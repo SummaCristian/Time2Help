@@ -9,12 +9,12 @@ struct CategoryCapsule: View {
         HStack(spacing: 6) {
             Image(systemName: category.icon)
                 .font(.subheadline)
-                .foregroundStyle(.white)
+                .foregroundStyle(category == .all && isCategorySelected() ? .black : .white)
             
             Text(category.name)
                 .font(.subheadline.bold())
                 .fontDesign(.rounded)
-                .foregroundStyle(.white)
+                .foregroundStyle(category == .all && isCategorySelected() ? .black : .white)
             
         }
         .frame(height: 40)
