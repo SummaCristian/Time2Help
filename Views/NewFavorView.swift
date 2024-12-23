@@ -4,8 +4,6 @@ import MapKit
 // This file contains the UI for the New Favor sheet.
 
 struct NewFavorSheet: View {
-    // Used to control the dismissal mechanism from inside the sheet
-    @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     
     @Binding var isPresented: Bool
@@ -29,6 +27,10 @@ struct NewFavorSheet: View {
     // New Favor: this is the Favor that the user is creating, whose details can be edited in here.
     // At the end of the creation process, if the User confirms it, it will be added to the Database
     @StateObject var newFavor: Favor
+    
+    @Binding var showCreatedFavorOverlay: Bool
+    @Binding var lastFavorCreated: Favor?
+    @Binding var lastInteraction: FavorInteraction?
     
     // The UI
     var body: some View {
@@ -289,7 +291,14 @@ struct NewFavorSheet: View {
                     Text("I dettagli che hai inserito andranno persi")
                 }
                 .onChange(of: newFavor.title) {
-                    if newFavor.title != "" {
+                    if newFavor.title != "" && newFavor.description != "" {
+                        canBeCreated = true
+                    } else {
+                        canBeCreated = false
+                    }
+                }
+                .onChange(of: newFavor.description) {
+                    if newFavor.title != "" && newFavor.description != "" {
                         canBeCreated = true
                     } else {
                         canBeCreated = false
@@ -314,6 +323,18 @@ struct NewFavorSheet: View {
                             
                             database.addFavor(favor: newFavor)
                             //dismiss()
+                                                        
+                            lastFavorCreated = newFavor
+                            lastInteraction = .created
+                            
+                            showCreatedFavorOverlay = true
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                                withAnimation {
+                                    showCreatedFavorOverlay = false
+                                }
+                            }
+                            
                             isPresented = false
                         }) {
                             Label("Richiedi Favore", systemImage: "plus")
@@ -321,12 +342,10 @@ struct NewFavorSheet: View {
                                 .foregroundStyle(.white)
                                 .padding(.vertical, 15)
                                 .padding(.horizontal, 45)
-                                .background(.blue, in: .capsule)
+                                .background(canBeCreated ? .blue : .gray, in: .capsule)
                         }
                         .shadow(radius: 10)
                         .disabled(!canBeCreated)
-                        .opacity(canBeCreated ? 1 : 0)
-                        .offset(y: canBeCreated ? 0 : 50)
                         .animation(.easeInOut, value: canBeCreated)
                         .sensoryFeedback(.pathComplete, trigger: canBeCreated)
                         .hoverEffect(.highlight)
@@ -376,5 +395,5 @@ struct NewFavorSheet: View {
 }
 
 #Preview {    
-    NewFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), newFavor: Favor(author: User(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue"))))
+    NewFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), newFavor: Favor(author: User(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue"))), showCreatedFavorOverlay: .constant(true), lastFavorCreated: .constant(nil), lastInteraction: .constant(.created))
 }
