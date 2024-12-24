@@ -140,42 +140,13 @@ struct NewFavorSheet: View {
                     // Date selectors
                     Section(
                         content: {
-                            Toggle(isOn: $newFavor.isAllDay, label: {
-                                Text("Tutto il giorno")
-                            })
-                            .tint(.green)
-                            .onChange(of: newFavor.isAllDay) { old, new in
-                                if new {
-                                    // Is All Day
-                                    newFavor.startingDate = Calendar.current.startOfDay(for: newFavor.startingDate)
-                                    newFavor.endingDate = Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: newFavor.endingDate) ?? Calendar.current.startOfDay(for: newFavor.endingDate)
-                                } else {
-                                    // Not All Day
-                                    newFavor.startingDate = .now
-                                    newFavor.endingDate = .now.addingTimeInterval(3600)
-                                }
-                            }
-                            .padding(.vertical, 4)
-                            
-                            DatePicker(
-                                "Inizio",
-                                selection: $newFavor.startingDate,
-                                displayedComponents: newFavor.isAllDay ? .date : [.date, .hourAndMinute]
-                            )
-                            .tint(.green)
-                            .padding(.vertical, 4)
-                            
-                            DatePicker(
-                                "Fine",
-                                selection: $newFavor.endingDate,
-                                displayedComponents: newFavor.isAllDay ? .date : [.date, .hourAndMinute]
-                            )
-                            .tint(.green)
-                            .padding(.vertical, 4)
+                            TimeSlotsList(slots: $newFavor.timeSlots)
+                                .tint(newFavor.color)
                         },
                         header: {
-                            Text("DATA E ORA")
-                        })
+                            Text("Fasce orarie")
+                        }
+                    )
                     
                     // Additional infos
                     Section(
