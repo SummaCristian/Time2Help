@@ -107,5 +107,5 @@ struct FavorFeedbackOverlay: View {
 }
 
 #Preview {
-    FavorFeedbackOverlay(favor: Favor(title: "Test", description: "", author: User(nameSurname: .constant("Nome"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, startingDate: .now, endingDate: .now, isAllDay: true, location: MapDetails.startingLocation, isCarNecessary: true, isHeavyTask: true, status: .accepted, category: .generic), type: .created)
+    FavorFeedbackOverlay(favor: Favor(title: "Test", description: "", author: User(nameSurname: .constant("Nome"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, location: MapDetails.startingLocation, isCarNecessary: true, isHeavyTask: true, status: .accepted, category: .generic), type: .created)
 }
