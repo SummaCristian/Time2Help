@@ -38,7 +38,7 @@ struct FavorDetailsSheet: View {
     var body: some View {
         // The GeometryReader is used to achieve a top alignment for the UI
         GeometryReader { _ in
-            List {
+            Form {
                 Section {
                     HStack {                        
                         // The Favor's Title
@@ -219,53 +219,13 @@ struct FavorDetailsSheet: View {
                     }
                 )
                 
-                // The Favor's Date data
+                // The Favor's Time slots data
                 Section(
                     content: {
-                        HStack {
-                            Text("Data di inizio:")
-                            Spacer()
-                            Text(favor.startingDate.formatted(date: .long, time: .omitted))
-                                .bold()
-                                .foregroundStyle(favor.color)
-                        }
-                        
-                        HStack {
-                            Text("Data di fine:")
-                            Spacer()
-                            Text(favor.endingDate.formatted(date: .long, time: .omitted))
-                                .bold()
-                                .foregroundStyle(favor.color)
-                        }
-                        
-                        HStack {
-                            Text("Ora:")
-                            
-                            Spacer()
-                            
-                            Text(favor.startingDate.formatted(date: .omitted, time: .shortened))
-                                .bold()
-                                .foregroundStyle(favor.color)
-                            
-                            Image(systemName: "arrow.right")
-                            
-                            Text(favor.endingDate.formatted(date: .omitted, time: .shortened))
-                                .bold()
-                                .foregroundStyle(favor.color)
-                        }
-                        
-                        HStack {
-                            Text("Durata:")
-                            
-                            Spacer()
-                            
-                            Text(calculateTime(favor: favor))
-                                .bold()
-                                .foregroundStyle(favor.color)
-                        }
+                        TimeSlotsList(slots: $favor.timeSlots, isEditable: false, tint: favor.color)
                     },
                     header: {
-                        Text("DATA E ORA")
+                        Text("Fasce orarie")
                     }
                 )
                 
@@ -426,15 +386,4 @@ extension Color {
             opacity: alpha
         )
     }
-}
-
-// Function that calculates the time duration of a Favor, and returns it as a String,
-// that is then used to display that information inside the UI.
-func calculateTime(favor: Favor) -> String {
-    let timeInterval = favor.endingDate.timeIntervalSince(favor.startingDate)
-    let formatter = DateComponentsFormatter()
-    formatter.unitsStyle = .full
-    formatter.allowedUnits = [.day, .hour, .minute]
-    
-    return formatter.string(from: timeInterval)!
 }
