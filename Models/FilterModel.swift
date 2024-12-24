@@ -104,9 +104,18 @@ class FilterModel: ObservableObject {
         return isCategorySelected(category: favor.category) &&
         (isCarNeededSelected || !favor.isCarNecessary)  &&
         (isHeavyTaskSelected || !favor.isHeavyTask) &&
-        (startingDate <= favor.startingDate && favor.endingDate <= endingDate) &&
-        (favor.endingDate.timeIntervalSince(favor.startingDate) <= Double(maxDuration * 3600)) &&
+        (isFavorInAnyTimeSlot(slots: favor.timeSlots)) &&
         (favor.type == .privateFavor ? isPrivateTypeSelected : isPublicTypeSelected)
+    }
+    
+    func isFavorInAnyTimeSlot(slots: [TimeSlot]) -> Bool {
+        for slot in slots {
+            if (startingDate <= slot.startingDate && slot.endingDate <= endingDate) &&
+                slot.endingDate.timeIntervalSince(slot.startingDate) <= Double(maxDuration * 3600) {
+                return true // Exit immediately if the condition is satisfied
+            }
+        }
+        return false // Return false if no matching slot is found
     }
     
     // Checks if the Category is selected in the current Filter
