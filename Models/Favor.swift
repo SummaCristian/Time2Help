@@ -2,6 +2,13 @@ import Foundation
 import MapKit
 import SwiftUI
 
+struct TimeSlot: Identifiable {
+    let id: UUID = UUID()
+    
+    var startingDate: Date
+    var endingDate: Date
+}
+
 class Favor: Identifiable, ObservableObject, Hashable {
     // An ID to identify it
     let id: UUID
@@ -14,9 +21,7 @@ class Favor: Identifiable, ObservableObject, Hashable {
     @Published var type: FavorType
     
     // Secondary details
-    @Published var startingDate: Date
-    @Published var endingDate: Date
-    @Published var isAllDay: Bool
+    @Published var timeSlots: [TimeSlot] = [TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600))]
     @Published var location: CLLocationCoordinate2D
     @Published var isCarNecessary: Bool
     @Published var isHeavyTask: Bool
@@ -47,9 +52,6 @@ class Favor: Identifiable, ObservableObject, Hashable {
         self.description = ""
         self.neighbourhood = ""
         self.type = .privateFavor
-        self.startingDate = Date()
-        self.endingDate = Date().addingTimeInterval(3600)
-        self.isAllDay = false
         self.location = CLLocationCoordinate2D()
         self.isCarNecessary = false
         self.isHeavyTask = false
@@ -66,9 +68,6 @@ class Favor: Identifiable, ObservableObject, Hashable {
         author: User,
         neighbourhood: String,
         type: FavorType,
-        startingDate: Date,
-        endingDate: Date,
-        isAllDay: Bool,
         location: CLLocationCoordinate2D,
         isCarNecessary: Bool,
         isHeavyTask: Bool,
@@ -82,9 +81,6 @@ class Favor: Identifiable, ObservableObject, Hashable {
         self.author = author
         self.neighbourhood = neighbourhood
         self.type = type
-        self.startingDate = startingDate
-        self.endingDate = endingDate
-        self.isAllDay = isAllDay
         self.location = location
         self.isCarNecessary = isCarNecessary
         self.isHeavyTask = isHeavyTask
