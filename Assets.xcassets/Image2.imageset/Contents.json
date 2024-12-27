@@ -1,8 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Risorsa immagine.heic",
-      "idiom" : "universal"
+      "filename" : "6673.2.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
