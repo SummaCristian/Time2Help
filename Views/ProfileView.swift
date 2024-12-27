@@ -7,6 +7,8 @@ struct ProfileView: View {
     
     @Environment(\.openURL) private var openURL
     
+    @Binding var isSatelliteMode: Bool
+    
     @ObservedObject var viewModel: MapViewModel
     
     // The Database, where the Favors are stored
@@ -113,11 +115,13 @@ struct ProfileView: View {
                             VStack(alignment: .leading, spacing: 16) {
                                 HStack {
                                     Image("RequestedFavorsIcon")
+                                        .resizable()
+                                        .frame(width: 50, height: 50)
                                     Spacer()
                                 }
                                 
                                 Text("Favori richiesti")
-                                    .font(.caption.bold())
+                                    .font(.subheadline.bold())
                             }
                             .padding()
                             .background {
@@ -135,11 +139,13 @@ struct ProfileView: View {
                             VStack(alignment: .leading, spacing: 16) {
                                 HStack {
                                     Image("AcceptedFavorsIcon")
+                                        .resizable()
+                                        .frame(width: 50, height: 50)
                                     Spacer()
                                 }
                                 
                                 Text("Favori accettati")
-                                    .font(.caption.bold())
+                                    .font(.subheadline.bold())
                             }
                             .padding()
                             .background {
@@ -231,17 +237,15 @@ struct ProfileView: View {
                     }
                     .listRowBackground(Color.clear)
                 }
-                
-                
             }
             .navigationTitle("Profilo")
             .navigationDestination(item: $destination) { destination in
                 switch destination {
                 case "Requested Favors":
-                    RequestedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
-                case "Accepted Favors": 
-                    AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
-                default: 
+                    RequestedFavorsView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+                case "Accepted Favors":
+                    AcceptedFavorsView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+                default:
                     Text("Unknown")
                 }
                 
@@ -278,7 +282,7 @@ struct ProfileView: View {
             ExportView()
         }
         .sheet(isPresented: $isModifySheetPresented, content: {
-            ModifyProfileView(viewModel: viewModel, isModifySheetPresented: $isModifySheetPresented, user: $user, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
+            ModifyProfileView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, isModifySheetPresented: $isModifySheetPresented, user: $user, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
                 .interactiveDismissDisabled()
         })
         .onAppear {
