@@ -11,6 +11,8 @@ class FilterModel: ObservableObject {
     @Published var isPrivateTypeSelected: Bool
     @Published var isPublicTypeSelected: Bool
     
+    var allowNone: Bool
+    
     // Init with default values, that can also be Overridden if needed
     init(
         selectedCategories: [FavorCategory] = [.all],
@@ -21,7 +23,8 @@ class FilterModel: ObservableObject {
         maxDuration: Int = 24,
         isAllTypesSelected: Bool = true,
         isPrivateTypeSelected: Bool = true,
-        isPublicTypeSelected: Bool = true
+        isPublicTypeSelected: Bool = true,
+        allowNone: Bool = false
     ) {
         self.selectedCategories = selectedCategories
         self.isCarNeededSelected = isCarNeededSelected
@@ -32,6 +35,7 @@ class FilterModel: ObservableObject {
         self.isAllTypesSelected = isAllTypesSelected
         self.isPrivateTypeSelected = isPrivateTypeSelected
         self.isPublicTypeSelected = isPublicTypeSelected
+        self.allowNone = allowNone
         
         setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
     }
@@ -149,7 +153,9 @@ class FilterModel: ObservableObject {
                     selectedCategories.removeAll { $0 == category }
                 } else {
                     selectedCategories.removeAll()
-                    selectedCategories.append(.all)
+                    if !allowNone {
+                        selectedCategories.append(.all)
+                    }
                 }
             }
         }
