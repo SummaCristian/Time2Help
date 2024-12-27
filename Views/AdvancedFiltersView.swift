@@ -12,11 +12,16 @@ struct AdvancedFiltersView: View {
     @State private var isAllDaySelected = false
     @State private var showTimePickers = false
     
-    @State private var temporaryFilter: FilterModel = FilterModel()
+    @StateObject private var temporaryFilter: FilterModel = FilterModel(allowNone: true)
     
     @State private var isAllTypesSelectedTemp: Bool = true
     @State private var isPrivateTypeSelectedTemp: Bool = true
     @State private var isPublicTypeSelectedTemp: Bool = true
+    
+    @State private var isAllCategorySelected: Bool = true
+    @State private var showCategories: Bool = false
+    
+    @State private var ignoreChange = false
     
     var body: some View {
             ScrollView {
@@ -36,20 +41,7 @@ struct AdvancedFiltersView: View {
                         Spacer()
                     }
                     
-                    LazyVGrid(columns: Array(repeating: .init(.fixed(55)), count: 5), spacing: 0) {
-                        ForEach(FavorCategory.allCases) { category in
-                            CategoryBoxView(category: category, filter: temporaryFilter)
-                                .frame(maxHeight: 60)
-                                .frame(maxWidth: .infinity)
-                                .onTapGesture {
-                                    if temporaryFilter.selectedCategories.contains(category) {
-                                        temporaryFilter.deselectCategory(category: category)
-                                    } else {
-                                        temporaryFilter.selectCategory(category: category)
-                                    }
-                                }
-                        }
-                    }
+                    CategoryPicker(isAllCategorySelected: $isAllCategorySelected, showCategories: $showCategories, filterModel: temporaryFilter)
                     
                     // Date and Time Filters
                     HStack(spacing: 5) {
@@ -76,7 +68,7 @@ struct AdvancedFiltersView: View {
                                 .frame(width: 30, height: 30)
                                 .background {
                                     RoundedRectangle(cornerRadius: 5)
-                                        .foregroundStyle(Color(.systemYellow))
+                                        .foregroundStyle(Color(.systemOrange))
                                 }
                             
                             VStack(alignment: .leading) {
@@ -88,7 +80,7 @@ struct AdvancedFiltersView: View {
                             }
                         }
                     })
-                    .tint(.yellow)
+                    .tint(.orange)
                     .padding()
                     .background {
                         RoundedRectangle(cornerRadius: 16)
@@ -133,7 +125,7 @@ struct AdvancedFiltersView: View {
                                 .fill(.thickMaterial)
                         }
                     }
-                    .tint(.yellow)
+                    .tint(.orange)
                     
                     // Duration
                     Stepper(value: $internalMaxDuration, in: 0 ... 24, step: 1) {
@@ -144,7 +136,7 @@ struct AdvancedFiltersView: View {
                             
                             Text(String(temporaryFilter.maxDuration))
                                 .font(.system(size: 24, weight: .bold, design: .rounded))
-                                .foregroundStyle(.yellow)
+                                .foregroundStyle(.orange)
                                 .contentTransition(.numericText())
                             
                             Text("ore")
@@ -155,7 +147,7 @@ struct AdvancedFiltersView: View {
                         RoundedRectangle(cornerRadius: 16)
                             .fill(.thickMaterial)
                     }
-                    .tint(.yellow)
+                    .tint(.orange)
                     
                     // Public and Private types
                     HStack(spacing: 5) {
@@ -339,6 +331,7 @@ struct AdvancedFiltersView: View {
                             role: .destructive, 
                             action: {
                                 temporaryFilter.reset()
+                                isAllCategorySelected = true
                             }, label: {
                                 Label(
                                     title: {
@@ -412,11 +405,33 @@ struct AdvancedFiltersView: View {
             isAllTypesSelectedTemp = temporaryFilter.isAllTypesSelected
             isPrivateTypeSelectedTemp = temporaryFilter.isPrivateTypeSelected
             isPublicTypeSelectedTemp = temporaryFilter.isPublicTypeSelected
+            
+            // Sync categories filters
+            showCategories = !temporaryFilter.isCategorySelected(category: .all)
+            if showCategories {
+                ignoreChange = true
+            }
+            isAllCategorySelected = filter.isCategorySelected(category: .all)
         }
         .onChange(of: internalMaxDuration) {_, _ in
             withAnimation {
                 temporaryFilter.maxDuration = internalMaxDuration
             }    
+        }
+        .onChange(of: isAllCategorySelected) { old, new in
+            if !ignoreChange {
+                if new {
+                    // All
+                    temporaryFilter.selectCategory(category: .all)
+                } else {
+                    //None
+                    temporaryFilter.selectedCategories.removeAll()
+                }
+            }
+            ignoreChange = false            
+            withAnimation {
+                showCategories = old
+            }
         }
         .onChange(of: isAllDaySelected) { old, new in
             if new {
@@ -434,17 +449,6 @@ struct AdvancedFiltersView: View {
                 
                 withAnimation {
                     showTimePickers = false
-                }
-            }
-        }
-        .onChange(of: isAllTypesSelectedTemp) { old, new in
-            if new {
-                withAnimation {
-                    temporaryFilter.selectType(type: .all)
-                }
-            } else {
-                withAnimation {
-                    temporaryFilter.selectType(type: .privateFavor)
                 }
             }
         }
