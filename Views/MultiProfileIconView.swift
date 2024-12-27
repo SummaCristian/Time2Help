@@ -14,7 +14,7 @@ struct MultiProfileIconView: View {
     var body: some View {
         let count = users.count
         
-        ZStack {                
+        ZStack {
             if count > 1 {
                 if count > 2 {
                     // Icon 3
@@ -38,7 +38,7 @@ struct MultiProfileIconView: View {
                 )
                 .scaleEffect(config == .box ? 0.75 : config == .markerBig ? 0.8 : 0.6)
                 .offset(
-                    x: config == .box ? 8 : config == .markerBig ? 6 : 6, 
+                    x: config == .box ? 8 : config == .markerBig ? 6 : 6,
                     y: config == .box ? 8 : config == .markerBig ? 22 : 14
                 )
             }
@@ -51,8 +51,8 @@ struct MultiProfileIconView: View {
             )
             .scaleEffect(config == .box ? (count == 1 ? 1 : 0.9) : config == .markerBig ? (count == 1 ? 1 : 0.8) : (count == 1 ? 0.8 : 0.6))
             .offset(
-                x: config == .box ? (count == 1 ? 0 : -5) : config == .markerBig ? (count == 1 ? 16 : 14) : (count == 1 ? 12 : 10), 
-                y: config == .box ? (count == 1 ? 0 : -2) : config == .markerBig ? (count == 1 ? 16 : 14) : (count == 1 ? 12 : 8)
+                x: config == .box ? (count == 1 ? 9 : -5) : config == .markerBig ? (count == 1 ? 16 : 14) : (count == 1 ? 12 : 10),
+                y: config == .box ? (count == 1 ? 10 : -2) : config == .markerBig ? (count == 1 ? 16 : 14) : (count == 1 ? 12 : 8)
             )
             
             if count > 3 {
@@ -65,12 +65,13 @@ struct MultiProfileIconView: View {
                             .frame(width: 20, height: 20)
                     }
                     .offset(
-                        x: config == .box ? 12 : config == .markerBig ? 24 : 22, 
+                        x: config == .box ? 12 : config == .markerBig ? 24 : 22,
                         y: config == .box ? -10 : config == .markerBig ? 8 : 6)
                     .scaleEffect(config == .markerSmall ? 0.8 : 1)
             }
         }
         .frame(width: 50, height: 50)
+        .offset(x: config == .box && count > 1 ? 5 : 0, y: config == .box && count == 2 ? 7 : config == .box && count >= 3 ? 5 : 0)
 
         // Debug
 //        .background {
