@@ -4,6 +4,8 @@ import MapKit
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @Binding var isSatelliteMode: Bool
+    
     @Namespace private var rewardNameSpace
         
     // Connection to the ViewModel for Data and Location Permissions
@@ -47,7 +49,7 @@ struct ContentView: View {
                 TabView(selection: $selectedTab) {
                     Group {
                         // Tab 0: Map
-                        MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood, user: $user)
+                        MapView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood, user: $user)
                             .tabItem {
                                 Label("Mappa", systemImage: "map")
                             }
@@ -62,7 +64,7 @@ struct ContentView: View {
                             .disabled(true)
                         
                         // Tab 2: Profile
-                        ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+                        ProfileView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
                             .tabItem {
                                 Label("Profilo", systemImage: "person.fill")
                             }
@@ -93,7 +95,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $isSheetPresented) {
-            NewFavorSheet(isPresented: $isSheetPresented, database: database, viewModel: viewModel, newFavor: Favor(author: user), showCreatedFavorOverlay: $showInteractionOverlay, lastFavorCreated: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+            NewFavorSheet(isSatelliteMode: $isSatelliteMode, isPresented: $isSheetPresented, database: database, viewModel: viewModel, newFavor: Favor(author: user), showCreatedFavorOverlay: $showInteractionOverlay, lastFavorCreated: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
                 .interactiveDismissDisabled()
         }
         .sheet(
@@ -103,7 +105,7 @@ struct ContentView: View {
                 selectedFavorID = nil
             },
             content: { favor in
-                FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+                FavorDetailsSheet(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
             })
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         // Reward Details Overlay
@@ -115,8 +117,8 @@ struct ContentView: View {
                         .overlay {
                             // Background Gradient
                             LinearGradient(
-                                gradient: Gradient( colors: [.indigo, .purple, .pink, .red, .orange, .yellow, .green, .cyan]), 
-                                startPoint: .topLeading, 
+                                gradient: Gradient( colors: [.indigo, .purple, .pink, .red, .orange, .yellow, .green, .cyan]),
+                                startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                                 .opacity(0.4)
@@ -137,8 +139,8 @@ struct ContentView: View {
                             RoundedRectangle(cornerRadius: 25)
                                 .frame(height: 300)
                                 .foregroundStyle(LinearGradient(
-                                    gradient: Gradient( colors: [selectedReward?.color.opacity(0.3) ?? .white, selectedReward?.color ?? .white]), 
-                                    startPoint: .topLeading, 
+                                    gradient: Gradient( colors: [selectedReward?.color.opacity(0.3) ?? .white, selectedReward?.color ?? .white]),
+                                    startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ))
                             
