@@ -8,15 +8,13 @@ struct CategoryCapsule: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: category.icon)
-                .font(.subheadline)
-                .foregroundStyle(category == .all && isCategorySelected() ? .black : .white)
             
             Text(category.name)
-                .font(.subheadline.bold())
+                .fontWeight(.bold)
                 .fontDesign(.rounded)
-                .foregroundStyle(category == .all && isCategorySelected() ? .black : .white)
-            
         }
+        .font(.subheadline)
+        .foregroundStyle(category == .all && isCategorySelected() ? .black : .white)
         .frame(height: 40)
         .padding(.horizontal, 12)
         .background((isCategorySelected() ? category.color : .gray).gradient)
@@ -46,6 +44,6 @@ struct CategoryCapsule: View {
             ForEach(FavorCategory.allCases) { category in
                 CategoryCapsule(filter: FilterModel(selectedCategories: []), category: category)
             }
-        }   
+        }
     }
 }
