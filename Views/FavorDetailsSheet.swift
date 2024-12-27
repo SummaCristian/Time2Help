@@ -5,6 +5,8 @@ import MapKit
 
 struct FavorDetailsSheet: View {
     
+    @Binding var isSatelliteMode: Bool
+    
     @ObservedObject var viewModel: MapViewModel
     
     @ObservedObject var database: Database
@@ -40,22 +42,22 @@ struct FavorDetailsSheet: View {
         GeometryReader { _ in
             Form {
                 Section {
-                    HStack {                        
+                    HStack(spacing: 12) {
                         // The Favor's Title
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 16) {
                             Spacer().frame(height: 15)
                             
                             Text(favor.title)
                                 .font(.title)
                                 .fontWeight(.black)
                             
-                            HStack(spacing: 5) {
+                            HStack(spacing: 8) {
                                 ProfileIconView(username: favor.author.$nameSurname, color: favor.author.$profilePictureColor, size: .small)
                                 
                                 // The Favor's Author's Name
                                 Text(favor.author.nameSurname)
-                                    .fontWidth(.compressed)
                                     .font(.system(size: 15))
+                                    .fontWidth(.compressed)
                                     .fontWeight(.bold)
                                     .textCase(.uppercase)
                             }
@@ -72,13 +74,12 @@ struct FavorDetailsSheet: View {
                                 isAuthorProfileSheetPresented = true
                             }
                             
-                            HStack {
+                            HStack(spacing: 8) {
                                 Image(systemName: favor.type.icon)
-                                    .font(.footnote)
                                 
                                 Text(favor.type.string)
-                                    .font(.footnote)
                             }
+                            .font(.subheadline)
                             .offset(x: 10)
                         }
                         
@@ -101,8 +102,8 @@ struct FavorDetailsSheet: View {
                                     ForEach(favor.helpers) { helper in
                                         HStack(spacing: 5) {
                                             ProfileIconView(
-                                                username: helper.$nameSurname, 
-                                                color: helper.$profilePictureColor, 
+                                                username: helper.$nameSurname,
+                                                color: helper.$profilePictureColor,
                                                 size: .small
                                             )
                                             
@@ -132,8 +133,8 @@ struct FavorDetailsSheet: View {
                             } else {
                                 HStack(spacing: 5) {
                                     ProfileIconView(
-                                        username: favor.helpers.first!.$nameSurname, 
-                                        color: favor.helpers.first!.$profilePictureColor, 
+                                        username: favor.helpers.first!.$nameSurname,
+                                        color: favor.helpers.first!.$profilePictureColor,
                                         size: .small
                                     )
                                     
@@ -180,8 +181,8 @@ struct FavorDetailsSheet: View {
                     Section(
                         content: {
                             StarsView(
-                                value: $value, 
-                                isInDetailsSheet: true, 
+                                value: $value,
+                                isInDetailsSheet: true,
                                 clickOnGoing: favor.review != nil && favor.author.id != user.id ? .constant(true) : $clickOnGoing
                             )
                             .onAppear {
@@ -310,7 +311,7 @@ struct FavorDetailsSheet: View {
             // The Accept Favor Button
             // it is outside the ScrollView, because it hovers on top of the rest of the UI.
             // This allows to have it always in the same spot, always accessible
-            if favor.canBeAccepted(userID: user.id){
+            if favor.canBeAccepted(userID: user.id) {
                 VStack{
                     Spacer()
                     
@@ -346,25 +347,27 @@ struct FavorDetailsSheet: View {
         .presentationDragIndicator(.visible)
         .presentationDetents([.medium, .large])
         .alert(
-            "Auto Necessaria", 
-            isPresented: $isCarNeededAlertShowing, 
+            "Auto Necessaria",
+            isPresented: $isCarNeededAlertShowing,
             actions: {
                 Button("Chiudi", role: .cancel, action: {})
-            }, 
+            },
             message: {
                 Text("L'utente che ha richiesto questo Favore ha segnalato la necessità di possedere un'auto e di essere abilitati alla guida.\nTime2Help ricorda l'importanza di mettersi alla guida solo se si è in condizioni di guidare, ovvero non in stato di ebbrezza e/o sotto effetto di sostanze stupefacenti, nonchè l'obbligo di rispettare il Codice della Strada.")
-            })
+            }
+        )
         .alert(
-            "Lavoro Faticoso", 
-            isPresented: $isHeavyTaskAlertShowing, 
+            "Lavoro Faticoso",
+            isPresented: $isHeavyTaskAlertShowing,
             actions: {
                 Button("Chiudi", role: .cancel, action: {})
-            }, 
+            },
             message: {
                 Text("L'utente che ha richiesto questo Favore ha segnalato che si tratta di un lavoro fisico potenzialmente pesante.\nAccetta questo Favore solo se ritieni di poterlo fare.\nTime2Help non è responsabile per alcun danno diretto o indiretto causato dall'esecuzione di un Favore.")
-            })
+            }
+        )
         .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
-            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+            ProfileView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
         })
         /*.sheet(isPresented: $isHelperProfileSheetPresented, content: {
          ProfileView(database: database, selectedFavor: $selectedFavor, user: favor.$helper ?? nil)
