@@ -6,9 +6,11 @@ struct NeighbourhoodMarker: View {
     @Binding var isSelected: Bool
     let neighbourhood: Neighbourhood
     
+    let isSatelliteMode: Bool
+    
     // The UI
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             Text("Q")
                 .font(.custom("Futura-bold", size: 25))
 //                .foregroundStyle(isSelected ? .white : .orange)
@@ -28,6 +30,8 @@ struct NeighbourhoodMarker: View {
             if neighbourhood.big || isSelected {
                 Text(neighbourhood.name)
                     .font(.subheadline.bold())
+                    .foregroundStyle(isSatelliteMode ? .white : .primary)
+                    .shadow(radius: 6)
             }
         }
         .scaleEffect(neighbourhood.big || isSelected ? 1 : 0.4)
