@@ -4,6 +4,7 @@ import MapKit
 struct LoginView: View {
     
     @Binding var showLogin: Bool
+    @Binding var isSatelliteMode: Bool
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -14,7 +15,7 @@ struct LoginView: View {
     var body: some View {
         ZStack(alignment: .top) {
             NavigationStack {
-                LoginViewOne(showLogin: $showLogin, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
+                LoginViewOne(showLogin: $showLogin, isSatelliteMode: $isSatelliteMode, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
                     .toolbar(.hidden, for: .navigationBar)
             }
             
@@ -60,6 +61,7 @@ struct LoginHeader: View {
 struct LoginViewOne: View {
     
     @Binding var showLogin: Bool
+    @Binding var isSatelliteMode: Bool
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -91,7 +93,7 @@ struct LoginViewOne: View {
                 .frame(maxHeight: .infinity, alignment: .top)
                 
                 NavigationLink {
-                    LoginViewTwo(showLogin: $showLogin, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
+                    LoginViewTwo(showLogin: $showLogin, isSatelliteMode: $isSatelliteMode, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
                         .toolbar(.hidden, for: .navigationBar)
                 } label: {
                     Text("Sì, andiamo!")
@@ -113,6 +115,7 @@ struct LoginViewOne: View {
 struct LoginViewTwo: View {
     
     @Binding var showLogin: Bool
+    @Binding var isSatelliteMode: Bool
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -138,9 +141,9 @@ struct LoginViewTwo: View {
                 }
                 .frame(height: 150)
                 .padding([.horizontal, .bottom], 20)
-                //
+                
                 Button {
-                    viewModel.initialize()
+                    viewModel.customInitialize()
                 } label: {
                     Text(viewModel.locationManager.authorizationStatus == .notDetermined ? "Attiva la localizzazione" : viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse ? "Attivata!" : "Non attivata")
                         .font(.title3.bold())
@@ -172,7 +175,7 @@ struct LoginViewTwo: View {
                 }
                 
                 NavigationLink {
-                    LoginViewThree(showLogin: $showLogin, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
+                    LoginViewThree(showLogin: $showLogin, isSatelliteMode: $isSatelliteMode, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood)
                         .toolbar(.hidden, for: .navigationBar)
                 } label: {
                     Text("Proseguiamo!")
@@ -198,6 +201,7 @@ struct LoginViewTwo: View {
 struct LoginViewThree: View {
     
     @Binding var showLogin: Bool
+    @Binding var isSatelliteMode: Bool
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -311,7 +315,7 @@ struct LoginViewThree: View {
                     }
                 } else {
                     NavigationLink {
-                        LoginViewFour(showLogin: $showLogin, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+                        LoginViewFour(showLogin: $showLogin, isSatelliteMode: $isSatelliteMode, viewModel: viewModel, nameSurname: $nameSurname, selectedColor: $selectedColor, selectedNeighbourhood: $selectedNeighbourhood, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
                             .toolbar(.hidden, for: .navigationBar)
                     } label: {
                         Text("Proseguiamo!")
@@ -345,6 +349,7 @@ struct LoginViewThree: View {
 struct LoginViewFour: View {
     
     @Binding var showLogin: Bool
+    @Binding var isSatelliteMode: Bool
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -399,15 +404,11 @@ struct LoginViewFour: View {
                     ) {
                         Annotation("", coordinate: selectedNeighbourhoodStructTemp.location, content: {
                             // Only this Neighbourhood is shown in this mini-Map
-                            NeighbourhoodMarker(isSelected: .constant(true), neighbourhood: selectedNeighbourhoodStructTemp)
+                            NeighbourhoodMarker(isSelected: .constant(true), neighbourhood: selectedNeighbourhoodStructTemp, isSatelliteMode: isSatelliteMode)
                         })
                     }
                     .mapStyle(
-                        .standard(
-                            elevation: .realistic,
-                            emphasis: .automatic,
-                            pointsOfInterest: .excludingAll
-                        )
+                        isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
                     )
                     .frame(height: 200)
                     .cornerRadius(10)
@@ -466,7 +467,7 @@ struct LoginViewFour: View {
             selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
         }, content: {
             // Shows the Neighbourhood Selector sheet
-            NeighbourhoodSelector(viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+            NeighbourhoodSelector(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
         })
     }
 }
