@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct RequestedFavorsView: View {
+    @Binding var isSatelliteMode: Bool
+    
     @ObservedObject var viewModel: MapViewModel
     
     // The Database, where the Favors are stored
@@ -54,7 +56,7 @@ struct RequestedFavorsView: View {
         }
         .navigationTitle("Favori richiesti")
         .navigationDestination(item: $selectedFavor) { favor in
-            FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+            FavorDetailsSheet(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
         }
     }
 }
