@@ -49,10 +49,9 @@ struct FavorBoxView: View {
                         .font(.caption)
                         .foregroundStyle(.white)
                 }
-                Spacer()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding(.top, 6)
             }
-            
-            Spacer()
             
             // Author and Helper(s)
             HStack(alignment: .bottom) {
