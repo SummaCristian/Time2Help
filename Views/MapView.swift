@@ -79,6 +79,7 @@ struct MapView: View {
                         }
                     )
                 }
+                    
             }
         }
         .mapControlVisibility(.visible)
@@ -129,8 +130,6 @@ struct MapView: View {
         .overlay {
             VStack {
                 CategoryFiltersView(filter: filter)
-                
-                Spacer()
             }
             .padding(.top, 20)
         }
