@@ -10,9 +10,9 @@ enum FavorType: Identifiable, CaseIterable {
     var string: String {
         switch self {
         case .privateFavor:
-            return "Privato"
+            return "Singolo"
         case .publicFavor:
-            return "Pubblico"
+            return "Gruppo"
         }
     }
     
@@ -75,7 +75,7 @@ enum FavorColor: Identifiable, CaseIterable {
             return Color(.systemPurple)
         case .pink:
             return Color(.systemPink)
-        case .brown: 
+        case .brown:
             return Color(.systemBrown)
         }
     }
