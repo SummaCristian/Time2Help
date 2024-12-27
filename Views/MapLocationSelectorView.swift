@@ -5,6 +5,8 @@ struct LocationSelector: View {
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
     
+    @Binding var isSatelliteMode: Bool
+    
     @ObservedObject var viewModel: MapViewModel
     
     // The location selected by the User, nil if no selection has been made yet
@@ -13,15 +15,23 @@ struct LocationSelector: View {
     // The newly created favor, whose location is being edited in here
     @ObservedObject var newFavor: Favor
     
+    // A NameSpace needed for certain Map features
+    @Namespace private var mapNameSpace
+    
+    // The MapCameraPosition used to center around the User's Location
+    @State private var camera: MapCameraPosition = MapCameraPosition.automatic
+    @State private var cameraSupport: MapCameraPosition = MapCameraPosition.automatic
+    
     // The UI
     var body: some View {
         ZStack {
             // The MapReader is needed to intercept the User's tap inputs
             MapReader { reader in
                 Map(
-                    initialPosition: .automatic,
+                    position: $camera,
                     bounds: MapCameraBounds(minimumDistance: 500, maximumDistance: .infinity),
-                    interactionModes: .all
+                    interactionModes: .all,
+                    scope: mapNameSpace
                 ) {
                     if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
                         // The User's Location
@@ -36,17 +46,33 @@ struct LocationSelector: View {
                 }
                 .mapControlVisibility(.visible)
                 .mapControls {
-                    if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
-                        MapUserLocationButton()
-                    }
-                    MapCompass()
                     MapScaleView()
-                    MapPitchToggle()
                 }
-                .safeAreaPadding(.top, 100)
+                .mapStyle(
+                    isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
+                )
+                .safeAreaPadding(.top, 105)
                 .safeAreaPadding(.leading, 5)
                 .safeAreaPadding(.trailing, 10)
                 .safeAreaPadding(.bottom, 80)
+                .overlay {
+                    VStack(spacing: 0) {
+                        HStack(spacing: 0) {
+                            Spacer()
+                            
+                            MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, isSatelliteMode: $isSatelliteMode, selectedCLLocationCoordinate: selectedLocation ?? newFavor.location, mapNameSpace: mapNameSpace)
+                        }
+                            
+                        Spacer()
+                    }
+                    .padding(.top, 105)
+                    .padding(.trailing, 10)
+                }
+                .onMapCameraChange(frequency: .continuous) { camera in
+                    self.cameraSupport = MapCameraPosition.camera(.init(centerCoordinate: camera.camera.centerCoordinate, distance: camera.camera.distance, heading: camera.camera.heading, pitch: camera.camera.pitch))
+                }
+                .mapScope(mapNameSpace)
+                .animation(.easeInOut, value: camera)
                 .onTapGesture(perform: { screenCoord in
                     // Intercepted a tap made by the User
                     // Converts the tap position into Map's coordinates
@@ -116,6 +142,7 @@ struct LocationSelector: View {
                             .background(.green, in: .capsule)
                     }
                     .shadow(radius: 10)
+                    .disabled(selectedLocation == nil)
                     .hoverEffect(.highlight)
                 }
             }
