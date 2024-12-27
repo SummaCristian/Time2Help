@@ -52,7 +52,7 @@ struct RequestedFavorsView: View {
                 )
             }
         }
-        .navigationTitle("I tuoi Favori")
+        .navigationTitle("Favori richiesti")
         .navigationDestination(item: $selectedFavor) { favor in
             FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
         }
