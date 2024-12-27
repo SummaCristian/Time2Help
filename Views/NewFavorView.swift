@@ -6,6 +6,8 @@ import MapKit
 struct NewFavorSheet: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @Binding var isSatelliteMode: Bool
+    
     @Binding var isPresented: Bool
     
     // Boolean value that controls the appearing of the second sheet, used to edit the Favor's Location
@@ -69,7 +71,6 @@ struct NewFavorSheet: View {
                             
                             HStack(alignment: .top, spacing: 8) {
                                 TextField("Descrizione", text: $newFavor.description, axis: .vertical)
-                                    .font(.callout)
                                     .textInputAutocapitalization(.sentences)
                                     .lineLimit(5 ... 5)
                                 
@@ -92,18 +93,20 @@ struct NewFavorSheet: View {
                     Section(
                         content: {
                             Picker(
-                                selection: $newFavor.type, 
+                                selection: $newFavor.type,
                                 content: {
                                     ForEach(FavorType.allCases) { type in
-                                        VStack (alignment: .leading, spacing: 5) {
+                                        VStack (alignment: .leading, spacing: 8) {
                                             Label(type.string, systemImage: type.icon)
+                                                .padding(.leading, 8)
+                                            
                                             Text(type.description)
                                                 .font(.caption)
                                                 .foregroundStyle(.secondary)
                                         }
-                                            .tag(type)
+                                        .tag(type)
                                     }
-                                }, 
+                                },
                                 label: {
                                     //Text("Tipo di Favore")
                                 })
@@ -120,13 +123,14 @@ struct NewFavorSheet: View {
                     Section(
                         content: {
                             Picker(
-                                selection: $newFavor.category, 
-                                label: 
+                                selection: $newFavor.category,
+                                label:
                                     Text(newFavor.category.description)
                                         .font(.subheadline)
                             ) {
                                 ForEach(FavorCategory.allCases.filter({$0 != .all})) { category in
-                                    Label(category.name, systemImage: category.icon).tag(category)
+                                    Label(category.name, systemImage: category.icon)
+                                        .tag(category)
                                 }
                             }
                             .pickerStyle(.menu)
@@ -140,8 +144,7 @@ struct NewFavorSheet: View {
                     // Date selectors
                     Section(
                         content: {
-                            TimeSlotsList(slots: $newFavor.timeSlots)
-                                .tint(newFavor.color)
+                            TimeSlotsList(slots: $newFavor.timeSlots, tint: newFavor.color)
                         },
                         header: {
                             Text("Fasce orarie")
@@ -164,6 +167,7 @@ struct NewFavorSheet: View {
                                     Text("Auto Necessaria")
                                 }
                             })
+                            .tint(.red)
                             .padding(.vertical, 4)
                             
                             Toggle(isOn: $newFavor.isHeavyTask, label: {
@@ -179,6 +183,7 @@ struct NewFavorSheet: View {
                                     Text("Faticoso")
                                 }
                             })
+                            .tint(.green)
                             .padding(.vertical, 4)
                         },
                         header: {
@@ -199,9 +204,10 @@ struct NewFavorSheet: View {
                                     HStack(spacing: 6) {
                                         Image(systemName: "pin.fill")
                                             .font(.subheadline)
+                                        
                                         Text("Scegli")
                                     }
-                                    .foregroundColor(.green)
+                                    .foregroundColor(newFavor.color)
                                 }
                                 
                                 Map(
@@ -213,6 +219,9 @@ struct NewFavorSheet: View {
                                         FavorMarker(favor: newFavor, isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
                                     })
                                 }
+                                .mapStyle(
+                                    isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
+                                )
                                 .frame(height: 200)
                                 .cornerRadius(10)
                                 .hoverEffect(.lift)
@@ -240,7 +249,7 @@ struct NewFavorSheet: View {
                         newFavor.location = location
                     } else {
                         // Handle the case where the location is unavailable
-                        print("Location not available yet.")
+//                        print("Location not available yet.")
                         // Optionally show an alert to the user
                     }
                 }
@@ -249,7 +258,7 @@ struct NewFavorSheet: View {
                 }
                 .sheet(isPresented: $isLocationSelectorPresented, content: {
                     // Shows the Location Selector sheet
-                    LocationSelector(viewModel: viewModel, newFavor: newFavor)
+                    LocationSelector(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, newFavor: newFavor)
                         .interactiveDismissDisabled()
                 })
                 .alert("Tornare indietro?", isPresented: $isConfirmationDialogPresented) {
@@ -365,6 +374,6 @@ struct NewFavorSheet: View {
     }
 }
 
-#Preview {    
-    NewFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), newFavor: Favor(author: User(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue"))), showCreatedFavorOverlay: .constant(true), lastFavorCreated: .constant(nil), lastInteraction: .constant(.created))
+#Preview {
+    NewFavorSheet(isSatelliteMode: .constant(true), isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), newFavor: Favor(author: User(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue"))), showCreatedFavorOverlay: .constant(true), lastFavorCreated: .constant(nil), lastInteraction: .constant(.created))
 }
