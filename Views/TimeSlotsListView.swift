@@ -5,7 +5,7 @@ struct TimeSlotsList: View {
     
     var isEditable: Bool = true
     
-    @State var tint: Color = .accentColor
+    let tint: Color
     
     var body: some View {
         if isEditable {
@@ -16,6 +16,7 @@ struct TimeSlotsList: View {
                         
                         DatePicker("", selection: slot.startingDate, displayedComponents: [.date, .hourAndMinute])
                             .labelsHidden()
+                            
                         
                         Image(systemName: "arrow.right")
                             .bold()
@@ -26,8 +27,7 @@ struct TimeSlotsList: View {
                         Spacer()
                         
                         Image(systemName: "line.horizontal.3")
-                            .bold()
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.gray)
                     }
                     .padding(5)
                 }
@@ -55,7 +55,9 @@ struct TimeSlotsList: View {
                                 Text("Aggiungi fascia")
                                     .bold()
                             }
-                        })
+                        }
+                    )
+                    .tint(tint)
                     .buttonStyle(BorderedButtonStyle())
                     .buttonBorderShape(.capsule)
                     .padding(.vertical, 6)
@@ -68,10 +70,10 @@ struct TimeSlotsList: View {
                     // Each day will have its own Row, which is why we need to extract them
                     let days: [Date] = extractDays()
                     
-                    ForEach(days.indices) { index in
+                    ForEach(days, id: \.self) { day in
                         HStack {
                             // Day indication per-row
-                            Text(days[index].formatted(date: .long, time: .omitted))
+                            Text(day.formatted(date: .long, time: .omitted))
                                 .bold()
                                 .foregroundStyle(tint)
                             
@@ -80,9 +82,9 @@ struct TimeSlotsList: View {
                             // Time Slots
                             VStack {
                                 let calendar = Calendar.current
-                                let slotsInDay = slots.filter({ calendar.isDate($0.startingDate, inSameDayAs: days[index])})
+                                let slotsInDay = slots.filter({ calendar.isDate($0.startingDate, inSameDayAs: day)})
                                 
-                                ForEach(slotsInDay) { slot in 
+                                ForEach(slotsInDay) { slot in
                                     HStack {
                                         Text(slot.startingDate.formatted(date: .omitted, time: .shortened))
                                             .foregroundStyle(tint)
@@ -123,18 +125,18 @@ struct TimeSlotsList: View {
     VStack() {
         // Editable
         TimeSlotsList(slots: .constant(
-            [TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)), 
-             TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)), 
-             TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)), 
+            [TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)),
+             TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)),
+             TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)),
              TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600))
-            ]))
+            ]), tint: .orange)
         
         // Non Editable
         TimeSlotsList(slots: .constant(
-            [TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)), 
-             TimeSlot(startingDate: Date().addingTimeInterval(36000), endingDate: Date().addingTimeInterval(36200)), 
-             TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)), 
+            [TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)),
+             TimeSlot(startingDate: Date().addingTimeInterval(36000), endingDate: Date().addingTimeInterval(36200)),
+             TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)),
              TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600))
-            ]), isEditable: false)
+            ]), isEditable: false, tint: .orange)
     }
 }
