@@ -3,6 +3,8 @@ import MapKit
 
 struct ModifyProfileView: View {
     
+    @Binding var isSatelliteMode: Bool
+    
     @ObservedObject var viewModel: MapViewModel
     
     @Binding var isModifySheetPresented: Bool
@@ -59,7 +61,6 @@ struct ModifyProfileView: View {
                                     }
                                     
                                     ProfileIconView(username: $nameSurnameTemp, color: $selectedColorTemp, size: .medium)
-                                    
                                 }
                                 
                                 VStack(alignment: .center, spacing: 16) {
@@ -115,15 +116,11 @@ struct ModifyProfileView: View {
                                 ) {
                                     Annotation("", coordinate: selectedNeighbourhoodStructTemp.location, content: {
                                         // Only this Neighbourhood is shown in this mini-Map
-                                        NeighbourhoodMarker(isSelected: .constant(true), neighbourhood: selectedNeighbourhoodStructTemp)
+                                        NeighbourhoodMarker(isSelected: .constant(true), neighbourhood: selectedNeighbourhoodStructTemp, isSatelliteMode: isSatelliteMode)
                                     })
                                 }
                                 .mapStyle(
-                                    .standard(
-                                        elevation: .realistic,
-                                        emphasis: .automatic,
-                                        pointsOfInterest: .excludingAll
-                                    )
+                                    isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
                                 )
                                 .frame(height: 200)
                                 .cornerRadius(10)
@@ -164,7 +161,6 @@ struct ModifyProfileView: View {
                         }
                     }
                 })
-                
                 
                 VStack(spacing: 0) {
                     Spacer()
@@ -210,6 +206,10 @@ struct ModifyProfileView: View {
         .alert("Tornare indietro?", isPresented: $isConfirmationDialogPresented) {
             Button("No", role: .cancel) {}
             Button("Sì", role: .destructive) {
+                nameSurnameTemp = user.nameSurname
+                selectedColorTemp = user.profilePictureColor
+                selectedNeighbourhoodStructTemp.name = user.neighbourhood
+                
                 isModifySheetPresented = false
             }
         } message: {
@@ -219,7 +219,8 @@ struct ModifyProfileView: View {
             selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
         }, content: {
             // Shows the Location Selector sheet
-            NeighbourhoodSelector(viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+            NeighbourhoodSelector(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+                .interactiveDismissDisabled()
         })
         .onAppear {
             selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
