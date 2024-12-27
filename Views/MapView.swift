@@ -6,6 +6,8 @@ import MapKit
 struct MapView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @Binding var isSatelliteMode: Bool
+    
     // The ViewModel, where the Data and Permission are handled.
     @ObservedObject var viewModel: MapViewModel
     
@@ -20,8 +22,6 @@ struct MapView: View {
     // This is used to deselect the Favor once it's not selected anymore
     @Binding var selectedFavorID: UUID?
     
-    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
-    
     let selectedNeighbourhood: String
     
     @Binding var user: User
@@ -30,7 +30,9 @@ struct MapView: View {
     @Namespace private var mapNameSpace
     
     // The MapCameraPosition used to center around the User's Location
-    @State private var mapCameraPosition: MapCameraPosition = MapCameraPosition.automatic
+    @State private var camera: MapCameraPosition = MapCameraPosition.automatic
+    @State private var cameraSupport: MapCameraPosition = MapCameraPosition.automatic
+    
     // The list of Map Elements from Apple's MapKit database
     @State private var selection: MapFeature? = nil
     
@@ -40,7 +42,7 @@ struct MapView: View {
     var body: some View {
         // The Map, centered around ViewModel's region, and showing the User's position when possible
         Map(
-            position: $mapCameraPosition,
+            position: $camera,
             bounds: MapCameraBounds(minimumDistance: 0.008, maximumDistance: .infinity),
             interactionModes: .all,
             selection: $selection,
@@ -84,38 +86,7 @@ struct MapView: View {
         }
         .mapControlVisibility(.visible)
         .mapControls {
-            if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
-                MapUserLocationButton()
-            }
-            MapCompass()
             MapScaleView()
-            MapPitchToggle()
-        }
-        .overlay {
-            VStack() {
-                HStack {
-                    Button(action: {
-                        isSatelliteMode = !isSatelliteMode
-                    }) {
-                        MapStyleButton(isSatelliteSelected: $isSatelliteMode)
-                            .contextMenu(menuItems: {
-                                Button("Semplificata", systemImage: isSatelliteMode ? "map" : "map.fill") {
-                                    isSatelliteMode = false
-                                }
-                                
-                                Button("Satellite", systemImage: isSatelliteMode ? "globe.europe.africa.fill" : "globe.europe.africa") {
-                                    isSatelliteMode = true
-                                }
-                            })
-                    }
-                    .frame(width: 44, height: 44)
-                    .offset(x: 5, y: 60)
-                    
-                    Spacer()
-                }
-                
-                Spacer()
-            }
         }
         .mapStyle(
             isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
@@ -125,6 +96,25 @@ struct MapView: View {
         .safeAreaPadding(.top, 80)
         .safeAreaPadding(.leading, 5)
         .safeAreaPadding(.trailing, 10)
+        .safeAreaPadding(.bottom, 80)
+        .overlay {
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    Spacer()
+                    
+                    MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, isSatelliteMode: $isSatelliteMode, selectedCLLocationCoordinate: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location, mapNameSpace: mapNameSpace)
+                }
+                    
+                Spacer()
+            }
+            .padding(.top, 80)
+            .padding(.trailing, 10)
+        }
+        .onMapCameraChange(frequency: .continuous) { camera in
+            self.cameraSupport = MapCameraPosition.camera(.init(centerCoordinate: camera.camera.centerCoordinate, distance: camera.camera.distance, heading: camera.camera.heading, pitch: camera.camera.pitch))
+        }
+        .mapScope(mapNameSpace)
+        .animation(.easeInOut, value: camera)
         .sensoryFeedback(.selection, trigger: filter.selectedCategories)
         .sensoryFeedback(.impact, trigger: selection)
         .overlay {
@@ -147,9 +137,9 @@ struct MapView: View {
     
     func verifyLocationStatus() {
         if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
-            mapCameraPosition = .userLocation(followsHeading: true, fallback: .automatic)
+            camera = .userLocation(followsHeading: true, fallback: .automatic)
         } else {
-            mapCameraPosition = MapCameraPosition.camera(.init(centerCoordinate: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location, distance: 3200))
+            camera = MapCameraPosition.camera(.init(centerCoordinate: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location, distance: 3200))
         }
     }
 }
