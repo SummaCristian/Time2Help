@@ -71,7 +71,10 @@ struct MultiProfileIconView: View {
             }
         }
         .frame(width: 50, height: 50)
-        .offset(x: config == .box && count > 1 ? 5 : 0, y: config == .box && count == 2 ? 7 : config == .box && count >= 3 ? 5 : 0)
+        .offset(
+            x: config == .box && count > 1 ? 5 : 0,
+            y: config == .box && count == 2 ? 7 : config == .box && count >= 3 ? 5 : 0
+        )
 
         // Debug
 //        .background {
