@@ -53,6 +53,8 @@ struct FavorBoxView: View {
                 .padding(.top, 6)
             }
             
+            Spacer()
+            
             // Author and Helper(s)
             HStack(alignment: .bottom) {
                 // Author
@@ -86,7 +88,7 @@ struct FavorBoxView: View {
 #Preview {
     ScrollView() {
         LazyVGrid(columns: [.init(.adaptive(minimum: 150), spacing: 10)]) {
-            ForEach(FavorCategory.allCases) { category in
+            ForEach(FavorCategory.allCases.filter({$0 != .all})) { category in
                 FavorBoxView(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, location: MapDetails.startingLocation, isCarNecessary: true, isHeavyTask: true, status: .completed, category: category))
             }
         }
