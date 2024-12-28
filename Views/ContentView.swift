@@ -4,8 +4,6 @@ import MapKit
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @Binding var isSatelliteMode: Bool
-    
     @Namespace private var rewardNameSpace
         
     // Connection to the ViewModel for Data and Location Permissions
@@ -49,7 +47,7 @@ struct ContentView: View {
                 TabView(selection: $selectedTab) {
                     Group {
                         // Tab 0: Map
-                        MapView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood, user: $user)
+                        MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood, user: $user)
                             .tabItem {
                                 Label("Mappa", systemImage: "map")
                             }
@@ -64,7 +62,7 @@ struct ContentView: View {
                             .disabled(true)
                         
                         // Tab 2: Profile
-                        ProfileView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+                        ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
                             .tabItem {
                                 Label("Profilo", systemImage: "person.fill")
                             }
@@ -95,7 +93,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $isSheetPresented) {
-            NewFavorSheet(isSatelliteMode: $isSatelliteMode, isPresented: $isSheetPresented, database: database, viewModel: viewModel, newFavor: Favor(author: user), showCreatedFavorOverlay: $showInteractionOverlay, lastFavorCreated: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+            NewFavorSheet(isPresented: $isSheetPresented, database: database, viewModel: viewModel, newFavor: Favor(author: user), showCreatedFavorOverlay: $showInteractionOverlay, lastFavorCreated: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
                 .interactiveDismissDisabled()
         }
         .sheet(
@@ -105,7 +103,7 @@ struct ContentView: View {
                 selectedFavorID = nil
             },
             content: { favor in
-                FavorDetailsSheet(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+                FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
             })
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         // Reward Details Overlay

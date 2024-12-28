@@ -2,8 +2,7 @@ import SwiftUI
 import MapKit
 
 struct ModifyProfileView: View {
-    
-    @Binding var isSatelliteMode: Bool
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -61,6 +60,7 @@ struct ModifyProfileView: View {
                                     }
                                     
                                     ProfileIconView(username: $nameSurnameTemp, color: $selectedColorTemp, size: .medium)
+                                    
                                 }
                                 
                                 VStack(alignment: .center, spacing: 16) {
@@ -116,7 +116,7 @@ struct ModifyProfileView: View {
                                 ) {
                                     Annotation("", coordinate: selectedNeighbourhoodStructTemp.location, content: {
                                         // Only this Neighbourhood is shown in this mini-Map
-                                        NeighbourhoodMarker(isSelected: .constant(true), neighbourhood: selectedNeighbourhoodStructTemp, isSatelliteMode: isSatelliteMode)
+                                        NeighbourhoodMarker(isSelected: .constant(true), neighbourhood: selectedNeighbourhoodStructTemp)
                                     })
                                 }
                                 .mapStyle(
@@ -219,8 +219,7 @@ struct ModifyProfileView: View {
             selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
         }, content: {
             // Shows the Location Selector sheet
-            NeighbourhoodSelector(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
-                .interactiveDismissDisabled()
+            NeighbourhoodSelector(viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
         })
         .onAppear {
             selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp

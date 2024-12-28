@@ -7,8 +7,6 @@ struct ProfileView: View {
     
     @Environment(\.openURL) private var openURL
     
-    @Binding var isSatelliteMode: Bool
-    
     @ObservedObject var viewModel: MapViewModel
     
     // The Database, where the Favors are stored
@@ -237,15 +235,17 @@ struct ProfileView: View {
                     }
                     .listRowBackground(Color.clear)
                 }
+                
+                
             }
             .navigationTitle("Profilo")
             .navigationDestination(item: $destination) { destination in
                 switch destination {
                 case "Requested Favors":
-                    RequestedFavorsView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
-                case "Accepted Favors":
-                    AcceptedFavorsView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
-                default:
+                    RequestedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+                case "Accepted Favors": 
+                    AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+                default: 
                     Text("Unknown")
                 }
                 
@@ -282,7 +282,7 @@ struct ProfileView: View {
             ExportView()
         }
         .sheet(isPresented: $isModifySheetPresented, content: {
-            ModifyProfileView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, isModifySheetPresented: $isModifySheetPresented, user: $user, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
+            ModifyProfileView(viewModel: viewModel, isModifySheetPresented: $isModifySheetPresented, user: $user, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
                 .interactiveDismissDisabled()
         })
         .onAppear {

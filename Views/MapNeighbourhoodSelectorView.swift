@@ -2,11 +2,11 @@ import SwiftUI
 import MapKit
 
 struct NeighbourhoodSelector: View {
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
+    
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
-    
-    @Binding var isSatelliteMode: Bool
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -16,7 +16,7 @@ struct NeighbourhoodSelector: View {
     
     @State private var neighbourhoodsUpdated: [Neighbourhood] = Database.neighbourhoods
     
-    // A NameSpace needed for certain Map features
+    // A NameSpace for certain Map features
     @Namespace private var mapNameSpace
     
     @State private var camera: MapCameraPosition = MapCameraPosition.automatic
@@ -42,7 +42,7 @@ struct NeighbourhoodSelector: View {
                 // Note: it's set in selectedLocation if possible, but if it's nil, it defaults to the Favor's old Location
                 ForEach(neighbourhoodsUpdated) { neighbourhood in
                     Annotation("", coordinate: neighbourhood.location) {
-                        NeighbourhoodMarker(isSelected: .constant(neighbourhood.id == selectedNeighbourhoodStructTempTwo.id), neighbourhood: neighbourhood, isSatelliteMode: isSatelliteMode)
+                        NeighbourhoodMarker(isSelected: .constant(neighbourhood.id == selectedNeighbourhoodStructTempTwo.id), neighbourhood: neighbourhood)
                             .onTapGesture {
                                 selectedNeighbourhoodStructTempTwo = neighbourhood
                                 withAnimation(.spring(duration: 0.2)) {
@@ -57,7 +57,8 @@ struct NeighbourhoodSelector: View {
                 MapScaleView()
             }
             .mapStyle(
-                isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
+                isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) :
+                .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
             )
             .onAppear {
                 camera = MapCameraPosition.camera(.init(centerCoordinate: selectedNeighbourhoodStructTempTwo.location, distance: 3200))
@@ -92,9 +93,9 @@ struct NeighbourhoodSelector: View {
                     HStack(spacing: 0) {
                         Spacer()
                         
-                        MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $camera, isSatelliteMode: $isSatelliteMode, selectedCLLocationCoordinate: selectedNeighbourhoodStructTempTwo.location, mapNameSpace: mapNameSpace)
+                        MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, selectedCLLocationCoordinate: selectedNeighbourhoodStructTempTwo.location, mapNameSpace: mapNameSpace)
                     }
-                        
+                    
                     Spacer()
                 }
                 .padding(.top, 115)
@@ -150,7 +151,7 @@ struct NeighbourhoodSelector: View {
                     
                     Spacer()
                     
-                    NeighbourhoodMarker(isSelected: .constant(false), neighbourhood: .init(name: "", location: .init(), big: true), isSatelliteMode: false)
+                    NeighbourhoodMarker(isSelected: .constant(false), neighbourhood: .init(name: "", location: .init(), big: true))
                         .padding(.bottom, -25)
                 }
                 .padding(.vertical, 25)
@@ -160,7 +161,7 @@ struct NeighbourhoodSelector: View {
                 Spacer()
             }
             
-//            Text("\(altitude)")
+            //            Text("\(altitude)")
             VStack(alignment: .leading) {
                 HStack {
                     Spacer()

@@ -6,8 +6,6 @@ import MapKit
 struct MapView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @Binding var isSatelliteMode: Bool
-    
     // The ViewModel, where the Data and Permission are handled.
     @ObservedObject var viewModel: MapViewModel
     
@@ -22,6 +20,10 @@ struct MapView: View {
     // This is used to deselect the Favor once it's not selected anymore
     @Binding var selectedFavorID: UUID?
     
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
+    
+    @AppStorage("showList") private var showList: Bool = false
+    
     let selectedNeighbourhood: String
     
     @Binding var user: User
@@ -32,7 +34,6 @@ struct MapView: View {
     // The MapCameraPosition used to center around the User's Location
     @State private var camera: MapCameraPosition = MapCameraPosition.automatic
     @State private var cameraSupport: MapCameraPosition = MapCameraPosition.automatic
-    
     // The list of Map Elements from Apple's MapKit database
     @State private var selection: MapFeature? = nil
     
@@ -40,83 +41,152 @@ struct MapView: View {
         
     // The UI
     var body: some View {
-        // The Map, centered around ViewModel's region, and showing the User's position when possible
-        Map(
-            position: $camera,
-            bounds: MapCameraBounds(minimumDistance: 0.008, maximumDistance: .infinity),
-            interactionModes: .all,
-            selection: $selection,
-            scope: mapNameSpace
-        ) {
-            if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
-                // The User's position
-                UserAnnotation()
-                    .mapOverlayLevel(level: .aboveRoads)
-            }
-            
-            // All the Favors
-            ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood})) { favor in
-                if (
-                    filter.isFavorIncluded(favor: favor)
-                ) {
-                    if favor.type == .publicFavor {
-                        MapCircle(center: favor.location, radius: 35)
-                            .foregroundStyle(favor.category.color.opacity(0.2))
-                            .stroke(favor.category.color, lineWidth: 3)
-                            .mapOverlayLevel(level: .aboveRoads)
+        ZStack {
+            // The Map, centered around ViewModel's region, and showing the User's position when possible
+            Map(
+                position: $camera,
+                bounds: MapCameraBounds(minimumDistance: 0.008, maximumDistance: .infinity),
+                interactionModes: .all,
+                selection: $selection,
+                scope: mapNameSpace
+            ) {
+                if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
+                    // The User's position
+                    UserAnnotation()
+                        .mapOverlayLevel(level: .aboveRoads)
+                }
+                
+                // All the Favors
+                ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood})) { favor in
+                    if (
+                        filter.isFavorIncluded(favor: favor)
+                    ) {
+                        if favor.type == .publicFavor {
+                            MapCircle(center: favor.location, radius: 35)
+                                .foregroundStyle(favor.category.color.opacity(0.2))
+                                .stroke(favor.category.color, lineWidth: 3)
+                                .mapOverlayLevel(level: .aboveRoads)
+                        }
+                        
+                        Annotation(
+                            coordinate: favor.location,
+                            content: {
+                                FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: false, isOwner: user.id == favor.author.id)
+                                    .onTapGesture {
+                                        // Selects the Favor and triggers the showing of the sheet
+                                        selectedFavor = favor
+                                        selectedFavorID = favor.id
+                                    }
+                            },
+                            label: {
+                                //Label(favor.title, systemImage: favor.icon.icon)
+                            }
+                        )
                     }
                     
-                    Annotation(
-                        coordinate: favor.location,
-                        content: {
-                            FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: false, isOwner: user.id == favor.author.id)
-                                .onTapGesture {
-                                    // Selects the Favor and triggers the showing of the sheet
-                                    selectedFavor = favor
-                                    selectedFavorID = favor.id
-                                }
-                        },
-                        label: {
-                            //Label(favor.title, systemImage: favor.icon.icon)
-                        }
-                    )
                 }
+            }
+            .mapControlVisibility(.visible)
+            .mapControls {
+                MapScaleView()
+            }
+            .mapStyle(
+                isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
+            )
+            
+            
+            if showList {
+                ZStack {
+                    ZStack {
+                        Rectangle()
+                            .foregroundStyle(.ultraThinMaterial)
+                            .ignoresSafeArea()
+                        
+                        ScrollView {
+                            VStack {
+                                ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood})) { favor in
+                                    if (
+                                        filter.isFavorIncluded(favor: favor)
+                                    ) {
+                                        FavorListRow(favor: favor)
+                                            .onTapGesture {
+                                                // Selects the Favor and triggers the showing of the sheet
+                                                selectedFavor = favor
+                                                selectedFavorID = favor.id
+                                            }
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.bottom, 50)
+                    }
                     
+                    VStack {
+                        Rectangle()
+                            .foregroundStyle(.ultraThinMaterial)
+                            .ignoresSafeArea()
+                            .frame(height: 0)
+                        
+                        Spacer()
+                    }
+                }
             }
         }
-        .mapControlVisibility(.visible)
-        .mapControls {
-            MapScaleView()
-        }
-        .mapStyle(
-            isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
-        )
         .edgesIgnoringSafeArea(.bottom)
         .tint(.blue)
-        .safeAreaPadding(.top, 80)
-        .safeAreaPadding(.leading, 5)
+        .safeAreaPadding(.top, 150)
+        .safeAreaPadding(.leading, 10)
         .safeAreaPadding(.trailing, 10)
         .safeAreaPadding(.bottom, 80)
+        .sensoryFeedback(.selection, trigger: filter.selectedCategories)
+        .sensoryFeedback(.impact, trigger: selection)
         .overlay {
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
+            if !showList {
+                VStack(spacing: 0) {
+                    HStack(spacing: 0) {
+                        Spacer()
+                        
+                        MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, selectedCLLocationCoordinate: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location, mapNameSpace: mapNameSpace)
+                    }
+                    
                     Spacer()
-                    
-                    MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, isSatelliteMode: $isSatelliteMode, selectedCLLocationCoordinate: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location, mapNameSpace: mapNameSpace)
                 }
-                    
-                Spacer()
+                .padding(.top, 140)
+                .padding(.trailing, 15)
             }
-            .padding(.top, 80)
-            .padding(.trailing, 10)
         }
         .onMapCameraChange(frequency: .continuous) { camera in
             self.cameraSupport = MapCameraPosition.camera(.init(centerCoordinate: camera.camera.centerCoordinate, distance: camera.camera.distance, heading: camera.camera.heading, pitch: camera.camera.pitch))
         }
         .mapScope(mapNameSpace)
         .animation(.easeInOut, value: camera)
-        .sensoryFeedback(.selection, trigger: filter.selectedCategories)
-        .sensoryFeedback(.impact, trigger: selection)
+        .overlay {
+            VStack(alignment: .leading) {
+                HStack {
+                    Spacer()
+                    
+                    Button {
+                        withAnimation {
+                            showList.toggle()
+                        }
+                    } label: {
+                        Image(systemName: showList ? "list.bullet" : "map.fill")
+                            .font(.title3.bold())
+                            .foregroundStyle(.white)
+                            .padding(.all, showList ? 14 : 12)
+                    }
+                    .background(
+                        Circle()
+                            .foregroundStyle(.blue)
+                    )
+                }
+                
+                Spacer()
+            }
+            .safeAreaPadding(.top, 85)
+            .safeAreaPadding(.trailing, 20)
+            .animation(.spring(duration: 0.4), value: showList)
+        }
         .overlay {
             VStack {
                 CategoryFiltersView(filter: filter)

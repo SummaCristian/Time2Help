@@ -1,5 +1,3 @@
-// MARK: Added
-
 import SwiftUI
 import MapKit
 
@@ -11,7 +9,7 @@ struct MapButtonsView: View {
     @Binding var camera: MapCameraPosition
     @Binding var cameraSupport: MapCameraPosition
     
-    @Binding var isSatelliteMode: Bool
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
     
     let selectedCLLocationCoordinate: CLLocationCoordinate2D
     
@@ -42,7 +40,7 @@ struct MapButtonsView: View {
                 }) {
                     Text(!is3dMode ? "3D" : "2D")
                         .font(.custom("ArchivoVariable-SemiBold_Medium", size: 18))
-//                        .font(.body)
+                    //                        .font(.body)
                         .foregroundStyle(.blue)
                         .frame(width: 50, height: 50)
                 }
@@ -66,12 +64,12 @@ struct MapButtonsView: View {
             }
             .background {
                 Capsule()
-//                        RoundedRectangle(cornerRadius: 12)
+                //                        RoundedRectangle(cornerRadius: 12)
                     .foregroundStyle(.thinMaterial)
                     .shadow(color: .gray.opacity(0.2), radius: 6)
             }
             
-//            MapCompass(scope: mapNameSpace)
+            //            MapCompass(scope: mapNameSpace)
         }
     }
 }

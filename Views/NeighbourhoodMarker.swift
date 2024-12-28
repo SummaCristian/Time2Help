@@ -3,17 +3,17 @@ import SwiftUI
 struct NeighbourhoodMarker: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
+    
     @Binding var isSelected: Bool
     let neighbourhood: Neighbourhood
-    
-    let isSatelliteMode: Bool
     
     // The UI
     var body: some View {
         VStack(spacing: 12) {
             Text("Q")
                 .font(.custom("Futura-bold", size: 25))
-//                .foregroundStyle(isSelected ? .white : .orange)
+            //                .foregroundStyle(isSelected ? .white : .orange)
                 .foregroundStyle(LinearGradient(colors: isSelected ? (colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)]) : [.orange], startPoint: .topLeading, endPoint: .bottomTrailing))
                 .frame(width: 50, height: 50)
                 .background(
@@ -26,7 +26,7 @@ struct NeighbourhoodMarker: View {
                                 .stroke(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: isSelected ? 3 : 2)
                         }
                 )
-                
+            
             if neighbourhood.big || isSelected {
                 Text(neighbourhood.name)
                     .font(.subheadline.bold())
