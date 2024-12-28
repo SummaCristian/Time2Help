@@ -98,7 +98,7 @@ struct CategoryFiltersView: View {
             }
             .padding(.horizontal)
             .frame(alignment: .top)
-            .scrollDisabled(isAdvancedFiltersViewShowing)
+            .scrollDisabled(!isAdvancedFiltersViewShowing)
         }
         .sensoryFeedback(.impact, trigger: moveToCenter, condition: { old, new in
             new
