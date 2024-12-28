@@ -5,8 +5,6 @@ import MapKit
 
 struct FavorDetailsSheet: View {
     
-    @Binding var isSatelliteMode: Bool
-    
     @ObservedObject var viewModel: MapViewModel
     
     @ObservedObject var database: Database
@@ -56,6 +54,7 @@ struct FavorDetailsSheet: View {
                                 
                                 // The Favor's Author's Name
                                 Text(favor.author.nameSurname)
+                                    .fontWidth(.compressed)
                                     .font(.system(size: 15))
                                     .fontWidth(.compressed)
                                     .fontWeight(.bold)
@@ -74,7 +73,7 @@ struct FavorDetailsSheet: View {
                                 isAuthorProfileSheetPresented = true
                             }
                             
-                            HStack(spacing: 8) {
+                            HStack(spacing: 0) {
                                 Image(systemName: favor.type.icon)
                                 
                                 Text(favor.type.string)
@@ -367,7 +366,7 @@ struct FavorDetailsSheet: View {
             }
         )
         .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
-            ProfileView(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
         })
         /*.sheet(isPresented: $isHelperProfileSheetPresented, content: {
          ProfileView(database: database, selectedFavor: $selectedFavor, user: favor.$helper ?? nil)

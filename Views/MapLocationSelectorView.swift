@@ -2,10 +2,10 @@ import SwiftUI
 import MapKit
 
 struct LocationSelector: View {
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
+    
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
-    
-    @Binding var isSatelliteMode: Bool
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -60,9 +60,9 @@ struct LocationSelector: View {
                         HStack(spacing: 0) {
                             Spacer()
                             
-                            MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, isSatelliteMode: $isSatelliteMode, selectedCLLocationCoordinate: selectedLocation ?? newFavor.location, mapNameSpace: mapNameSpace)
+                            MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, selectedCLLocationCoordinate: selectedLocation ?? newFavor.location, mapNameSpace: mapNameSpace)
                         }
-                            
+                        
                         Spacer()
                     }
                     .padding(.top, 105)

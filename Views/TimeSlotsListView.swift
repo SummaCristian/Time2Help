@@ -5,7 +5,7 @@ struct TimeSlotsList: View {
     
     var isEditable: Bool = true
     
-    let tint: Color
+    @State var tint: Color = .accentColor
     
     var body: some View {
         if isEditable {
@@ -16,7 +16,7 @@ struct TimeSlotsList: View {
                         
                         DatePicker("", selection: slot.startingDate, displayedComponents: [.date, .hourAndMinute])
                             .labelsHidden()
-                            
+                        
                         
                         Image(systemName: "arrow.right")
                             .bold()

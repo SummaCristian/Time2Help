@@ -6,7 +6,7 @@ import MapKit
 struct NewFavorSheet: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @Binding var isSatelliteMode: Bool
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
     
     @Binding var isPresented: Bool
     
@@ -71,6 +71,7 @@ struct NewFavorSheet: View {
                             
                             HStack(alignment: .top, spacing: 8) {
                                 TextField("Descrizione", text: $newFavor.description, axis: .vertical)
+                                    .font(.callout)
                                     .textInputAutocapitalization(.sentences)
                                     .lineLimit(5 ... 5)
                                 
@@ -99,7 +100,6 @@ struct NewFavorSheet: View {
                                         VStack (alignment: .leading, spacing: 8) {
                                             Label(type.string, systemImage: type.icon)
                                                 .padding(.leading, 8)
-                                            
                                             Text(type.description)
                                                 .font(.caption)
                                                 .foregroundStyle(.secondary)
@@ -204,7 +204,6 @@ struct NewFavorSheet: View {
                                     HStack(spacing: 6) {
                                         Image(systemName: "pin.fill")
                                             .font(.subheadline)
-                                        
                                         Text("Scegli")
                                     }
                                     .foregroundColor(newFavor.color)
@@ -258,7 +257,7 @@ struct NewFavorSheet: View {
                 }
                 .sheet(isPresented: $isLocationSelectorPresented, content: {
                     // Shows the Location Selector sheet
-                    LocationSelector(isSatelliteMode: $isSatelliteMode, viewModel: viewModel, newFavor: newFavor)
+                    LocationSelector(viewModel: viewModel, newFavor: newFavor)
                         .interactiveDismissDisabled()
                 })
                 .alert("Tornare indietro?", isPresented: $isConfirmationDialogPresented) {
@@ -375,5 +374,5 @@ struct NewFavorSheet: View {
 }
 
 #Preview {
-    NewFavorSheet(isSatelliteMode: .constant(true), isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), newFavor: Favor(author: User(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue"))), showCreatedFavorOverlay: .constant(true), lastFavorCreated: .constant(nil), lastInteraction: .constant(.created))
+    NewFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), newFavor: Favor(author: User(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue"))), showCreatedFavorOverlay: .constant(true), lastFavorCreated: .constant(nil), lastInteraction: .constant(.created))
 }
