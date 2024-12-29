@@ -17,10 +17,6 @@ enum Reward: Identifiable {
     case shoppingCategory
     case schoolCategory
     case kidsCategory
-    case housechoresCategory
-    case trashCategory
-    case sportCategory
-    case weatherCategory
     
     var id : Self {self}
     
@@ -55,14 +51,6 @@ enum Reward: Identifiable {
             return RewardMedal(variant: .categoryOfFavors, categoryVariant: .school)
         case .kidsCategory:
             return RewardMedal(variant: .categoryOfFavors, categoryVariant: .babySitting)
-        case .housechoresCategory:
-            return RewardMedal(variant: .categoryOfFavors, categoryVariant: .houseChores)
-        case .trashCategory:
-            return RewardMedal(variant: .categoryOfFavors, categoryVariant: .trash)
-        case .sportCategory:
-            return RewardMedal(variant: .categoryOfFavors, categoryVariant: .sport)
-        case .weatherCategory:
-            return RewardMedal(variant: .categoryOfFavors, categoryVariant: .weather)
         }
     }
     
@@ -97,14 +85,6 @@ enum Reward: Identifiable {
             return .indigo
         case .kidsCategory:
             return .pink
-        case .housechoresCategory:
-            return .teal
-        case .trashCategory:
-            return .brown
-        case .sportCategory:
-            return .mint
-        case .weatherCategory:
-            return .cyan
         }
     }
     
@@ -139,14 +119,6 @@ enum Reward: Identifiable {
             return "Eroe della Scuola"
         case .kidsCategory:
             return "Eroe dei Bambini"
-        case .housechoresCategory:
-            return "Eroe delle Faccende"
-        case .trashCategory:
-            return "Eroe della Spazzatura"
-        case .sportCategory:
-            return "Eroe dello Sport"
-        case .weatherCategory:
-            return "Eroe del Meteo"
         }
     }
     
@@ -181,14 +153,6 @@ enum Reward: Identifiable {
             return "Hai completato con successo 30 Favori di tipo Scuola!"
         case .kidsCategory:
             return "Hai completato con successo 30 Favori di tipo Bambini!"
-        case .housechoresCategory:
-            return "Hai completato con successo 30 Favori di tipo Faccende!"
-        case .trashCategory:
-            return "Hai completato con successo 30 Favori di tipo Spazzatura!"
-        case .sportCategory:
-            return "Hai completato con successo 30 Favori di tipo Sport!"
-        case .weatherCategory:
-            return "Hai completato con successo 30 Favori di tipo Meteo!"
         }
     }
 }
