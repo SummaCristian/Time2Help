@@ -2,7 +2,6 @@ import SwiftUI
 import MapKit
 
 struct NeighbourhoodSelector: View {
-    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
     
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
@@ -13,6 +12,8 @@ struct NeighbourhoodSelector: View {
     // The location selected by the User, nil if no selection has been made yet
     @Binding var selectedNeighbourhoodStructTemp: Neighbourhood
     @Binding var selectedNeighbourhoodStructTempTwo: Neighbourhood
+    
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
     
     @State private var neighbourhoodsUpdated: [Neighbourhood] = Database.neighbourhoods
     
@@ -93,7 +94,7 @@ struct NeighbourhoodSelector: View {
                     HStack(spacing: 0) {
                         Spacer()
                         
-                        MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, selectedCLLocationCoordinate: selectedNeighbourhoodStructTempTwo.location, mapNameSpace: mapNameSpace)
+                        MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $camera, selectedCLLocationCoordinate: selectedNeighbourhoodStructTempTwo.location, mapNameSpace: mapNameSpace)
                     }
                     
                     Spacer()
