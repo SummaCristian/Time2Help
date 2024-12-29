@@ -23,8 +23,8 @@ struct MapButtonsView: View {
                 Button(action: {
                     isSatelliteMode.toggle()
                 }) {
-                    Image(systemName: !isSatelliteMode ? "map.fill" : "globe.europe.africa.fill")
-                        .font(.body)
+                    Image(systemName: !isSatelliteMode ? "map.circle" : "globe.europe.africa.fill")
+                        .font(isSatelliteMode ? .title2 : .title)
                         .foregroundStyle(.blue)
                         .frame(width: 50, height: 50)
                 }
@@ -39,7 +39,7 @@ struct MapButtonsView: View {
                     }
                 }) {
                     Text(!is3dMode ? "3D" : "2D")
-//                        .font(.custom("ArchivoVariable-SemiBold_Medium", size: 18))
+                    //                        .font(.custom("ArchivoVariable-SemiBold_Medium", size: 18))
                     //                        .font(.body)
                         .foregroundStyle(.blue)
                         .frame(width: 50, height: 50)
