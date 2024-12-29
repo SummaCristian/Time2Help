@@ -140,7 +140,7 @@ struct LoginViewTwo: View {
                 .padding([.horizontal, .bottom], 20)
                 //
                 Button {
-                    viewModel.initialize()
+                    viewModel.customInitialize()
                 } label: {
                     Text(viewModel.locationManager.authorizationStatus == .notDetermined ? "Attiva la localizzazione" : viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse ? "Attivata!" : "Non attivata")
                         .font(.title3.bold())
