@@ -175,7 +175,7 @@ struct ModifyProfileView: View {
                             
                             isModifySheetPresented = false
                         }) {
-                            Label("Modifica", systemImage: "pencil")
+                            Label("Salva", systemImage: "pencil")
                                 .font(.body.bold())
                                 .foregroundStyle(.white)
                                 .padding(.vertical, 15)
