@@ -54,41 +54,26 @@ struct FavorListRow: View {
                 
                 // Icon
                 Image(systemName: favor.icon)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary.opacity(0.7))
             }
         }
         .frame(maxWidth: .infinity)
         .frame(height: 65)
         .padding(.horizontal, 24)
         .padding(.vertical)
-//        .background(
-//            GeometryReader { geometry in
-//                RadialGradient(colors: [.clear, .black], center: .center, startRadius: 0, endRadius: max(geometry.size.width, geometry.size.height) * 0.9)
-//                    .opacity(0.2)
-//            }
-//        )
-        //.background(favor.color.gradient)
         .background {
-//            Rectangle()
-//                .foregroundStyle(.ultraThinMaterial)
-//                .overlay {
-//                    LinearGradient(colors: [favor.color.opacity(0.9), favor.color.opacity(0.75)], startPoint: .leading, endPoint: .trailing)
-//                }
             Rectangle()
-                .foregroundStyle(.ultraThinMaterial.opacity(0.3))
+                .foregroundStyle(.regularMaterial)
                 .background {
                     ZStack {
                         Rectangle()
                             .fill(.primary.opacity(0.1))
-                        
-                        HStack {
-                            Rectangle()
-                                .fill(LinearGradient(colors: [favor.color, .clear], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                .frame(width: 200)
-                                .blur(radius: 30)
-                            Spacer()
-                        }
                     }
+                }
+                .overlay {
+                    LinearGradient(colors: [favor.color.opacity(0.9), favor.color.opacity(0.6), favor.color.opacity(0.1), .clear], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        .opacity(0.8)
+                        .blur(radius: 2)
                 }
         }
         .shadow(radius: 5)
