@@ -22,7 +22,7 @@ struct CategoryFiltersView: View {
                 ZStack {
                     if !isAdvancedFiltersViewShowing {
                         Menu {
-                            Button ("Filtri avanzati", systemImage: "line.3.horizontal.decrease") {
+                            Button ("Filtri avanzati", systemImage: "slider.horizontal.3") {
                                 openAdvancedFilters()
                             }
                             
@@ -30,7 +30,7 @@ struct CategoryFiltersView: View {
                                 filter.reset()
                             }
                         } label: {
-                            Image(systemName: "line.3.horizontal.decrease")
+                            Image(systemName: "slider.horizontal.3")
                                 .font(.system(size: 20, weight: .medium))
                                 .padding(10)
                                 .foregroundStyle(.primary)
@@ -59,7 +59,7 @@ struct CategoryFiltersView: View {
                 .background(.thinMaterial)
                 .clipShape(isAdvancedFiltersViewShowing ? AnyShape(RoundedRectangle(cornerRadius: 32)) : AnyShape(Circle()))
                 .offset(
-                    x: moveToCenter ? 130 : 0,
+                    x: moveToCenter ? 130 : 0, 
                     y: moveToCenter ? 200 : 0
                 )
 //                .shadow(radius: 3)
