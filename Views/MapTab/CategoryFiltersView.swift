@@ -26,24 +26,22 @@ struct CategoryFiltersView: View {
                                 openAdvancedFilters()
                             }
                             
-                            
                             Button("Reset", systemImage: "arrow.counterclockwise", role: .destructive) {
                                 filter.reset()
                             }
-                            
                         } label: {
                             Image(systemName: "line.3.horizontal.decrease")
                                 .font(.system(size: 20, weight: .medium))
                                 .padding(10)
                                 .foregroundStyle(.primary)
                         }
-                    primaryAction: {
-                        openAdvancedFilters()
-                    }
-                    .scaleEffect(moveToCenter ? 1.5 : 1)
-                    .clipShape(Circle())
-                    .hoverEffect(.lift)
-                    .matchedGeometryEffect(id: "advancedFilters", in: animationNamespace)
+                        primaryAction: {
+                            openAdvancedFilters()
+                        }
+                        .scaleEffect(moveToCenter ? 1.5 : 1)
+                        .clipShape(Circle())
+                        .hoverEffect(.lift)
+                        .matchedGeometryEffect(id: "advancedFilters", in: animationNamespace)
                     } else {
                         AdvancedFiltersView(
                             screenWidth: geometry.size.width,
@@ -54,16 +52,17 @@ struct CategoryFiltersView: View {
                         .matchedGeometryEffect(id: "advancedFilters", in: animationNamespace)
                         .clipShape(RoundedRectangle(cornerRadius: 32))
                         .blur(radius: blurContainer ? 10 : 0)
-                        .padding(5)
                     }
                 }
                 .frame(minHeight: 60)
                 .background(.thinMaterial)
                 .clipShape(isAdvancedFiltersViewShowing ? AnyShape(RoundedRectangle(cornerRadius: 32)) : AnyShape(Circle()))
                 .offset(
-                    x: moveToCenter ? 130 : 0, 
-                    y: moveToCenter ? 200 : 0)
-                .shadow(radius: 3)
+                    x: moveToCenter ? 130 : 0,
+                    y: moveToCenter ? 200 : 0
+                )
+//                .shadow(radius: 3)
+                .shadow(color: .gray.opacity(0.4), radius: 6)
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
@@ -95,10 +94,10 @@ struct CategoryFiltersView: View {
                     }
                     .padding(.vertical, 8)
                 }
+                .scrollDisabled(isAdvancedFiltersViewShowing)
             }
-            .padding(.horizontal)
+            .padding(.leading, 15)
             .frame(alignment: .top)
-            .scrollDisabled(!isAdvancedFiltersViewShowing)
         }
         .sensoryFeedback(.impact, trigger: moveToCenter, condition: { old, new in
             new
@@ -107,7 +106,6 @@ struct CategoryFiltersView: View {
             new
         })
         .sensoryFeedback(.levelChange, trigger: filter.maxDuration)
-        
         .onChange(of: startClosing) { _, _ in
             if startClosing {
                 var transaction = Transaction(animation: .smooth)
@@ -134,7 +132,6 @@ struct CategoryFiltersView: View {
         }
     }
     
-    
     func openAdvancedFilters() {
         var transaction = Transaction(animation: .smooth)
         transaction.disablesAnimations = false
@@ -156,13 +153,11 @@ struct CategoryFiltersView: View {
             }
         }
     }
-    
 }
 
 #Preview {
     VStack(spacing: 50) {
         CategoryFiltersView(filter: FilterModel())
-        CategoryFiltersView(filter: FilterModel(selectedCategories: [])
-        )
+        CategoryFiltersView(filter: FilterModel(selectedCategories: []))
     }
 }
