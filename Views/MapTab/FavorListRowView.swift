@@ -57,7 +57,8 @@ struct FavorListRow: View {
                     .foregroundStyle(.white)
             }
         }
-        .frame(width: .infinity, height: 65)
+        .frame(maxWidth: .infinity)
+        .frame(height: 65)
         .padding(.horizontal, 24)
         .padding(.vertical)
 //        .background(
