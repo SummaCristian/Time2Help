@@ -52,6 +52,7 @@ struct CategoryFiltersView: View {
                         .matchedGeometryEffect(id: "advancedFilters", in: animationNamespace)
                         .clipShape(RoundedRectangle(cornerRadius: 32))
                         .blur(radius: blurContainer ? 10 : 0)
+                        .padding(5)
                     }
                 }
                 .frame(minHeight: 60)
@@ -95,6 +96,7 @@ struct CategoryFiltersView: View {
                     .padding(.vertical, 8)
                 }
                 .scrollDisabled(isAdvancedFiltersViewShowing)
+                .padding(.leading, isAdvancedFiltersViewShowing ? 10 : 0)
             }
             .padding(.leading, 15)
             .frame(alignment: .top)
