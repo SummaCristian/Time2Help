@@ -2,7 +2,6 @@ import SwiftUI
 import MapKit
 
 struct NeighbourhoodSelector: View {
-    
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -94,7 +93,7 @@ struct NeighbourhoodSelector: View {
                     HStack(spacing: 0) {
                         Spacer()
                         
-                        MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $camera, selectedCLLocationCoordinate: selectedNeighbourhoodStructTempTwo.location, mapNameSpace: mapNameSpace)
+                        MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, selectedCLLocationCoordinate: selectedNeighbourhoodStructTempTwo.location, mapNameSpace: mapNameSpace)
                     }
                     
                     Spacer()
