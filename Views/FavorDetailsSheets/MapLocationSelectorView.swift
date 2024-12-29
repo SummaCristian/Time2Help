@@ -2,12 +2,12 @@ import SwiftUI
 import MapKit
 
 struct LocationSelector: View {
-    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
-    
     // Used to control the dismissal from inside the sheet
     @Environment(\.dismiss) var dismiss
     
     @ObservedObject var viewModel: MapViewModel
+    
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
     
     // The location selected by the User, nil if no selection has been made yet
     @State private var selectedLocation: CLLocationCoordinate2D? = nil
