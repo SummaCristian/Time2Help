@@ -9,11 +9,11 @@ struct MapButtonsView: View {
     @Binding var camera: MapCameraPosition
     @Binding var cameraSupport: MapCameraPosition
     
-    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
-    
     let selectedCLLocationCoordinate: CLLocationCoordinate2D
     
     let mapNameSpace: Namespace.ID
+    
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
     
     @State private var is3dMode: Bool = false
     
@@ -39,7 +39,7 @@ struct MapButtonsView: View {
                     }
                 }) {
                     Text(!is3dMode ? "3D" : "2D")
-                        .font(.custom("ArchivoVariable-SemiBold_Medium", size: 18))
+//                        .font(.custom("ArchivoVariable-SemiBold_Medium", size: 18))
                     //                        .font(.body)
                         .foregroundStyle(.blue)
                         .frame(width: 50, height: 50)
@@ -66,7 +66,7 @@ struct MapButtonsView: View {
                 Capsule()
                 //                        RoundedRectangle(cornerRadius: 12)
                     .foregroundStyle(.thinMaterial)
-                    .shadow(color: .gray.opacity(0.2), radius: 6)
+                    .shadow(color: .gray.opacity(0.4), radius: 6)
             }
             
             //            MapCompass(scope: mapNameSpace)
