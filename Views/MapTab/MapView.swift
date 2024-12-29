@@ -20,13 +20,12 @@ struct MapView: View {
     // This is used to deselect the Favor once it's not selected anymore
     @Binding var selectedFavorID: UUID?
     
-    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
-    
-    @AppStorage("showList") private var showList: Bool = false
-    
     let selectedNeighbourhood: String
     
     @Binding var user: User
+    
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
+    @AppStorage("showList") private var showList: Bool = false
     
     // A NameSpace needed for certain Map features
     @Namespace private var mapNameSpace
@@ -34,6 +33,7 @@ struct MapView: View {
     // The MapCameraPosition used to center around the User's Location
     @State private var camera: MapCameraPosition = MapCameraPosition.automatic
     @State private var cameraSupport: MapCameraPosition = MapCameraPosition.automatic
+    
     // The list of Map Elements from Apple's MapKit database
     @State private var selection: MapFeature? = nil
     
@@ -117,8 +117,9 @@ struct MapView: View {
                                     }
                                 }
                             }
+                            .padding(.bottom, 20)
                         }
-                        .padding(.bottom, 50)
+                        .padding(.bottom, 85)
                     }
                     
                     VStack {
@@ -134,10 +135,10 @@ struct MapView: View {
         }
         .edgesIgnoringSafeArea(.bottom)
         .tint(.blue)
-        .safeAreaPadding(.top, 150)
+        .safeAreaPadding(.top, showList ? 150 : 85)
         .safeAreaPadding(.leading, 10)
         .safeAreaPadding(.trailing, 10)
-        .safeAreaPadding(.bottom, 80)
+        .safeAreaPadding(.bottom, 85)
         .sensoryFeedback(.selection, trigger: filter.selectedCategories)
         .sensoryFeedback(.impact, trigger: selection)
         .overlay {
@@ -170,10 +171,11 @@ struct MapView: View {
                             showList.toggle()
                         }
                     } label: {
-                        Image(systemName: showList ? "list.bullet" : "map.fill")
+                        Image(systemName: showList ? "map.fill" : "list.bullet")
                             .font(.title3.bold())
                             .foregroundStyle(.white)
-                            .padding(.all, showList ? 14 : 12)
+//                            .padding(.all, showList ? 14 : 12)
+                            .frame(width: 45, height: 45)
                     }
                     .background(
                         Circle()
@@ -184,8 +186,8 @@ struct MapView: View {
                 Spacer()
             }
             .safeAreaPadding(.top, 85)
-            .safeAreaPadding(.trailing, 20)
-            .animation(.spring(duration: 0.4), value: showList)
+            .safeAreaPadding(.trailing, 17.5)
+            .animation(.easeInOut(duration: 0.4), value: showList)
         }
         .overlay {
             VStack {
