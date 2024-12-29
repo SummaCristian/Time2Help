@@ -39,21 +39,17 @@ struct FavorBoxView: View {
             }
             
             // Title and Status (text)
-            HStack (alignment: .top) {
-                VStack(alignment: .leading) {
-                    Text(favor.title)
-                        .bold()
-                        .foregroundStyle(.white)
-                    
-                    Text(favor.status.textualForm)
-                        .font(.caption)
-                        .foregroundStyle(.white)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .padding(.top, 6)
+            VStack(alignment: .leading) {
+                Text(favor.title)
+                    .bold()
+                    .foregroundStyle(.white)
+                
+                Text(favor.status.textualForm)
+                    .font(.caption)
+                    .foregroundStyle(.white)
             }
-            
-            Spacer()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .padding(.top, 6)
             
             // Author and Helper(s)
             HStack(alignment: .bottom) {
@@ -78,7 +74,8 @@ struct FavorBoxView: View {
             }
         )
         .background(favor.color.gradient)
-        .shadow(radius: 5)
+        .shadow(color: .gray.opacity(0.4), radius: 6)
+//        .shadow(radius: 5)
         .clipShape(roundedCorners ? AnyShape(RoundedRectangle(cornerRadius: 25)) : AnyShape(.rect))
         .hoverEffect(.lift)
     }
