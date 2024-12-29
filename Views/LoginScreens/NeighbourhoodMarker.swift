@@ -3,10 +3,10 @@ import SwiftUI
 struct NeighbourhoodMarker: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
-    
     @Binding var isSelected: Bool
     let neighbourhood: Neighbourhood
+    
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
     
     // The UI
     var body: some View {
