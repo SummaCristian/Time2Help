@@ -36,7 +36,9 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     // iOS's Location Manager
     @Published var locationManager: CLLocationManager = CLLocationManager()
     
-    func inizialize() {
+    // @Published var location: CLLocationCoordinate2D?
+    
+    func customInitialize() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         checkLocationAuthorization()
