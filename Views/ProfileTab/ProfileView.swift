@@ -123,9 +123,10 @@ struct ProfileView: View {
                             }
                             .padding()
                             .background {
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 15)
                                     .foregroundStyle(Color(.systemGray6))
-                                    .shadow(radius: 3)
+                                    .shadow(color: .gray.opacity(0.4), radius: 6)
+//                                    .shadow(radius: 3)
                             }
                             .hoverEffect(.lift)
                             .onTapGesture {
@@ -147,9 +148,10 @@ struct ProfileView: View {
                             }
                             .padding()
                             .background {
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 15)
                                     .foregroundStyle(Color(.systemGray6))
-                                    .shadow(radius: 3)
+                                    .shadow(color: .gray.opacity(0.4), radius: 6)
+//                                    .shadow(radius: 3)
                             }
                             .hoverEffect(.lift)
                             .onTapGesture {
@@ -243,9 +245,9 @@ struct ProfileView: View {
                 switch destination {
                 case "Requested Favors":
                     RequestedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
-                case "Accepted Favors": 
+                case "Accepted Favors":
                     AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
-                default: 
+                default:
                     Text("Unknown")
                 }
                 
