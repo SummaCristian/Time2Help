@@ -154,10 +154,6 @@ enum FavorCategory: Identifiable, CaseIterable {
     case shopping
     case school
     case babySitting
-    case houseChores
-    case trash
-    case sport
-    case weather
     
     var id: Self {self}
     
@@ -179,14 +175,6 @@ enum FavorCategory: Identifiable, CaseIterable {
             return "Scuola"
         case .babySitting:
             return "Bambini"
-        case .houseChores:
-            return "Faccende"
-        case .trash:
-            return "Spazzatura"
-        case .sport:
-            return "Sport"
-        case .weather:
-            return "Meteo"
         case .all:
             return "Tutte"
         }
@@ -210,14 +198,6 @@ enum FavorCategory: Identifiable, CaseIterable {
             return "Favori legati all'istruzione, come aiutare nello studio, oppure svolgere attività di dopo-scuola"
         case .babySitting:
             return "Favori relativi ai bambini, come fare baby-sitting o simili"
-        case .houseChores:
-            return "Svolgere delle attività \"casalinghe\", come aiutare con il bucato, o in cucina"
-        case .trash:
-            return "Favori di aiuto alla comunità legati al tema della spazzatura o della raccolta differenziata"
-        case .sport:
-            return "Favori legati allo sport, come cercare persone per una partita di calcio, o cercare qualcuno che insegni a giocare"
-        case .weather:
-            return "Favori legati al meteo e agli imprevisti derivanti, ad esempio chiedere in prestito un ombrello o dei guanti"
         case .all:
             return "Tutte"
         }
@@ -232,7 +212,7 @@ enum FavorCategory: Identifiable, CaseIterable {
         case .transport:
             return FavorColor.red.color
         case .petSitting:
-            return FavorColor.yellow.color
+            return FavorColor.teal.color
         case .manualJob:
             return FavorColor.blue.color
         case .shopping:
@@ -241,14 +221,6 @@ enum FavorCategory: Identifiable, CaseIterable {
             return FavorColor.indigo.color
         case .babySitting:
             return FavorColor.pink.color
-        case .houseChores:
-            return FavorColor.teal.color
-        case .trash:
-            return FavorColor.brown.color
-        case .sport:
-            return FavorColor.mint.color
-        case .weather:
-            return FavorColor.cyan.color
         case .all:
             return Color.white
         }
@@ -272,14 +244,6 @@ enum FavorCategory: Identifiable, CaseIterable {
             return "book.fill"
         case .babySitting:
             return "stroller.fill"
-        case .houseChores:
-            return "house.fill"
-        case .trash:
-            return "trash.fill"
-        case .sport:
-            return "soccerball"
-        case .weather:
-            return "umbrella.fill"
         case .all:
             return "star.fill"
         }
