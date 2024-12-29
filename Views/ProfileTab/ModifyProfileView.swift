@@ -2,8 +2,6 @@ import SwiftUI
 import MapKit
 
 struct ModifyProfileView: View {
-    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
-    
     @ObservedObject var viewModel: MapViewModel
     
     @Binding var isModifySheetPresented: Bool
@@ -13,6 +11,8 @@ struct ModifyProfileView: View {
     @Binding var nameSurnameTemp: String
     @Binding var selectedColorTemp: String
     @Binding var selectedNeighbourhoodStructTemp: Neighbourhood
+    
+    @AppStorage("mapStyle") private var isSatelliteMode: Bool = false
     
     @State private var errorNameSurnameEmpty: Bool = false
     
