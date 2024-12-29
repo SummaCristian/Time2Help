@@ -54,7 +54,6 @@ struct FavorDetailsSheet: View {
                                 
                                 // The Favor's Author's Name
                                 Text(favor.author.nameSurname)
-                                    .fontWidth(.compressed)
                                     .font(.system(size: 15))
                                     .fontWidth(.compressed)
                                     .fontWeight(.bold)
