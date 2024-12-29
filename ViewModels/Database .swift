@@ -630,21 +630,21 @@ class Database: ObservableObject {
         mario.rewards.append(.numberFifty)
         mario.rewards.append(.numberHundred)
         mario.rewards.append(.gardeningCategory)
-        mario.rewards.append(.trashCategory)
+        mario.rewards.append(.transportationCategory)
         
         giuseppe.rewards.append(.numberTen)
         giuseppe.rewards.append(.numberTwenty)
         giuseppe.rewards.append(.numberFifty)
         giuseppe.rewards.append(.schoolCategory)
         giuseppe.rewards.append(.jobCategory)
-        giuseppe.rewards.append(.housechoresCategory)
+        giuseppe.rewards.append(.kidsCategory)
         
         grazia.rewards.append(.numberTen)
         grazia.rewards.append(.numberTwenty)
         grazia.rewards.append(.kidsCategory)
         grazia.rewards.append(.petsCategory)
         grazia.rewards.append(.gardeningCategory)
-        grazia.rewards.append(.housechoresCategory)
+        grazia.rewards.append(.schoolCategory)
         
         users.append(mario)
         users.append(giuseppe)
@@ -714,7 +714,7 @@ class Database: ObservableObject {
                 isCarNecessary: true,
                 isHeavyTask: true,
                 status: .accepted,
-                category: .houseChores
+                category: .generic
             )
         )
         
@@ -748,7 +748,7 @@ class Database: ObservableObject {
                 isCarNecessary: true,
                 isHeavyTask: true,
                 status: .justStarted,
-                category: .sport
+                category: .petSitting
             )
         )
         
@@ -831,7 +831,7 @@ class Database: ObservableObject {
                 isCarNecessary: true,
                 isHeavyTask: true,
                 status: .expired,
-                category: .trash
+                category: .gardening
             )
         )
         
@@ -850,7 +850,7 @@ class Database: ObservableObject {
                 isCarNecessary: true,
                 isHeavyTask: true,
                 status: .completed,
-                category: .weather
+                category: .manualJob
             )
         )
         favors.last!.helpers.append(mario)
@@ -867,7 +867,7 @@ class Database: ObservableObject {
                 isCarNecessary: true,
                 isHeavyTask: true,
                 status: .notAcceptedYet,
-                category: .weather
+                category: .school
             )
         )
         
@@ -882,7 +882,7 @@ class Database: ObservableObject {
                 isCarNecessary: true,
                 isHeavyTask: true,
                 status: .justStarted,
-                category: .houseChores
+                category: .babySitting
             )
         )
         favors.last!.helpers.append(matilde)
@@ -969,7 +969,7 @@ class Database: ObservableObject {
                 isCarNecessary: false,
                 isHeavyTask: true,
                 status: .completed,
-                category: .houseChores
+                category: .transport
             )
         )
         favors.last!.helpers.append(piera)
