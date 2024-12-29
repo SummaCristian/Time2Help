@@ -29,6 +29,8 @@ struct AdvancedFiltersView: View {
                 // Category Filters
                 HStack(spacing: 5) {
                     Image(systemName: "tag.fill")
+                        .frame(width: 30)
+                    
                     VStack(alignment: .leading) {
                         Text("Categorie")
                             .font(.title3.bold())
@@ -46,6 +48,8 @@ struct AdvancedFiltersView: View {
                 // Date and Time Filters
                 HStack(spacing: 5) {
                     Image(systemName: "clock.fill")
+                        .frame(width: 30)
+                    
                     VStack(alignment: .leading) {
                         Text("Data, ora e durata")
                             .font(.title3.bold())
@@ -152,6 +156,7 @@ struct AdvancedFiltersView: View {
                 // Public and Private types
                 HStack(spacing: 5) {
                     Image(systemName: "person.2.fill")
+                        .frame(width: 30)
                     
                     VStack(alignment: .leading) {
                         Text("Tipo di Favore")
@@ -229,6 +234,7 @@ struct AdvancedFiltersView: View {
                 // Car Needed and Heavy Task Filters
                 HStack(spacing: 5) {
                     Image(systemName: "exclamationmark.triangle.fill")
+                        .frame(width: 30)
                     
                     VStack(alignment: .leading) {
                         Text("Info aggiuntive")
