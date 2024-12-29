@@ -57,7 +57,7 @@ struct TimeSlotsList: View {
                             }
                         }
                     )
-                    .tint(tint)
+                    //.tint(tint)
                     .buttonStyle(BorderedButtonStyle())
                     .buttonBorderShape(.capsule)
                     .padding(.vertical, 6)
@@ -129,7 +129,7 @@ struct TimeSlotsList: View {
              TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)),
              TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)),
              TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600))
-            ]), tint: .orange)
+            ]))
         
         // Non Editable
         TimeSlotsList(slots: .constant(
@@ -137,6 +137,6 @@ struct TimeSlotsList: View {
              TimeSlot(startingDate: Date().addingTimeInterval(36000), endingDate: Date().addingTimeInterval(36200)),
              TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600)),
              TimeSlot(startingDate: Date(), endingDate: Date().addingTimeInterval(3600))
-            ]), isEditable: false, tint: .orange)
+            ]), isEditable: false)
     }
 }

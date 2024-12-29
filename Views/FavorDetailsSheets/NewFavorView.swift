@@ -144,7 +144,8 @@ struct NewFavorSheet: View {
                     // Date selectors
                     Section(
                         content: {
-                            TimeSlotsList(slots: $newFavor.timeSlots, tint: newFavor.color)
+                            TimeSlotsList(slots: $newFavor.timeSlots)
+                                .tint(newFavor.color)
                         },
                         header: {
                             Text("Fasce orarie")
