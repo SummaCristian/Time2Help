@@ -24,152 +24,171 @@ struct AdvancedFiltersView: View {
     @State private var ignoreChange = false
     
     var body: some View {
-            ScrollView {
+        ScrollView {
+            VStack {
+                // Category Filters
+                HStack(spacing: 5) {
+                    Image(systemName: "tag.fill")
+                    VStack(alignment: .leading) {
+                        Text("Categorie")
+                            .font(.title3.bold())
+                        
+                        Text("Seleziona le categorie che ti interessano")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
+                }
+                
+                CategoryPicker(isAllCategorySelected: $isAllCategorySelected, showCategories: $showCategories, filterModel: temporaryFilter)
+                
+                // Date and Time Filters
+                HStack(spacing: 5) {
+                    Image(systemName: "clock.fill")
+                    VStack(alignment: .leading) {
+                        Text("Data, ora e durata")
+                            .font(.title3.bold())
+                        
+                        Text("Imposta data, ora o durata per filtrare i Favori")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.top, 10)
+                
+                
+                // Starting Date and Time
+                Toggle(isOn: $isAllDaySelected, label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "calendar")
+                            .foregroundStyle(Color(.white))
+                            .frame(width: 30, height: 30)
+                            .background {
+                                RoundedRectangle(cornerRadius: 5)
+                                    .foregroundStyle(Color(.systemOrange))
+                            }
+                        
+                        VStack(alignment: .leading) {
+                            Text("Tutto il giorno")
+                            
+                            Text("Imposta qualunque orario")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                })
+                .tint(.orange)
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.thickMaterial)
+                }
+                
+                HStack {
+                    VStack {
+                        Text("Inizio")
+                            .font(.headline.bold())
+                        
+                        if !showTimePickers {
+                            DatePicker("Inizio", selection: $temporaryFilter.startingDate, displayedComponents: .hourAndMinute)
+                                .labelsHidden()
+                        }
+                        DatePicker("Inizio", selection: $temporaryFilter.startingDate, displayedComponents: .date)
+                            .labelsHidden()
+                        
+                    }
+                    .padding()
+                    .background {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.thickMaterial)
+                    }
+                    
+                    // Ending Date and Time
+                    VStack {
+                        Text("Fine")
+                            .font(.headline.bold())
+                        
+                        if !showTimePickers {
+                            DatePicker("Fine", selection: $temporaryFilter.endingDate, displayedComponents: .hourAndMinute)
+                                .labelsHidden()
+                        }
+                        DatePicker("Fine", selection: $temporaryFilter.endingDate, displayedComponents: .date)
+                            .labelsHidden()
+                        
+                    }
+                    .padding()
+                    .background {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.thickMaterial)
+                    }
+                }
+                .tint(.orange)
+                
+                // Duration
+                Stepper(value: $internalMaxDuration, in: 0 ... 24, step: 1) {
+                    HStack(alignment: .center) {
+                        Text("Durata:")
+                        
+                        Spacer()
+                        
+                        Text(String(temporaryFilter.maxDuration))
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundStyle(.orange)
+                            .contentTransition(.numericText())
+                        
+                        Text("ore")
+                    }
+                }
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.thickMaterial)
+                }
+                .tint(.orange)
+                
+                // Public and Private types
+                HStack(spacing: 5) {
+                    Image(systemName: "person.2.fill")
+                    
+                    VStack(alignment: .leading) {
+                        Text("Tipo di Favore")
+                            .font(.title3.bold())
+                        
+                        Text("Filtra in base alla tua preferenza sul tipo")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.top, 10)
+                
                 VStack {
-                    // Category Filters
-                    HStack(spacing: 5) {
-                        Image(systemName: "tag.fill")
-                        VStack(alignment: .leading) {
-                            Text("Categorie")
-                                .font(.title3.bold())
-                            
-                            Text("Seleziona le categorie che ti interessano")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        
-                        Spacer()
-                    }
-                    
-                    CategoryPicker(isAllCategorySelected: $isAllCategorySelected, showCategories: $showCategories, filterModel: temporaryFilter)
-                    
-                    // Date and Time Filters
-                    HStack(spacing: 5) {
-                        Image(systemName: "clock.fill")
-                        VStack(alignment: .leading) {
-                            Text("Data, ora e durata")
-                                .font(.title3.bold())
-                            
-                            Text("Imposta data, ora o durata per filtrare i Favori")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.top, 10)
-                    
-                    
-                    // Starting Date and Time
-                    Toggle(isOn: $isAllDaySelected, label: {
+                    Toggle(isOn: $isAllTypesSelectedTemp, label: {
                         HStack(spacing: 8) {
-                            Image(systemName: "calendar")
+                            Image(systemName: "person.2.fill")
                                 .foregroundStyle(Color(.white))
                                 .frame(width: 30, height: 30)
                                 .background {
                                     RoundedRectangle(cornerRadius: 5)
-                                        .foregroundStyle(Color(.systemOrange))
+                                        .foregroundStyle(Color(.blue))
                                 }
                             
-                            VStack(alignment: .leading) {
-                                Text("Tutto il giorno")
-                                
-                                Text("Imposta qualunque orario")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
+                            Text("Tutti")
                         }
                     })
-                    .tint(.orange)
-                    .padding()
-                    .background {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.thickMaterial)
-                    }
+                    .tint(.blue)
                     
-                    HStack {
-                        VStack {
-                            Text("Inizio")
-                                .font(.headline.bold())
-                            
-                            if !showTimePickers {
-                                DatePicker("Inizio", selection: $temporaryFilter.startingDate, displayedComponents: .hourAndMinute)
-                                    .labelsHidden()
-                            }
-                            DatePicker("Inizio", selection: $temporaryFilter.startingDate, displayedComponents: .date)
-                                .labelsHidden()
-                            
-                        }
-                        .padding()
-                        .background {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(.thickMaterial)
-                        }
+                    if !isAllTypesSelectedTemp {
                         
-                        // Ending Date and Time
-                        VStack {
-                            Text("Fine")
-                                .font(.headline.bold())
-                            
-                            if !showTimePickers {
-                                DatePicker("Fine", selection: $temporaryFilter.endingDate, displayedComponents: .hourAndMinute)
-                                    .labelsHidden()
-                            }
-                            DatePicker("Fine", selection: $temporaryFilter.endingDate, displayedComponents: .date)
-                                .labelsHidden()
-                            
-                        }
-                        .padding()
-                        .background {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(.thickMaterial)
-                        }
-                    }
-                    .tint(.orange)
-                    
-                    // Duration
-                    Stepper(value: $internalMaxDuration, in: 0 ... 24, step: 1) {
-                        HStack(alignment: .center) {
-                            Text("Durata:")
-                            
-                            Spacer()
-                            
-                            Text(String(temporaryFilter.maxDuration))
-                                .font(.system(size: 24, weight: .bold, design: .rounded))
-                                .foregroundStyle(.orange)
-                                .contentTransition(.numericText())
-                            
-                            Text("ore")
-                        }
-                    }
-                    .padding()
-                    .background {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.thickMaterial)
-                    }
-                    .tint(.orange)
-                    
-                    // Public and Private types
-                    HStack(spacing: 5) {
-                        Image(systemName: "person.2.fill")
+                        Divider()
                         
-                        VStack(alignment: .leading) {
-                            Text("Tipo di Favore")
-                                .font(.title3.bold())
-                            
-                            Text("Filtra in base alla tua preferenza sul tipo")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.top, 10)
-                    
-                    VStack {
-                        Toggle(isOn: $isAllTypesSelectedTemp, label: {
+                        Toggle(isOn: $isPrivateTypeSelectedTemp, label: {
                             HStack(spacing: 8) {
-                                Image(systemName: "person.2.fill")
+                                Image(systemName: FavorType.privateFavor.icon)
                                     .foregroundStyle(Color(.white))
                                     .frame(width: 30, height: 30)
                                     .background {
@@ -177,119 +196,98 @@ struct AdvancedFiltersView: View {
                                             .foregroundStyle(Color(.blue))
                                     }
                                 
-                                Text("Tutti")
+                                Text("Singolo")
                             }
                         })
                         .tint(.blue)
                         
-                        if !isAllTypesSelectedTemp {
-                            
-                            Divider()
-                            
-                            Toggle(isOn: $isPrivateTypeSelectedTemp, label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: FavorType.privateFavor.icon)
-                                        .foregroundStyle(Color(.white))
-                                        .frame(width: 30, height: 30)
-                                        .background {
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .foregroundStyle(Color(.blue))
-                                        }
-                                    
-                                    Text("Singolo")
-                                }
-                            })
-                            .tint(.blue)
-                            
-                            Divider()
-                            
-                            Toggle(isOn: $isPublicTypeSelectedTemp, label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: FavorType.publicFavor.icon)
-                                        .font(.subheadline)
-                                        .foregroundStyle(Color(.white))
-                                        .frame(width: 30, height: 30)
-                                        .background {
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .foregroundStyle(Color(.blue))
-                                        }
-                                    
-                                    Text("Gruppo")
-                                }
-                            })
-                            .tint(.blue)
-                        }
-                    }
-                    .padding()
-                    .background {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.thickMaterial)
-                    }
-                    
-                    // Car Needed and Heavy Task Filters
-                    HStack(spacing: 5) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                        
-                        VStack(alignment: .leading) {
-                            Text("Info aggiuntive")
-                                .font(.title3.bold())
-                            
-                            Text("Escludi ciò che ritieni di non poter fare")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.top, 10)
-                    
-                    VStack {
-                        Toggle(isOn: $temporaryFilter.isCarNeededSelected, label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "car.fill")
-                                    .foregroundStyle(Color(.white))
-                                    .frame(width: 30, height: 30)
-                                    .background {
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .foregroundStyle(Color(.systemRed))
-                                    }
-                                
-                                Text("Auto necessaria")
-                            }
-                        })
-                        .tint(.red)
-                        
                         Divider()
                         
-                        Toggle(isOn: $temporaryFilter.isHeavyTaskSelected, label: {
+                        Toggle(isOn: $isPublicTypeSelectedTemp, label: {
                             HStack(spacing: 8) {
-                                Image(systemName: "hammer.fill")
+                                Image(systemName: FavorType.publicFavor.icon)
+                                    .font(.subheadline)
                                     .foregroundStyle(Color(.white))
                                     .frame(width: 30, height: 30)
                                     .background {
                                         RoundedRectangle(cornerRadius: 5)
-                                            .foregroundStyle(Color(.systemGreen))
+                                            .foregroundStyle(Color(.blue))
                                     }
                                 
-                                Text("Lavoro faticoso")
+                                Text("Gruppo")
                             }
                         })
-                        .tint(.green)
-                    }
-                    .padding()
-                    .background {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.thickMaterial)
+                        .tint(.blue)
                     }
                 }
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.thickMaterial)
                 }
-                .padding(.vertical, 70)
-                .padding(.horizontal)
-        .padding(.horizontal)
+                
+                // Car Needed and Heavy Task Filters
+                HStack(spacing: 5) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    
+                    VStack(alignment: .leading) {
+                        Text("Info aggiuntive")
+                            .font(.title3.bold())
+                        
+                        Text("Escludi ciò che ritieni di non poter fare")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.top, 10)
+                
+                VStack {
+                    Toggle(isOn: $temporaryFilter.isCarNeededSelected, label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "car.fill")
+                                .foregroundStyle(Color(.white))
+                                .frame(width: 30, height: 30)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .foregroundStyle(Color(.systemRed))
+                                }
+                            
+                            Text("Auto necessaria")
+                        }
+                    })
+                    .tint(.red)
+                    
+                    Divider()
+                    
+                    Toggle(isOn: $temporaryFilter.isHeavyTaskSelected, label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "hammer.fill")
+                                .foregroundStyle(Color(.white))
+                                .frame(width: 30, height: 30)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .foregroundStyle(Color(.systemGreen))
+                                }
+                            
+                            Text("Lavoro faticoso")
+                        }
+                    })
+                    .tint(.green)
+                }
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.thickMaterial)
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+        .padding(.vertical, 70)
         .padding(.vertical, 24)
         .frame(width: screenWidth > 500 ? 360 : screenWidth - 40, alignment: .top)
         .frame(maxHeight: screenHeight > 900 ? 780 : 600)
-        
         .overlay {
             // Title and Close Button
             VStack {
@@ -297,6 +295,7 @@ struct AdvancedFiltersView: View {
                     HStack {
                         Text("Filtri avanzati")
                             .font(.title.bold())
+                            .padding(.horizontal, 4)
                         
                         Spacer()
                         
@@ -321,23 +320,23 @@ struct AdvancedFiltersView: View {
                 .background {
                     Rectangle()
                         .foregroundStyle(.ultraThinMaterial)
-                } 
+                }
                 
                 Spacer()
                 
                 VStack {
                     HStack(spacing: 16) {
                         Button(
-                            role: .destructive, 
+                            role: .destructive,
                             action: {
                                 temporaryFilter.reset()
                                 isAllCategorySelected = true
                             }, label: {
                                 Label(
                                     title: {
-                                        Text("Reset") 
+                                        Text("Reset")
                                     },
-                                    icon: { 
+                                    icon: {
                                         Image(systemName: "arrow.counterclockwise")
                                     }
                                 )
@@ -352,7 +351,7 @@ struct AdvancedFiltersView: View {
                         .shadow(radius: 10)
                         
                         Button(
-                            role: .cancel, 
+                            role: .cancel,
                             action: {
                                 // Cloning the temporaryFilter into the main Filter
                                 filter.clone(source: temporaryFilter)
@@ -361,9 +360,9 @@ struct AdvancedFiltersView: View {
                             }, label: {
                                 Label(
                                     title: {
-                                        Text("Applica") 
+                                        Text("Applica")
                                     },
-                                    icon: { 
+                                    icon: {
                                         Image(systemName: "checkmark")
                                     }
                                 )
@@ -388,7 +387,6 @@ struct AdvancedFiltersView: View {
                 }
             }
         }
-        
         .onAppear {
             temporaryFilter.clone(source: filter)
             
@@ -416,7 +414,7 @@ struct AdvancedFiltersView: View {
         .onChange(of: internalMaxDuration) {_, _ in
             withAnimation {
                 temporaryFilter.maxDuration = internalMaxDuration
-            }    
+            }
         }
         .onChange(of: isAllCategorySelected) { old, new in
             if !ignoreChange {
@@ -428,7 +426,7 @@ struct AdvancedFiltersView: View {
                     temporaryFilter.selectedCategories.removeAll()
                 }
             }
-            ignoreChange = false            
+            ignoreChange = false
             withAnimation {
                 showCategories = old
             }
@@ -494,7 +492,7 @@ struct AdvancedFiltersView: View {
             isAllTypesSelectedTemp = temporaryFilter.isAllTypesSelected
         }
         .onChange(of: temporaryFilter.isPrivateTypeSelected) { _, _ in
-            isPrivateTypeSelectedTemp = temporaryFilter.isPrivateTypeSelected    
+            isPrivateTypeSelectedTemp = temporaryFilter.isPrivateTypeSelected
         }
         .onChange(of: temporaryFilter.isPublicTypeSelected) { _, _ in
             isPublicTypeSelectedTemp = temporaryFilter.isPublicTypeSelected
