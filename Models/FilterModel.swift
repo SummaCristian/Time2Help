@@ -1,5 +1,35 @@
 import Foundation
 
+enum SettableType: Identifiable, CaseIterable {
+    case indifferent
+    case individual
+    case group
+    
+    var id: Self {self}
+    
+    var name: String {
+        switch self {
+        case .indifferent:
+            return "Indifferente"
+        case .individual:
+            return "Singolo"
+        case .group:
+            return "Gruppo"
+        }
+    }
+    
+    var int: Int {
+        switch self {
+        case .indifferent:
+            return 0
+        case .individual:
+            return 1
+        case .group:
+            return 2
+        }
+    }
+}
+
 class FilterModel: ObservableObject {
     @Published var selectedCategories: [FavorCategory]
     @Published var isCarNeededSelected: Bool
@@ -7,9 +37,9 @@ class FilterModel: ObservableObject {
     @Published var startingDate: Date
     @Published var endingDate: Date
     @Published var maxDuration: Int
-    @Published var isAllTypesSelected: Bool
-    @Published var isPrivateTypeSelected: Bool
-    @Published var isPublicTypeSelected: Bool
+    @Published var isIndifferentTypesSelected: Bool
+    @Published var isIndividualTypeSelected: Bool
+    @Published var isGroupTypeSelected: Bool
     
     var allowNone: Bool
     
@@ -21,9 +51,9 @@ class FilterModel: ObservableObject {
         startingDate: Date = .now,
         endingDate: Date = .now,
         maxDuration: Int = 24,
-        isAllTypesSelected: Bool = true,
-        isPrivateTypeSelected: Bool = true,
-        isPublicTypeSelected: Bool = true,
+        isIndifferentTypesSelected: Bool = true,
+        isIndividualTypeSelected: Bool = false,
+        isGroupTypeSelected: Bool = false,
         allowNone: Bool = false
     ) {
         self.selectedCategories = selectedCategories
@@ -32,9 +62,9 @@ class FilterModel: ObservableObject {
         self.startingDate = startingDate
         self.endingDate = endingDate
         self.maxDuration = maxDuration
-        self.isAllTypesSelected = isAllTypesSelected
-        self.isPrivateTypeSelected = isPrivateTypeSelected
-        self.isPublicTypeSelected = isPublicTypeSelected
+        self.isIndifferentTypesSelected = isIndifferentTypesSelected
+        self.isIndividualTypeSelected = isIndividualTypeSelected
+        self.isGroupTypeSelected = isGroupTypeSelected
         self.allowNone = allowNone
         
         setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
@@ -47,7 +77,7 @@ class FilterModel: ObservableObject {
         startingDate = .now
         endingDate = .now
         maxDuration = 24
-        selectType(type: .all)
+        selectType(type: .indifferent)
         
         setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
         setTime(of: [.endingTime], hour: 23, minute: 59, second: 59)
@@ -60,31 +90,25 @@ class FilterModel: ObservableObject {
         self.startingDate = source.startingDate
         self.endingDate = source.endingDate
         self.maxDuration = source.maxDuration
-        self.isAllTypesSelected = source.isAllTypesSelected
-        self.isPublicTypeSelected = source.isPublicTypeSelected
-        self.isPrivateTypeSelected = source.isPrivateTypeSelected
-    }
-    
-    enum SettableType {
-        case all
-        case privateFavor
-        case publicFavor
+        self.isIndifferentTypesSelected = source.isIndifferentTypesSelected
+        self.isIndividualTypeSelected = source.isIndividualTypeSelected
+        self.isGroupTypeSelected = source.isGroupTypeSelected
     }
     
     func selectType(type: SettableType) {
         switch type {
-        case .all:
-            isAllTypesSelected = true
-            isPrivateTypeSelected = true
-            isPublicTypeSelected = true
-        case .privateFavor:
-            isAllTypesSelected = false
-            isPrivateTypeSelected = true
-            isPublicTypeSelected = false
-        case .publicFavor:
-            isAllTypesSelected = false
-            isPrivateTypeSelected = false
-            isPublicTypeSelected = true
+        case .indifferent:
+            isIndifferentTypesSelected = true
+            isIndividualTypeSelected = false
+            isGroupTypeSelected = false
+        case .individual:
+            isIndifferentTypesSelected = false
+            isIndividualTypeSelected = true
+            isGroupTypeSelected = false
+        case .group:
+            isIndifferentTypesSelected = false
+            isIndividualTypeSelected = false
+            isGroupTypeSelected = true
         }
     }
     
@@ -109,7 +133,7 @@ class FilterModel: ObservableObject {
         (isCarNeededSelected || !favor.isCarNecessary)  &&
         (isHeavyTaskSelected || !favor.isHeavyTask) &&
         (isFavorInAnyTimeSlot(slots: favor.timeSlots)) &&
-        (favor.type == .privateFavor ? isPrivateTypeSelected : isPublicTypeSelected)
+        (isIndifferentTypesSelected ? true : favor.type == .individual ? isIndividualTypeSelected : isGroupTypeSelected)
     }
     
     func isFavorInAnyTimeSlot(slots: [TimeSlot]) -> Bool {
