@@ -526,9 +526,11 @@ extension Date {
         filter: FilterModel(),
         isAdvancedFiltersViewShowing: .constant(true)
     )
-    .padding()
-    .background {
-        RoundedRectangle(cornerRadius: 32)
-            .fill(.thinMaterial)
-    }
+//    .background {
+//        RoundedRectangle(cornerRadius: 32)
+//            .fill(.thinMaterial)
+//    }
+    .clipShape(RoundedRectangle(cornerRadius: 32))
+    .padding(5)
+    .shadow(radius: 1)
 }
