@@ -61,7 +61,7 @@ struct MapView: View {
                     if (
                         filter.isFavorIncluded(favor: favor)
                     ) {
-                        if favor.type == .publicFavor {
+                        if favor.type == .group {
                             MapCircle(center: favor.location, radius: 35)
                                 .foregroundStyle(favor.category.color.opacity(0.2))
                                 .stroke(favor.category.color, lineWidth: 3)
@@ -79,7 +79,7 @@ struct MapView: View {
                                     }
                             },
                             label: {
-                                //Label(favor.title, systemImage: favor.icon.icon)
+                                // Label(favor.title, systemImage: favor.icon.icon)
                             }
                         )
                     }
@@ -122,7 +122,6 @@ struct MapView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .padding(.all, 60)
                             .padding(.bottom, 105)
-//                            .background(.regularMaterial, in: .rect(cornerRadius: 25))
                         } else {
                             ScrollView {
                                 VStack(spacing: 16) {
@@ -197,12 +196,12 @@ struct MapView: View {
                         Image(systemName: showList ? "map.fill" : "list.bullet")
                             .font(.title3.bold())
                             .foregroundStyle(.white)
-//                            .padding(.all, showList ? 14 : 12)
                             .frame(width: 45, height: 45)
                     }
                     .background(
                         Circle()
                             .foregroundStyle(.blue)
+                            .shadow(color: .gray.opacity(0.4), radius: 6)
                     )
                 }
                 
