@@ -9,6 +9,15 @@ struct TimeSlot: Identifiable {
     var endingDate: Date
 }
 
+struct FavorReview: Identifiable {
+    let id: UUID = UUID()
+    
+    var author: User
+    var rating: Double
+    var text: String
+    var isAuthor: Bool = false
+}
+
 class Favor: Identifiable, ObservableObject, Hashable {
     // An ID to identify it
     let id: UUID
@@ -25,10 +34,11 @@ class Favor: Identifiable, ObservableObject, Hashable {
     @Published var location: CLLocationCoordinate2D
     @Published var isCarNecessary: Bool
     @Published var isHeavyTask: Bool
-    @Published var review: Double?
     @Published var status: FavorStatus
     
     @Published var helpers: [User] = []
+    
+    @Published var reviews: [FavorReview] = []
     
     // Cosmetic details
     @Published var icon: String
