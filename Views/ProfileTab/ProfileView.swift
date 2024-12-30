@@ -5,7 +5,8 @@ import MapKit
 
 struct ProfileView: View {
     
-    @Environment(\.openURL) private var openURL
+    @Environment(\.openURL) var openURL
+    @Environment(\.colorScheme) var colorScheme
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -125,8 +126,8 @@ struct ProfileView: View {
                             .background {
                                 RoundedRectangle(cornerRadius: 15)
                                     .foregroundStyle(Color(.systemGray6))
-                                    .shadow(color: .gray.opacity(0.4), radius: 6)
-                                    .shadow(radius: 3)
+                                    .shadow(color: .gray.opacity(colorScheme == .dark ? 0.2 : 0.4), radius: 6)
+//                                    .shadow(radius: 3)
                             }
                             .hoverEffect(.lift)
                             .onTapGesture {
@@ -148,10 +149,10 @@ struct ProfileView: View {
                             }
                             .padding()
                             .background {
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 15)
                                     .foregroundStyle(Color(.systemGray6))
-                                    .shadow(color: .gray.opacity(0.4), radius: 6)
-                                    .shadow(radius: 3)
+                                    .shadow(color: .gray.opacity(colorScheme == .dark ? 0.2 : 0.4), radius: 6)
+//                                    .shadow(radius: 3)
                             }
                             .hoverEffect(.lift)
                             .onTapGesture {
@@ -253,33 +254,36 @@ struct ProfileView: View {
                 case "Accepted Favors":
                     AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
                 case "faqs":
-                    faqScreen()
+                    FaqScreen()
                 default:
                     Text("Unknown")
                 }
                 
             }
             .toolbar {
-                // FAQs
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(
-                        action: {
-                            destination = "faqs"
-                        }, label: {
-                            Label("Aiuto", systemImage: "questionmark.circle")
-                        }
-                    )
-                }
-                
-                if isEditable {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            let settingsString = UIApplication.openSettingsURLString
-                            if let settingsURL = URL(string: settingsString) {
-                                openURL(settingsURL)
+                    HStack(spacing: 12) {
+                        // FAQs
+                        Button(
+                            action: {
+                                destination = "faqs"
+                            }, label: {
+                                Label("Aiuto", systemImage: "questionmark.circle")
+                                    .font(.title3)
                             }
-                        } label: {
-                            Label("Impostazioni", systemImage: "gearshape.fill")
+                        )
+                        
+                        // App Settings
+                        if isEditable {
+                            Button {
+                                let settingsString = UIApplication.openSettingsURLString
+                                if let settingsURL = URL(string: settingsString) {
+                                    openURL(settingsURL)
+                                }
+                            } label: {
+                                Label("Impostazioni", systemImage: "gearshape.circle")
+                                    .font(.title3)
+                            }
                         }
                     }
                 }
