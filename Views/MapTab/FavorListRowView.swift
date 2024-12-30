@@ -47,6 +47,7 @@ struct FavorListRow: View {
                     MultiProfileIconView(config: .constant(.box), users: $favor.helpers)
                 }
             }
+            .padding(.trailing, 8)
             
             ZStack {
                 // Progress Indicator
@@ -58,9 +59,8 @@ struct FavorListRow: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 65)
+        .padding(.vertical, 12)
         .padding(.horizontal, 24)
-        .padding(.vertical)
         .background {
             Rectangle()
                 .foregroundStyle(.regularMaterial)
