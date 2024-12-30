@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct faqScreen: View {
+struct FaqScreen: View {
     var body: some View {
         Form {
             HStack {
@@ -34,5 +34,5 @@ struct faqScreen: View {
 }
 
 #Preview {
-    faqScreen()
+    FaqScreen()
 }
