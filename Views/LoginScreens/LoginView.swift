@@ -120,7 +120,7 @@ struct LoginViewTwo: View {
     @Binding var selectedColor: String
     @Binding var selectedNeighbourhood: String
     
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         GeometryReader { _ in
