@@ -126,7 +126,7 @@ struct ProfileView: View {
                                 RoundedRectangle(cornerRadius: 15)
                                     .foregroundStyle(Color(.systemGray6))
                                     .shadow(color: .gray.opacity(0.4), radius: 6)
-//                                    .shadow(radius: 3)
+                                    .shadow(radius: 3)
                             }
                             .hoverEffect(.lift)
                             .onTapGesture {
@@ -148,10 +148,10 @@ struct ProfileView: View {
                             }
                             .padding()
                             .background {
-                                RoundedRectangle(cornerRadius: 15)
+                                RoundedRectangle(cornerRadius: 12)
                                     .foregroundStyle(Color(.systemGray6))
                                     .shadow(color: .gray.opacity(0.4), radius: 6)
-//                                    .shadow(radius: 3)
+                                    .shadow(radius: 3)
                             }
                             .hoverEffect(.lift)
                             .onTapGesture {
@@ -182,9 +182,14 @@ struct ProfileView: View {
                     }
                 )
                 .onAppear {
-                    let userFavors = database.favors.filter({ $0.helpers.contains(where: { $0.id == user.id }) }).compactMap({ $0.review })
-                    if userFavors.count != 0 {
+                    let userFavors = database.favors
+                        .filter { $0.helpers.contains(where: { $0.id == user.id }) }
+                        .compactMap { $0.reviews.isEmpty ? nil : Double($0.reviews.reduce(0) { $0 + $1.rating }) / Double($0.reviews.count) }
+                    
+                    if !userFavors.isEmpty {
                         averageReviews = userFavors.reduce(0, +) / Double(userFavors.count)
+                    } else {
+                        averageReviews = 0
                     }
                 }
                 
@@ -247,12 +252,25 @@ struct ProfileView: View {
                     RequestedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
                 case "Accepted Favors":
                     AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+                case "faqs":
+                    faqScreen()
                 default:
                     Text("Unknown")
                 }
                 
             }
             .toolbar {
+                // FAQs
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(
+                        action: {
+                            destination = "faqs"
+                        }, label: {
+                            Label("Aiuto", systemImage: "questionmark.circle")
+                        }
+                    )
+                }
+                
                 if isEditable {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
@@ -261,9 +279,7 @@ struct ProfileView: View {
                                 openURL(settingsURL)
                             }
                         } label: {
-                            Image(systemName: "gearshape.fill")
-                                .font(.title3.bold())
-                                .foregroundStyle(.blue)
+                            Label("Impostazioni", systemImage: "gearshape.fill")
                         }
                     }
                 }
