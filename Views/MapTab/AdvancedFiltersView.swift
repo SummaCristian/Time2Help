@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AdvancedFiltersView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     @State var screenWidth: CGFloat
     @State var screenHeight: CGFloat
     
@@ -14,9 +16,10 @@ struct AdvancedFiltersView: View {
     
     @StateObject private var temporaryFilter: FilterModel = FilterModel(allowNone: true)
     
-    @State private var isAllTypesSelectedTemp: Bool = true
-    @State private var isPrivateTypeSelectedTemp: Bool = true
-    @State private var isPublicTypeSelectedTemp: Bool = true
+    @State private var selectedType: SettableType = .indifferent
+    @State private var isIndifferentTypesSelectedTemp: Bool = true
+    @State private var isIndividualTypeSelectedTemp: Bool = false
+    @State private var isGroupTypeSelectedTemp: Bool = false
     
     @State private var isAllCategorySelected: Bool = true
     @State private var showCategories: Bool = false
@@ -159,10 +162,10 @@ struct AdvancedFiltersView: View {
                         .frame(width: 30)
                     
                     VStack(alignment: .leading) {
-                        Text("Tipo di Favore")
+                        Text("Modalità di partecipazione")
                             .font(.title3.bold())
                         
-                        Text("Filtra in base alla tua preferenza sul tipo")
+                        Text("Filtra in base alla tua preferenza sulla modalità")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -171,63 +174,36 @@ struct AdvancedFiltersView: View {
                 }
                 .padding(.top, 10)
                 
-                VStack {
-                    Toggle(isOn: $isAllTypesSelectedTemp, label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "person.2.fill")
-                                .foregroundStyle(Color(.white))
-                                .frame(width: 30, height: 30)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 5)
-                                        .foregroundStyle(Color(.blue))
-                                }
-                            
-                            Text("Tutti")
-                        }
-                    })
-                    .tint(.blue)
+                
+                let zStackWidth = screenWidth - 88 // screenWidth - 30 - 10 - 32 - 16
+                
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 12)
+                        .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
+                        .frame(width: (zStackWidth - 4)/3)
+                        .shadow(color: .gray.opacity(colorScheme == .dark ? 0.1 : 0.2), radius: 6)
+                        .offset(x: CGFloat(selectedType.int) * (zStackWidth/3))
                     
-                    if !isAllTypesSelectedTemp {
-                        
-                        Divider()
-                            .padding(.vertical, 8)
-                        
-                        Toggle(isOn: $isPrivateTypeSelectedTemp, label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: FavorType.privateFavor.icon)
-                                    .foregroundStyle(Color(.white))
-                                    .frame(width: 30, height: 30)
-                                    .background {
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .foregroundStyle(Color(.blue))
-                                    }
+                    HStack(spacing: 0) {
+                        ForEach(SettableType.allCases) { type in
+                            VStack(spacing: 8) {
+                                Image(systemName: type == .indifferent ? "person.2.fill" : type == .individual ? FavorType.individual.icon : FavorType.group.icon)
                                 
-                                Text("Singolo")
-                            }
-                        })
-                        .tint(.blue)
-                        
-                        Divider()
-                            .padding(.vertical, 8)
-                        
-                        Toggle(isOn: $isPublicTypeSelectedTemp, label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: FavorType.publicFavor.icon)
+                                Text(type.name)
                                     .font(.subheadline)
-                                    .foregroundStyle(Color(.white))
-                                    .frame(width: 30, height: 30)
-                                    .background {
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .foregroundStyle(Color(.blue))
-                                    }
-                                
-                                Text("Gruppo")
                             }
-                        })
-                        .tint(.blue)
+                            .frame(width: zStackWidth/3)
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 12)
+                            .onTapGesture {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedType = type
+                                }
+                            }
+                        }
                     }
                 }
-                .padding()
+                .padding(.all, 8)
                 .background {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.thickMaterial)
@@ -340,6 +316,9 @@ struct AdvancedFiltersView: View {
                             action: {
                                 temporaryFilter.reset()
                                 isAllCategorySelected = true
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedType = .indifferent
+                                }
                             }, label: {
                                 Label(
                                     title: {
@@ -409,9 +388,10 @@ struct AdvancedFiltersView: View {
                 isAllDaySelected = true
             }
             
-            isAllTypesSelectedTemp = temporaryFilter.isAllTypesSelected
-            isPrivateTypeSelectedTemp = temporaryFilter.isPrivateTypeSelected
-            isPublicTypeSelectedTemp = temporaryFilter.isPublicTypeSelected
+            selectedType = temporaryFilter.isIndifferentTypesSelected ? .indifferent : temporaryFilter.isIndividualTypeSelected ? .individual : .group
+            isIndifferentTypesSelectedTemp = temporaryFilter.isIndifferentTypesSelected
+            isIndividualTypeSelectedTemp = temporaryFilter.isIndividualTypeSelected
+            isGroupTypeSelectedTemp = temporaryFilter.isGroupTypeSelected
             
             // Sync categories filters
             showCategories = !temporaryFilter.isCategorySelected(category: .all)
@@ -459,52 +439,23 @@ struct AdvancedFiltersView: View {
                 }
             }
         }
-        .onChange(of: isPrivateTypeSelectedTemp) {old, new in
-            if new {
-                withAnimation {
-                    if isPublicTypeSelectedTemp {
-                        temporaryFilter.selectType(type: .all)
-                    } else {
-                        temporaryFilter.selectType(type: .publicFavor)
-                    }
-                }
+        .onChange(of: selectedType) { _, new in
+            if new == .indifferent {
+                temporaryFilter.selectType(type: .indifferent)
+            } else if new == .individual {
+                temporaryFilter.selectType(type: .individual)
             } else {
-                withAnimation {
-                    if isPublicTypeSelectedTemp {
-                        temporaryFilter.selectType(type: .publicFavor)
-                    } else {
-                        temporaryFilter.selectType(type: .privateFavor)
-                    }
-                }
+                temporaryFilter.selectType(type: .group)
             }
         }
-        .onChange(of: isPublicTypeSelectedTemp) {old, new in
-            if new {
-                withAnimation {
-                    if isPrivateTypeSelectedTemp {
-                        temporaryFilter.selectType(type: .all)
-                    } else {
-                        temporaryFilter.selectType(type: .privateFavor)
-                    }
-                }
-            } else {
-                withAnimation {
-                    if isPrivateTypeSelectedTemp {
-                        temporaryFilter.selectType(type: .privateFavor)
-                    } else {
-                        temporaryFilter.selectType(type: .publicFavor)
-                    }
-                }
-            }
+        .onChange(of: temporaryFilter.isIndifferentTypesSelected) { _, new in
+            isIndifferentTypesSelectedTemp = temporaryFilter.isIndifferentTypesSelected
         }
-        .onChange(of: temporaryFilter.isAllTypesSelected) { _, _ in
-            isAllTypesSelectedTemp = temporaryFilter.isAllTypesSelected
+        .onChange(of: temporaryFilter.isIndividualTypeSelected) { _, _ in
+            isIndividualTypeSelectedTemp = temporaryFilter.isIndividualTypeSelected
         }
-        .onChange(of: temporaryFilter.isPrivateTypeSelected) { _, _ in
-            isPrivateTypeSelectedTemp = temporaryFilter.isPrivateTypeSelected
-        }
-        .onChange(of: temporaryFilter.isPublicTypeSelected) { _, _ in
-            isPublicTypeSelectedTemp = temporaryFilter.isPublicTypeSelected
+        .onChange(of: temporaryFilter.isGroupTypeSelected) { _, _ in
+            isGroupTypeSelectedTemp = temporaryFilter.isGroupTypeSelected
         }
         .sensoryFeedback(.levelChange, trigger: internalMaxDuration)
         .sensoryFeedback(.levelChange, trigger: temporaryFilter.selectedCategories)
