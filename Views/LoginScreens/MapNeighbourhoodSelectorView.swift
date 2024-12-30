@@ -275,6 +275,7 @@ struct NeighbourhoodSelector: View {
                         .background(
                             Circle()
                                 .foregroundStyle(.blue)
+                                .shadow(color: showListNeighbourhood ? .clear : .gray.opacity(0.4), radius: 6)
                         )
                     }
                     .padding(.vertical, 10)
