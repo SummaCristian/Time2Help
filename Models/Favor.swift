@@ -61,7 +61,7 @@ class Favor: Identifiable, ObservableObject, Hashable {
         self.title = ""
         self.description = ""
         self.neighbourhood = ""
-        self.type = .privateFavor
+        self.type = .individual
         self.location = CLLocationCoordinate2D()
         self.isCarNecessary = false
         self.isHeavyTask = false
@@ -102,7 +102,7 @@ class Favor: Identifiable, ObservableObject, Hashable {
     }
     
     func canBeAccepted(userID: UUID) -> Bool {
-        return (userID != author.id && ((type == .privateFavor && helpers.isEmpty) || (type == .publicFavor && !helpers.contains(where: { $0.id == userID }))))
+        return (userID != author.id && ((type == .individual && helpers.isEmpty) || (type == .group && !helpers.contains(where: { $0.id == userID }))))
     }
     
     // MARK: - Hashable Conformance
