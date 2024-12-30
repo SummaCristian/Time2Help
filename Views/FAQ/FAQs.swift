@@ -35,7 +35,7 @@ enum FAQs: Identifiable, CaseIterable {
                                 profilePictureColor: .constant("blue")
                             ),
                             neighbourhood: "Duomo",
-                            type: .privateFavor,
+                            type: .individual,
                             location: MapDetails.startingLocation,
                             isCarNecessary: false,
                             isHeavyTask: false,
@@ -57,7 +57,7 @@ enum FAQs: Identifiable, CaseIterable {
                                 profilePictureColor: .constant("blue")
                             ),
                             neighbourhood: "Duomo",
-                            type: .privateFavor,
+                            type: .individual,
                             location: MapDetails.startingLocation,
                             isCarNecessary: false,
                             isHeavyTask: false,
@@ -92,7 +92,7 @@ enum FAQs: Identifiable, CaseIterable {
                             profilePictureColor: .constant("blue")
                         ),
                         neighbourhood: "Duomo",
-                        type: .publicFavor,
+                        type: .group,
                         location: MapDetails.startingLocation,
                         isCarNecessary: false,
                         isHeavyTask: false,
