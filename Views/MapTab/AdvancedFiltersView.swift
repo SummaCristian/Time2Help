@@ -190,6 +190,7 @@ struct AdvancedFiltersView: View {
                     if !isAllTypesSelectedTemp {
                         
                         Divider()
+                            .padding(.vertical, 8)
                         
                         Toggle(isOn: $isPrivateTypeSelectedTemp, label: {
                             HStack(spacing: 8) {
@@ -207,6 +208,7 @@ struct AdvancedFiltersView: View {
                         .tint(.blue)
                         
                         Divider()
+                            .padding(.vertical, 8)
                         
                         Toggle(isOn: $isPublicTypeSelectedTemp, label: {
                             HStack(spacing: 8) {
@@ -266,6 +268,7 @@ struct AdvancedFiltersView: View {
                     .tint(.red)
                     
                     Divider()
+                        .padding(.vertical, 8)
                     
                     Toggle(isOn: $temporaryFilter.isHeavyTaskSelected, label: {
                         HStack(spacing: 8) {
