@@ -23,6 +23,7 @@ struct CategoryCapsule: View {
         .scaleEffect(filter.selectedCategories.contains(category) ? 1 : 0.95)
         .animation(.bouncy, value: filter.selectedCategories)
         .hoverEffect(.lift)
+        .shadow(color: .gray.opacity(0.4), radius: 6)
     }
     
     func isCategorySelected() -> Bool {
