@@ -175,17 +175,15 @@ struct ModifyProfileView: View {
                             
                             isModifySheetPresented = false
                         }) {
-                            Label("Salva", systemImage: "pencil")
+                            Label("Salva", systemImage: "square.and.arrow.down")
                                 .font(.body.bold())
                                 .foregroundStyle(.white)
                                 .padding(.vertical, 15)
                                 .padding(.horizontal, 45)
-                                .background(.blue, in: .capsule)
+                                .background(!canBeModified ? .gray : .blue, in: .capsule)
                         }
                         .shadow(radius: 10)
                         .disabled(!canBeModified)
-                        .opacity(canBeModified ? 1 : 0)
-                        .offset(y: canBeModified ? 0 : 50)
                         .animation(.easeInOut, value: canBeModified)
                         .sensoryFeedback(.pathComplete, trigger: canBeModified)
                         .hoverEffect(.highlight)
@@ -209,18 +207,18 @@ struct ModifyProfileView: View {
                 nameSurnameTemp = user.nameSurname
                 selectedColorTemp = user.profilePictureColor
                 selectedNeighbourhoodStructTemp.name = user.neighbourhood
+                selectedNeighbourhoodStructTemp.id = Database.neighbourhoods.first(where: { $0.name == user.neighbourhood })!.id
                 
                 isModifySheetPresented = false
             }
         } message: {
             Text("I dettagli che hai inserito andranno persi")
         }
-        .sheet(isPresented: $isNeighbourhoodSelectorPresented, onDismiss: {
-            selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
-        }, content: {
+        .sheet(isPresented: $isNeighbourhoodSelectorPresented) {
             // Shows the Location Selector sheet
             NeighbourhoodSelector(viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
-        })
+                .interactiveDismissDisabled()
+        }
         .onAppear {
             selectedNeighbourhoodStructTempTwo = selectedNeighbourhoodStructTemp
         }
