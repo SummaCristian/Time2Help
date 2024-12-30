@@ -102,24 +102,47 @@ struct MapView: View {
                             .foregroundStyle(.ultraThinMaterial)
                             .ignoresSafeArea()
                         
-                        ScrollView {
-                            VStack {
-                                ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood})) { favor in
-                                    if (
-                                        filter.isFavorIncluded(favor: favor)
-                                    ) {
-                                        FavorListRow(favor: favor)
-                                            .onTapGesture {
-                                                // Selects the Favor and triggers the showing of the sheet
-                                                selectedFavor = favor
-                                                selectedFavorID = favor.id
-                                            }
+                        if database.favors.filter({ $0.neighbourhood == selectedNeighbourhood }).isEmpty {
+                            VStack(spacing: 20) {
+                                Image(systemName: "eyes")
+                                    .font(.system(size: 80))
+                                    .overlay(alignment: .topTrailing) {
+                                        Image(systemName: "questionmark")
+                                            .font(.system(size: 30))
+                                            .padding(.top, -10)
+                                            .padding(.trailing, -16)
+                                    }
+                                
+                                Text("Nessun favore trovato nel tuo quartiere")
+                                    .font(.title2)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .foregroundStyle(.gray)
+                            .bold()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding(.all, 60)
+                            .padding(.bottom, 105)
+//                            .background(.regularMaterial, in: .rect(cornerRadius: 25))
+                        } else {
+                            ScrollView {
+                                VStack(spacing: 16) {
+                                    ForEach(database.favors.filter({ $0.neighbourhood == selectedNeighbourhood })) { favor in
+                                        if (
+                                            filter.isFavorIncluded(favor: favor)
+                                        ) {
+                                            FavorListRow(favor: favor)
+                                                .onTapGesture {
+                                                    // Selects the Favor and triggers the showing of the sheet
+                                                    selectedFavor = favor
+                                                    selectedFavorID = favor.id
+                                                }
+                                        }
                                     }
                                 }
+                                .padding(.vertical, 20)
                             }
-                            .padding(.bottom, 20)
+                            .padding(.bottom, 85)
                         }
-                        .padding(.bottom, 85)
                     }
                     
                     VStack {
