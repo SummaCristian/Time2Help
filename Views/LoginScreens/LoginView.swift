@@ -467,6 +467,7 @@ struct LoginViewFour: View {
         }, content: {
             // Shows the Neighbourhood Selector sheet
             NeighbourhoodSelector(viewModel: viewModel, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp, selectedNeighbourhoodStructTempTwo: $selectedNeighbourhoodStructTempTwo)
+                .interactiveDismissDisabled()
         })
     }
 }
