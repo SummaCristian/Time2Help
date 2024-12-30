@@ -87,7 +87,7 @@ struct NewFavorSheet: View {
                             .padding(.vertical, 6)
                         },
                         header: {
-                            Text("TITOLO E DESCRIZIONE")
+                            Text("Titolo e descrizione")
                         })
                     
                     // Private vs Public selector
@@ -115,7 +115,7 @@ struct NewFavorSheet: View {
                             
                         },
                         header: {
-                            Text("Tipo di Favore")
+                            Text("Modalità di partecipazione")
                         }
                     )
                     
@@ -165,7 +165,7 @@ struct NewFavorSheet: View {
                                                 .foregroundStyle(Color(.systemRed))
                                         }
                                     
-                                    Text("Auto Necessaria")
+                                    Text("Auto necessaria")
                                 }
                             })
                             .tint(.red)
@@ -188,7 +188,7 @@ struct NewFavorSheet: View {
                             .padding(.vertical, 4)
                         },
                         header: {
-                            Text("INFO AGGIUNTIVE")
+                            Text("Info aggiuntive")
                         }
                     )
                     .tint(.green)
@@ -234,7 +234,7 @@ struct NewFavorSheet: View {
                             }
                         },
                         header: {
-                            Text("POSIZIONE")
+                            Text("Posizione")
                         }
                     )
                     
