@@ -23,8 +23,9 @@ struct MapButtonsView: View {
                 Button(action: {
                     isSatelliteMode.toggle()
                 }) {
-                    Image(systemName: !isSatelliteMode ? "map.circle" : "globe.europe.africa.fill")
-                        .font(isSatelliteMode ? .title2 : .title)
+                    Image(systemName: isSatelliteMode ? "globe.europe.africa.fill" : "map.circle")
+                        .font(isSatelliteMode ? .system(size: 24) : .system(size: 25))
+                        .fontWeight(isSatelliteMode ? .semibold : .regular)
                         .foregroundStyle(.blue)
                         .frame(width: 50, height: 50)
                 }
@@ -39,8 +40,7 @@ struct MapButtonsView: View {
                     }
                 }) {
                     Text(!is3dMode ? "3D" : "2D")
-                    //                        .font(.custom("ArchivoVariable-SemiBold_Medium", size: 18))
-                    //                        .font(.body)
+                        //.font(.custom("ArchivoVariable-SemiBold_Medium", size: 18))
                         .foregroundStyle(.blue)
                         .frame(width: 50, height: 50)
                 }
@@ -57,19 +57,16 @@ struct MapButtonsView: View {
                     camera = MapCameraPosition.camera(.init(centerCoordinate: .init(latitude: selectedCLLocationCoordinate.latitude, longitude: selectedCLLocationCoordinate.longitude), distance: 3200.0, heading: 0.0, pitch: 0.0))
                 }) {
                     Image(systemName: "building.2.crop.circle")
-                        .font(.title3)
+                        .font(.system(size: 25))
                         .foregroundStyle(.blue)
                         .frame(width: 50, height: 50)
                 }
             }
             .background {
                 Capsule()
-                //                        RoundedRectangle(cornerRadius: 12)
                     .foregroundStyle(.thinMaterial)
                     .shadow(color: .gray.opacity(0.4), radius: 6)
             }
-            
-            //            MapCompass(scope: mapNameSpace)
         }
     }
 }
