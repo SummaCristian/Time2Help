@@ -735,7 +735,6 @@ class Database: ObservableObject {
         favors.last!.helpers.append(grazia)
         favors.last?.helpers.append(mario)
         favors.last?.helpers.append(giuseppe)
-        favors.last!.review = 0.0
         
         favors.append(
             Favor(
@@ -785,7 +784,6 @@ class Database: ObservableObject {
             )
         )
         favors.last!.helpers.append(giuseppe)
-        favors.last!.review = 5.0
         
         favors.append(
             Favor(
@@ -818,7 +816,6 @@ class Database: ObservableObject {
             )
         )
         favors.last!.helpers.append(grazia)
-        favors.last!.review = 3.0
         
         favors.append(
             Favor(
@@ -854,7 +851,6 @@ class Database: ObservableObject {
             )
         )
         favors.last!.helpers.append(mario)
-        favors.last!.review = 5.0
         
         favors.append(
             Favor(
@@ -911,15 +907,12 @@ class Database: ObservableObject {
                 favor.helpers.append(user)
                 if (count == 0) {
                     favor.status = .completed
-                    favor.review = 4.0
                 } else if (count == 1) { favor.status = .waitingForApprovation
                 } else if (count == 2) { favor.status = .halfwayThere
                 } else if (count == 3) {
                     favor.status = .completed
-                    favor.review = 3.0
                 } else {
                     favor.status = .completed
-                    favor.review = 4.0
                 }
                 count += 1
             } else if count >= 5 {
@@ -976,5 +969,17 @@ class Database: ObservableObject {
         favors.last!.helpers.append(giuseppe)
         favors.last!.helpers.append(mario)
         favors.last!.helpers.append(grazia)
+        
+        // Adds a random amount of reviews to each Favor
+        for favor in favors {
+            let random = Int.random(in: 0...3)
+            for _ in 0...random {
+                let randomValue = Double.random(in: 0.0...5.0)
+                let randomUser = Int.random(in: 0...(users.count-1))
+                
+                let review = FavorReview(author: users[randomUser], rating: randomValue, text: "This is a review")
+                favor.reviews.append(review)
+            }
+        }
     }
 }
