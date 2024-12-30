@@ -175,21 +175,22 @@ struct FavorDetailsSheet: View {
                     }
                 )
                 
-                if favor.review != nil && favor.author.id != user.id || favor.author.id == user.id && favor.status == .completed {
+                // The Favor's reviews
+                if favor.status == .completed {
                     Section(
                         content: {
                             StarsView(
                                 value: $value,
                                 isInDetailsSheet: true,
-                                clickOnGoing: favor.review != nil && favor.author.id != user.id ? .constant(true) : $clickOnGoing
+                                clickOnGoing: favor.author.id != user.id ? .constant(true) : $clickOnGoing,
+                                reviews: favor.reviews
                             )
                             .onAppear {
-                                if favor.review != nil && favor.author.id != user.id {
-                                    value = favor.review!
+                                if favor.author.id != user.id {
+                                    let sumOfReviews = favor.reviews.reduce(0) { $0 + $1.rating}
+                                    let averageOfReviews = sumOfReviews / Double(favor.reviews.count)
+                                    value = averageOfReviews
                                 }
-                            }
-                            .onChange(of: value) {_, _ in
-                                favor.review = value
                             }
                         },
                         header: {
