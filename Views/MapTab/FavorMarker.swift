@@ -107,7 +107,7 @@ struct FavorMarker: View {
                 
                 if (!isInFavorSheet && !favor.helpers.isEmpty) {
                     MultiProfileIconView(config: $iconConfig, users: $favor.helpers)
-                        .offset(x: moveTitle ? 4 : 0, y: moveTitle ? -40 : 0)                        
+                        .offset(x: moveTitle ? 4 : 0, y: moveTitle ? -40 : 0)
                 }
             }
         }
@@ -168,7 +168,7 @@ struct FavorMarker: View {
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true, isOwner: false)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .individual, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true, isOwner: false)
                     .padding(.bottom, 50)
             }
         }
@@ -178,7 +178,7 @@ struct FavorMarker: View {
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true, isOwner: false)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .individual, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true, isOwner: false)
                     .padding(.bottom, 50)
 
             }
@@ -188,7 +188,7 @@ struct FavorMarker: View {
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .individual, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
                     .padding(.bottom, 50)
             }
         }
@@ -198,7 +198,7 @@ struct FavorMarker: View {
         LazyVGrid(columns: [.init(.adaptive(minimum: 100), spacing: 10)]) {
             ForEach(FavorCategory.allCases) { category in
                 
-                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .privateFavor, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true, isOwner: true)
+                FavorMarker(favor: .init(title: "Test", description: "Test", author: .init(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .individual, location: MapDetails.startingLocation, isCarNecessary: false, isHeavyTask: false, status: .halfwayThere, category: category), isSelected: .constant(false), isInFavorSheet: true, isOwner: true)
                     .padding(.bottom, 50)
                 
             }
