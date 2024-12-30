@@ -5,30 +5,104 @@ struct StarsView: View {
     @Binding var value: Double
     let isInDetailsSheet: Bool
     @Binding var clickOnGoing: Bool
+    @State var reviews: [FavorReview] = []
+    @State var isExpanded = false
     
     @State private var clicked: [Bool] = [false, false, false, false, false]
     
     var body: some View {
-        HStack(spacing: 20) {
-            Spacer()
-            
-            ReviewNumberView(value: value)
-                .frame(width: 60)
-                .scaleEffect(1.2)
-            
-            HStack(spacing: 16) {
-                ForEach(0..<5, id: \.self) { index in
-                    if isInDetailsSheet {
-                        ClickableStar(value: $value, index: index, clickOnGoing: $clickOnGoing, clicked: $clicked)
-                    } else {
-                        StaticStar(value: value, index: index)
+        VStack(spacing: 0) {
+            HStack(spacing: 20) {
+                Spacer()
+                
+                ReviewNumberView(value: value)
+                    .frame(width: 60)
+                    .scaleEffect(1.2)
+                
+                HStack(spacing: 16) {
+                    ForEach(0..<5, id: \.self) { index in
+                        if isInDetailsSheet {
+                            ClickableStar(value: $value, index: index, clickOnGoing: $clickOnGoing, clicked: $clicked)
+                        } else {
+                            StaticStar(value: value, index: index)
+                        }
                     }
                 }
+                
+                Spacer()
             }
+            .padding(.bottom, reviews.isEmpty ? 0 : 30)
             
-            Spacer()
+            if !reviews.isEmpty {
+                // Open/Close control
+                HStack {
+                    Text(String(reviews.count) + " recensioni")
+                    
+                    Image(systemName: "chevron.down")
+                        .rotationEffect(.degrees(isExpanded ? -180 : 0))
+                    
+                }
+                .font(.title3.bold())
+                .foregroundStyle(.blue)
+                .onTapGesture {
+                    withAnimation {
+                        isExpanded.toggle()
+                    }
+                }
+                
+                if isExpanded {
+                    // Reviews
+                    List {
+                        ForEach(reviews) { review in
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    ProfileIconView(username: review.author.$nameSurname, color: review.author.$profilePictureColor, size: .small)
+                                    
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        Text(review.author.nameSurname)
+                                            .font(.headline)
+                                        
+                                        if review.isAuthor {
+                                            Text("Autore")
+                                                .font(.caption.bold())
+                                                .foregroundStyle(.red)
+                                        }
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    // Small StarsView (if there sre more than 1 review
+                                    // If its only 1, the big one displays the same value, so the small one is omitted
+                                    if reviews.count > 1 {
+                                        HStack(spacing: 0) {
+                                            ReviewNumberView(value: review.rating)
+                                                .frame(width: 40)
+                                                .scaleEffect(0.8)
+                                            
+                                            HStack(spacing: 0) {
+                                                ForEach(0..<5, id: \.self) { index in
+                                                    ClickableStar(value: .constant(review.rating), index: index, clickOnGoing: $clickOnGoing, clicked: $clicked)
+                                                        .scaleEffect(0.6)
+                                                        .frame(width: 20)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // Review Text
+                                Text(review.text)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.top)
+                    .transition(.blurReplace)
+                }
+            }
         }
-        .padding(.vertical, 20)
+        .frame(maxHeight: .infinity, alignment: .top)
+        .padding(.top, 20)
         .onAppear {
             if isInDetailsSheet {
                 let index = Int(value - 1)
@@ -39,6 +113,7 @@ struct StarsView: View {
                 }
             }
         }
+        .sensoryFeedback(.impact, trigger: isExpanded)
     }
 }
 
@@ -127,9 +202,9 @@ struct ClickableStar: View {
                 clickOnGoing = true
                 if index != 0 || index == 0 && value != 1.0 {
                     if clicked[0] {
-//                        for i in 0...index {
+                        //                        for i in 0...index {
                         clicked = [false, false, false, false, false]
-//                        }
+                        //                        }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                             for i in 0...index {
                                 clicked[i] = true
@@ -148,11 +223,11 @@ struct ClickableStar: View {
                             clickOnGoing = false
                         }
                     }
-//                    clicked[index] = true
-//                    value = Double(index)
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.27) {
-//                        clickOnGoing = false
-//                    }
+                    //                    clicked[index] = true
+                    //                    value = Double(index)
+                    //                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.27) {
+                    //                        clickOnGoing = false
+                    //                    }
                 } else {
                     value = 0.0
                     clicked[0] = false
@@ -203,4 +278,12 @@ struct StaticStar: View {
                 .opacity(Double(index + 1) < value || (Double(index) == floor(value) && value - floor(value) > 0.25) || value == Double(index + 1) ? 1 : 0)
         }
     }
+}
+
+#Preview {
+    StarsView(value: .constant(4.5), isInDetailsSheet: true, clickOnGoing: .constant(true), reviews: [
+        FavorReview(author: User(nameSurname: .constant("Mario Rossi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("red")), rating: 3.5, text: "This is a review", isAuthor: true),
+        FavorReview(author: User(nameSurname: .constant("Giuseppe Verdi"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("green")), rating: 5, text: "This is a review"),
+        FavorReview(author: User(nameSurname: .constant("Luigi Russo"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), rating: 0.5, text: "This is a review")
+    ])
 }
