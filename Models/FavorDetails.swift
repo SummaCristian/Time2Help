@@ -2,34 +2,34 @@ import Foundation
 import SwiftUI
 
 enum FavorType: Identifiable, CaseIterable {
-    case privateFavor
-    case publicFavor
+    case individual
+    case group
     
     var id : Self {self}
     
     var string: String {
         switch self {
-        case .privateFavor:
+        case .individual:
             return "Singolo"
-        case .publicFavor:
+        case .group:
             return "Gruppo"
         }
     }
     
     var icon: String {
         switch self {
-        case .privateFavor:
+        case .individual:
             return "person.fill"
-        case .publicFavor:
+        case .group:
             return "person.3.fill"
         }
     }
     
     var description: String {
         switch self {
-        case .privateFavor:
+        case .individual:
             return "Soltanto un utente portà accettarlo, ideale per Favori personali"
-        case .publicFavor:
+        case .group:
             return "Più utenti potranno accettarlo, ideale per Favori a beneficio della comunità"
         }
     }
