@@ -38,40 +38,40 @@ enum ProfileIconSize {
     
     var borderSize: CGFloat {
         switch self {
-            case .small:
-                return 30
-            case .medium:
-                return 60
-            case .large:
-                return 80
-            case .extraLarge:
-                return 115
+        case .small:
+            return 25
+        case .medium:
+            return 60
+        case .large:
+            return 80
+        case .extraLarge:
+            return 115
         }
     }
     
     var iconSize: CGFloat {
         switch self {
-            case .small:
-                return 20
-            case .medium:
-                return 50
-            case .large:
-                return 70
-            case .extraLarge:
-                return 100
+        case .small:
+            return 20
+        case .medium:
+            return 50
+        case .large:
+            return 70
+        case .extraLarge:
+            return 100
         }
     }
     
     var textSizeBig: CGFloat {
         switch self {
-            case .small:
-                return 10
-            case .medium:
-                return 22
-            case .large:
-                return 32
-            case .extraLarge:
-                return 40
+        case .small:
+            return 10
+        case .medium:
+            return 22
+        case .large:
+            return 32
+        case .extraLarge:
+            return 40
         }
     }
     
@@ -112,5 +112,17 @@ enum ProfileIconSize {
         case .extraLarge:
             return 0.5
         }
+    }
+}
+
+#Preview {
+    VStack(spacing: 30) {
+        ProfileIconView(username: .constant("Mario Rossi"), color: .constant("blue"), size: .extraLarge)
+        
+        ProfileIconView(username: .constant("Mario Rossi"), color: .constant("blue"), size: .large)
+        
+        ProfileIconView(username: .constant("Mario Rossi"), color: .constant("blue"), size: .medium)
+        
+        ProfileIconView(username: .constant("Mario Rossi"), color: .constant("blue"), size: .small)
     }
 }
