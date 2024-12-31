@@ -53,10 +53,12 @@ struct ProfileView: View {
     
     @State private var destination: String? = nil
     
-    @State private var isShowingRewardDetails = false
+    @State private var isShowingRewardDetails: Bool = false
     
     // Anti-Spam for Rewards (animations can break)
-    @State private var canTapOnRewards = true
+    @State private var canTapOnRewards: Bool = true
+    
+    @State private var showChat: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -222,29 +224,29 @@ struct ProfileView: View {
                         },
                         footer: {
                             Text("Colleziona le medaglie completando dei Favori")
+                                .padding(.bottom, isEditable ? 20 : 0)
                         }
                     )
                 }
                 
                 // Chat Button
-                if !isEditable {
-                    Button {
-                        // TODO: Open Chat
-                    } label: {
-                        Label("Chat", systemImage: "paperplane.fill")
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .foregroundColor(.white)
-                            .background {
-                                Capsule()
-                                    .foregroundStyle(user.profilePictureColor.toColor()!.gradient)
-                            }
-                    }
-                    .listRowBackground(Color.clear)
-                }
-                
-                
+//                if !isEditable {
+//                    Button {
+//                        showChat = true
+//                    } label: {
+//                        Label("Chat", systemImage: "paperplane.fill")
+//                            .frame(maxWidth: .infinity)
+//                            .padding(.vertical, 8)
+//                            .padding(.horizontal, 16)
+//                            .foregroundColor(.white)
+//                            .background {
+//                                Capsule()
+//                                    .foregroundStyle(user.profilePictureColor.toColor()!.gradient)
+//                            }
+//                    }
+//                    .listRowBackground(Color.clear)
+//                    .padding(.bottom, 20)
+//                }
             }
             .navigationTitle("Profilo")
             .navigationDestination(item: $destination) { destination in
@@ -262,7 +264,7 @@ struct ProfileView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 12) {
+                    HStack(spacing: !isEditable ? 4 : 12) {
                         // FAQs
                         Button(
                             action: {
@@ -272,6 +274,27 @@ struct ProfileView: View {
                                     .font(.title3)
                             }
                         )
+                        
+                        // Chat Button
+                        if !isEditable {
+                            Button {
+                                showChat = true
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "paperplane.fill")
+                                    
+                                    Text("Chat")
+                                }
+                                .font(.subheadline)
+                                .padding(.vertical, 6)
+                                .padding(.horizontal, 12)
+                                .foregroundColor(.white)
+                                .background {
+                                    Capsule()
+                                        .foregroundStyle(user.profilePictureColor.toColor()!.gradient)
+                                }
+                            }
+                        }
                         
                         // App Settings
                         if isEditable {
@@ -306,6 +329,10 @@ struct ProfileView: View {
         .sheet(isPresented: $isModifySheetPresented, content: {
             ModifyProfileView(viewModel: viewModel, isModifySheetPresented: $isModifySheetPresented, user: $user, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
                 .interactiveDismissDisabled()
+        })
+        .sheet(isPresented: $showChat, content: {
+            ChatView(other: $user, showChat: $showChat)
+//                .interactiveDismissDisabled()
         })
         .onAppear {
             selectedNameSurname = user.nameSurname
