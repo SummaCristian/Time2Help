@@ -38,7 +38,7 @@ struct MapView: View {
     @State private var selection: MapFeature? = nil
     
     @StateObject private var filter: FilterModel = FilterModel()
-        
+    
     // The UI
     var body: some View {
         ZStack {
@@ -165,11 +165,18 @@ struct MapView: View {
         .sensoryFeedback(.impact, trigger: selection)
         .overlay {
             if !showList {
-                VStack(spacing: 0) {
+                VStack(spacing: 10) {
                     HStack(spacing: 0) {
                         Spacer()
                         
                         MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, selectedCLLocationCoordinate: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location, mapNameSpace: mapNameSpace)
+                    }
+                    
+                    HStack(spacing: 0) {
+                        Spacer()
+                        
+                        MapCompass(scope: mapNameSpace)
+                            .padding(.trailing, 3)
                     }
                     
                     Spacer()
@@ -201,7 +208,6 @@ struct MapView: View {
                     .background(
                         Circle()
                             .foregroundStyle(.blue)
-                            .shadow(color: .gray.opacity(0.4), radius: 6)
                     )
                 }
                 
