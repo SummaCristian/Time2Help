@@ -175,7 +175,8 @@ struct AdvancedFiltersView: View {
                 .padding(.top, 10)
                 
                 
-                let zStackWidth = screenWidth - 88 // screenWidth - 30 - 10 - 32 - 16
+                let zStackWidth = (screenWidth > 500 ? 360 : screenWidth - 40) - 88 // screenWidth - 30 - 10 - 32 - 16
+                // Adjusted for bigger screen sizes
                 
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 12)
