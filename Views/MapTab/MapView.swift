@@ -39,6 +39,8 @@ struct MapView: View {
     
     @StateObject private var filter: FilterModel = FilterModel()
     
+    @State private var showTitles = true
+    
     // The UI
     var body: some View {
         ZStack {
@@ -71,7 +73,7 @@ struct MapView: View {
                         Annotation(
                             coordinate: favor.location,
                             content: {
-                                FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: false, isOwner: user.id == favor.author.id)
+                                FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: showTitles, isOwner: user.id == favor.author.id)
                                     .onTapGesture {
                                         // Selects the Favor and triggers the showing of the sheet
                                         selectedFavor = favor
@@ -187,6 +189,11 @@ struct MapView: View {
         }
         .onMapCameraChange(frequency: .continuous) { camera in
             self.cameraSupport = MapCameraPosition.camera(.init(centerCoordinate: camera.camera.centerCoordinate, distance: camera.camera.distance, heading: camera.camera.heading, pitch: camera.camera.pitch))
+            
+            // Hides the FavorMarker's titles when zoomed out, and shows them when zoomed in enough
+            withAnimation {
+                showTitles = camera.camera.distance > 3000
+            }
         }
         .mapScope(mapNameSpace)
         .animation(.easeInOut, value: camera)
