@@ -37,59 +37,69 @@ struct ContentView: View {
     @State private var showInteractionOverlay = false
     @State private var lastFavorInteraction: FavorInteraction?
     
+    // A State to show the Splash Screen on first launch
+    @State private var showSplashScreen = true
+    
     // Main View
     var body: some View {
-        // The main UI of this app is composed of a TabView, meaning the the UI is divided
-        // into different tabs, each one containing a portion of the app.
-        // Each one of the different screens is then coded inside its own file.
-        GeometryReader { geometry in
-            ZStack(alignment: .bottom) {
-                TabView(selection: $selectedTab) {
-                    Group {
-                        // Tab 0: Map
-                        MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood, user: $user)
-                            .tabItem {
-                                Label("Mappa", systemImage: "map")
+        ZStack {
+            if showSplashScreen {
+                SplashScreenView()
+            } else {
+                
+                // The main UI of this app is composed of a TabView, meaning the the UI is divided
+                // into different tabs, each one containing a portion of the app.
+                // Each one of the different screens is then coded inside its own file.
+                GeometryReader { geometry in
+                    ZStack(alignment: .bottom) {
+                        TabView(selection: $selectedTab) {
+                            Group {
+                                // Tab 0: Map
+                                MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood, user: $user)
+                                    .tabItem {
+                                        Label("Mappa", systemImage: "map")
+                                    }
+                                    .tag(0) // Tag for the Map tab
+                                
+                                // Tab 1: New Favor (opens sheet)
+                                Text("Nuovo Favore") // A placeholder just for the tab label
+                                    .tabItem {
+                                        Label("Nuovo Favore", systemImage: "plus.rectangle")
+                                    }
+                                    .tag(1) // Tag for the Nuovo Favore tab
+                                    .disabled(true)
+                                
+                                // Tab 2: Profile
+                                ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+                                    .tabItem {
+                                        Label("Profilo", systemImage: "person.fill")
+                                    }
+                                    .tag(2) // Tag for the Profile tab
                             }
-                            .tag(0) // Tag for the Map tab
+                        }
                         
-                        // Tab 1: New Favor (opens sheet)
-                        Text("Nuovo Favore") // A placeholder just for the tab label
-                            .tabItem {
-                                Label("Nuovo Favore", systemImage: "plus.rectangle")
-                            }
-                            .tag(1) // Tag for the Nuovo Favore tab
-                            .disabled(true)
-                        
-                        // Tab 2: Profile
-                        ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
-                            .tabItem {
-                                Label("Profilo", systemImage: "person.fill")
-                            }
-                            .tag(2) // Tag for the Profile tab
+                        // Invisible Button that covers the middle tab, used to open the "New Favor" sheet
+                        Button(action: {
+                            isSheetPresented = true // Show the sheet when the tab is selected
+                        }, label: {
+                            Image(systemName: "plus")
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
+                                .tint(.blue)
+                                .frame(width: (geometry.size.width/3) + 5, height: 65)
+                        })
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .foregroundStyle(.thinMaterial)
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
+                                }
+                        )
+                        .hoverEffect(.lift)
+                        .offset(y: 5)
                     }
                 }
-                
-                // Invisible Button that covers the middle tab, used to open the "New Favor" sheet
-                Button(action: {
-                    isSheetPresented = true // Show the sheet when the tab is selected
-                }, label: {
-                    Image(systemName: "plus")
-                        .font(.largeTitle)
-                        .fontWeight(.semibold)
-                        .tint(.blue)
-                        .frame(width: (geometry.size.width/3) + 5, height: 65)
-                })
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .foregroundStyle(.thinMaterial)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(LinearGradient(colors: colorScheme == .dark ? [Color(.systemGray3), Color(.systemGray5)] : [Color(.white), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
-                        }
-                )
-                .hoverEffect(.lift)
-                .offset(y: 5)
             }
         }
         .sheet(isPresented: $isSheetPresented) {
@@ -200,6 +210,12 @@ struct ContentView: View {
         .ignoresSafeArea(.keyboard)
         .tint(.blue)
         .onAppear() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                withAnimation {
+                    showSplashScreen = false
+                }
+            }
+            
             // Creates the main User
             user = User(nameSurname: $nameSurname, neighbourhood: $selectedNeighbourhood, profilePictureColor: $selectedColor)
             
