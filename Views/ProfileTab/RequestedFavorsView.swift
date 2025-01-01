@@ -28,11 +28,11 @@ struct RequestedFavorsView: View {
                 Section(
                     content: {
                         // Favors
-                        if (database.favors.filter({ $0.author.id == user.id }).count) == 0 {
+                        if (database.favors.filter({ $0.neighbourhood == user.neighbourhood }).filter({ $0.author.id == user.id }).count) == 0 {
                             Text("Nessun Favore richiesto ...")
                         } else {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2)) {
-                                ForEach(database.favors.filter({ $0.author.id == user.id })) { favor in
+                                ForEach(database.favors.filter({ $0.neighbourhood == user.neighbourhood }).filter({ $0.author.id == user.id })) { favor in
                                     FavorBoxView(favor: favor)
                                         .onTapGesture {
                                             selectedFavor = favor
