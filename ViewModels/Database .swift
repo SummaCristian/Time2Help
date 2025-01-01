@@ -653,322 +653,375 @@ class Database: ObservableObject {
         users.append(piera)
         
         // Favors
-        favors.append(
-            Favor(
-                title: "Test1",
-                description: "This is a test",
-                author: mario,
-                neighbourhood: "Città Studi",
-                type: .group,
-                location: MapDetails.startingLocation,
-                isCarNecessary: false,
-                isHeavyTask: true,
-                status: .notAcceptedYet,
-                category: .generic
+        for neighbourhood in Database.neighbourhoods {
+            favors.append(
+                Favor(
+                    title: "Trasporto di scatole",
+                    description: "Serve aiuto per trasportare diverse scatole di materiali edili lasciati dal cantiere",
+                    author: mario,
+                    neighbourhood: neighbourhood.name,
+                    type: .group,
+                    location: neighbourhood.location,
+                    isCarNecessary: false,
+                    isHeavyTask: true,
+                    status: .notAcceptedYet,
+                    category: .generic
+                )
             )
-        )
-        favors.last!.helpers.append(giuseppe)
-        favors.last!.helpers.append(mario)
-        
-        favors.append(
-            Favor(
-                title: "Test2",
-                description: "This is a test",
-                author: giuseppe,
-                neighbourhood: "Città Studi",
-                type: .individual,
-                location: CLLocationCoordinate2D(latitude: 45.4777234, longitude: 9.2279519),
-                isCarNecessary: true,
-                isHeavyTask: false,
-                status: .halfwayThere,
-                category: .babySitting
+            favors.last!.helpers.append(giuseppe)
+            favors.last!.helpers.append(mario)
+            
+            favors.append(
+                Favor(
+                    title: "Tenere una bambina",
+                    description: "Tenere una bimba di 6 anni per 30 minuti mentre svolgo una commissione",
+                    author: giuseppe,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude + 0.0004196,
+                        longitude: neighbourhood.location.longitude + 0.0003031
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: false,
+                    status: .halfwayThere,
+                    category: .babySitting
+                )
             )
-        )
-        favors.last!.helpers.append(mario)
-        
-        favors.append(
-            Favor(
-                title: "Test3",
-                description: "This is a test",
-                author: mario,
-                neighbourhood: "Città Studi",
-                type: .group,
-                location: CLLocationCoordinate2D(latitude: 45.4781024, longitude: 9.2268771),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .notAcceptedYet,
-                category: .gardening
+            favors.last!.helpers.append(mario)
+            
+            favors.append(
+                Favor(
+                    title: "Sistemare le aiuole",
+                    description: "Sistemare le aiuole, potare i cespugli, riempire le buche e abbellire le zone verdi",
+                    author: mario,
+                    neighbourhood: neighbourhood.name,
+                    type: .group,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude + 0.0000406,
+                        longitude: neighbourhood.location.longitude + 0.0013779
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .notAcceptedYet,
+                    category: .gardening
+                )
             )
-        )
-        
-        favors.last!.helpers.append(giuseppe)
-        
-        favors.append(
-            Favor(
-                title: "Test4",
-                description: "This is a test",
-                author: mario,
-                neighbourhood: "Città Studi",
-                type: .individual,
-                location: CLLocationCoordinate2D(latitude: 45.4790747, longitude: 9.2284311),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .accepted,
-                category: .generic
+            
+            favors.last!.helpers.append(giuseppe)
+            
+            favors.append(
+                Favor(
+                    title: "Portare scatoloni al mercato",
+                    description: "Mi serve aiuto per spostare degli scatoloni di arance fino al Mercato",
+                    author: mario,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.0009317, 
+                        longitude: neighbourhood.location.longitude - 0.0001761
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .accepted,
+                    category: .generic
+                )
             )
-        )
-        
-        favors.append(
-            Favor(
-                title: "Test5",
-                description: "This is a test",
-                author: mario,
-                neighbourhood: "Città Studi",
-                type: .group,
-                location: CLLocationCoordinate2D(latitude: 45.4769980, longitude: 9.2291438),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .expired,
-                category: .manualJob
+            
+            favors.append(
+                Favor(
+                    title: "Aiuto con mobili",
+                    description: "Dobbiamo montare dei mobili nuovi per la scuola, serve aiuto per montarli, chiunque è ben accetto!",
+                    author: mario,
+                    neighbourhood: neighbourhood.name,
+                    type: .group,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude + 0.001145,
+                        longitude: neighbourhood.location.longitude - 0.0008888
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .expired,
+                    category: .manualJob
+                )
             )
-        )
-        favors.last!.helpers.append(grazia)
-        favors.last?.helpers.append(mario)
-        favors.last?.helpers.append(giuseppe)
-        
-        favors.append(
-            Favor(
-                title: "Test6",
-                description: "This is a test",
-                author: giuseppe,
-                neighbourhood: "Città Studi",
-                type: .group,
-                location: CLLocationCoordinate2D(latitude: 45.4792328, longitude: 9.2265965),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .justStarted,
-                category: .petSitting
+            favors.last!.helpers.append(grazia)
+            favors.last?.helpers.append(mario)
+            favors.last?.helpers.append(giuseppe)
+            
+            favors.append(
+                Favor(
+                    title: "Aiuto per lavare dei cani",
+                    description: "L'organizzazione di volontariato ha organizzato un lavaggio per i cani del canile.\nServe aiuto da quante più persone possibili!",
+                    author: giuseppe,
+                    neighbourhood: neighbourhood.name,
+                    type: .group,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.0010898,
+                        longitude: neighbourhood.location.longitude + 0.0016585
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .justStarted,
+                    category: .petSitting
+                )
             )
-        )
-        
-        favors.last!.helpers.append(giuseppe)
-        favors.last!.helpers.append(mario)
-        
-        favors.append(
-            Favor(
-                title: "Test7",
-                description: "This is a test",
-                author: grazia,
-                neighbourhood: "Città Studi",
-                type: .individual,
-                location: CLLocationCoordinate2D(latitude: 45.4815986, longitude: 9.2293555),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .notAcceptedYet,
-                category: .petSitting
+            
+            favors.last!.helpers.append(giuseppe)
+            favors.last!.helpers.append(mario)
+            
+            favors.append(
+                Favor(
+                    title: "Dare da mangiare a 2 cani",
+                    description: "Non sono a casa, ma ho lasciato i miei due cagnolini in giardino.\nServe che qualcuno entri e gli dia da mangiare e da bere.",
+                    author: grazia,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.0034556,
+                        longitude: neighbourhood.location.longitude - 0.0011005
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .notAcceptedYet,
+                    category: .petSitting
+                )
             )
-        )
-        
-        favors.append(
-            Favor(
-                title: "Test8",
-                description: "This is a test",
-                author: mario,
-                neighbourhood: "Città Studi",
-                type: .individual,
-                location: CLLocationCoordinate2D(latitude: 45.4800150, longitude: 9.2298333),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .completed,
-                category: .school
+            
+            favors.append(
+                Favor(
+                    title: "Ripetizioni matematica",
+                    description: "Mio figlio di 12 anni ha bisogno di ripetizioni sulle equazioni di primo grado",
+                    author: mario,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.001872,
+                        longitude: neighbourhood.location.longitude - 0.0015783
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .completed,
+                    category: .school
+                )
             )
-        )
-        favors.last!.helpers.append(giuseppe)
-        
-        favors.append(
-            Favor(
-                title: "Test9",
-                description: "This is a test",
-                author: grazia,
-                neighbourhood: "Città Studi",
-                type: .individual,
-                location: CLLocationCoordinate2D(latitude: 45.4783722, longitude: 9.2305444),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .justStarted,
-                category: .shopping
-                
+            favors.last!.helpers.append(giuseppe)
+            
+            favors.append(
+                Favor(
+                    title: "Trasporto spesa",
+                    description: "Con la mia età non riesco più a portare le buste della spesa.\nMi serve qualcuno che mi aiuti a portarle a casa, possibilmente con la macchina.",
+                    author: grazia,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.0002292,
+                        longitude: neighbourhood.location.longitude - 0.0022894
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .justStarted,
+                    category: .shopping
+                    
+                )
             )
-        )
-        
-        favors.append(
-            Favor(
-                title: "Test10",
-                description: "This is a test",
-                author: giuseppe,
-                neighbourhood: "Città Studi",
-                type: .group,
-                location: CLLocationCoordinate2D(latitude: 45.4764242, longitude: 9.2287484),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .completed,
-                category: .transport
+            
+            favors.append(
+                Favor(
+                    title: "Car-sharing",
+                    description: "Siamo 2 persone, dobbiamo andare al concerto di stasera, cerchiamo un passaggio",
+                    author: giuseppe,
+                    neighbourhood: neighbourhood.name,
+                    type: .group,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude + 0.0017188,
+                        longitude: neighbourhood.location.longitude - 0.0004934
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .completed,
+                    category: .transport
+                )
             )
-        )
-        favors.last!.helpers.append(grazia)
-        
-        favors.append(
-            Favor(
-                title: "Test11",
-                description: "This is a test",
-                author: giuseppe,
-                neighbourhood: "Città Studi",
-                type: .individual,
-                location: CLLocationCoordinate2D(latitude: 45.4778219, longitude: 9.2326831),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .expired,
-                category: .gardening
+            favors.last!.helpers.append(grazia)
+            
+            favors.append(
+                Favor(
+                    title: "Piantare fiori",
+                    description: "Vanno piantati nuovi fiori nelle aiuole qui vicino.",
+                    author: giuseppe,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude + 0.0003211,
+                        longitude: neighbourhood.location.longitude - 0.0044281
+                    ),
+                    isCarNecessary: false,
+                    isHeavyTask: true,
+                    status: .expired,
+                    category: .gardening
+                )
             )
-        )
-        
-        favors.last!.helpers.append(giuseppe)
-        favors.last!.helpers.append(mario)
-        favors.last!.helpers.append(grazia)
-        
-        favors.append(
-            Favor(
-                title: "Test12",
-                description: "This is a test",
-                author: giuseppe,
-                neighbourhood: "Città Studi",
-                type: .group,
-                location: CLLocationCoordinate2D(latitude: 45.4781624, longitude: 9.2259771),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .completed,
-                category: .manualJob
+            
+            favors.last!.helpers.append(giuseppe)
+            favors.last!.helpers.append(mario)
+            favors.last!.helpers.append(grazia)
+            
+            favors.append(
+                Favor(
+                    title: "Lavandino rotto",
+                    description: "Il lavandino ha iniziato a perdere, qualcuno può aiutarmi?",
+                    author: giuseppe,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.0000194,
+                        longitude: neighbourhood.location.longitude + 0.0022779
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .completed,
+                    category: .manualJob
+                )
             )
-        )
-        favors.last!.helpers.append(mario)
-        
-        favors.append(
-            Favor(
-                title: "Test13",
-                description: "This is a test",
-                author: piera,
-                neighbourhood: "Bovisa",
-                type: .individual,
-                location: CLLocationCoordinate2D(latitude: 45.502856, longitude: 9.167285),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .notAcceptedYet,
-                category: .school
+            favors.last!.helpers.append(mario)
+            
+            favors.append(
+                Favor(
+                    title: "Ripetizioni di informatica",
+                    description: "Qualcuno può spiegarmi il linguaggio C per la verifica di settimana prossima?",
+                    author: piera,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude + 0.0000194,
+                        longitude: neighbourhood.location.longitude - 0.0022779
+                    ),
+                    isCarNecessary: false,
+                    isHeavyTask: false,
+                    status: .notAcceptedYet,
+                    category: .school
+                )
             )
-        )
-        
-        favors.append(
-            Favor(
-                title: "Test14",
-                description: "This is a test",
-                author: piera,
-                neighbourhood: "Bovisa",
-                type: .individual,
-                location: CLLocationCoordinate2D(latitude: 45.503835, longitude: 9.162520),
-                isCarNecessary: true,
-                isHeavyTask: true,
-                status: .justStarted,
-                category: .babySitting
+            
+            favors.append(
+                Favor(
+                    title: "Babysitting",
+                    description: "Serve qualcuno per tenere mio figlio di 8 anni per 3 ore stasera",
+                    author: piera,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude + 0.0002292,
+                        longitude: neighbourhood.location.longitude + 0.0022894
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .justStarted,
+                    category: .babySitting
+                )
             )
-        )
-        favors.last!.helpers.append(matilde)
-        
-        favors.append(
-            Favor(
-                title: "Test15",
-                description: "This is a test",
-                author: matilde,
-                neighbourhood: "Bovisa",
-                type: .group,
-                location: CLLocationCoordinate2D(latitude: 45.503154, longitude: 9.171065),
-                isCarNecessary: false,
-                isHeavyTask: true,
-                status: .ongoing,
-                category: .gardening
+            favors.last!.helpers.append(matilde)
+            
+            favors.append(
+                Favor(
+                    title: "Tagliare l'erba",
+                    description: "Devo tagliare l'erba del mio giardino, ma mi sono fatta male e non posso farlo da sola.\nQualcuno può aiutarmi?",
+                    author: matilde,
+                    neighbourhood: neighbourhood.name,
+                    type: .individual,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.0003211,
+                        longitude: neighbourhood.location.longitude + 0.0044281
+                    ),
+                    isCarNecessary: false,
+                    isHeavyTask: true,
+                    status: .ongoing,
+                    category: .gardening
+                )
             )
-        )
-        favors.last!.helpers.append(piera)
-        
-        // Accepts a few Favors (for testing)
-        let user = users.first!
-        var count = 0
-        for favor in favors {
-            if count < 5 && favor.canBeAccepted(userID: user.id) {
-                favor.helpers.append(user)
-                if (count == 0) {
-                    favor.status = .completed
-                } else if (count == 1) { favor.status = .waitingForApprovation
-                } else if (count == 2) { favor.status = .halfwayThere
-                } else if (count == 3) {
-                    favor.status = .completed
-                } else {
-                    favor.status = .completed
+            favors.last!.helpers.append(piera)
+            
+            // Accepts a few Favors (for testing)
+            let user = users.first!
+            var count = 0
+            for favor in favors {
+                if count < 5 && favor.canBeAccepted(userID: user.id) {
+                    favor.helpers.append(user)
+                    if (count == 0) {
+                        favor.status = .completed
+                    } else if (count == 1) { favor.status = .waitingForApprovation
+                    } else if (count == 2) { favor.status = .halfwayThere
+                    } else if (count == 3) {
+                        favor.status = .completed
+                    } else {
+                        favor.status = .completed
+                    }
+                    count += 1
+                } else if count >= 5 {
+                    break
                 }
-                count += 1
-            } else if count >= 5 {
-                break
             }
+            
+            favors.append(
+                Favor(
+                    title: "Sistemare aiuole",
+                    description: "Le aiuole si sono riempite di foglie, vanno spazzate e ripulite",
+                    author: user,
+                    neighbourhood: neighbourhood.name,
+                    type: .group,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.002632,
+                        longitude: neighbourhood.location.longitude + 0.00348
+                    ),
+                    isCarNecessary: false,
+                    isHeavyTask: true,
+                    status: .completed,
+                    category: .gardening
+                )
+            )
+            favors.last!.helpers.append(piera)
+            
+            favors.append(
+                Favor(
+                    title: "Passaggio per aeroporto",
+                    description: "Devo andare in aeroporto, ma c'è sciopero dei mezzi e non ho la macchina.\nQualcuno mi accompagna?",
+                    author: user,
+                    neighbourhood: neighbourhood.name,
+                    type: .group,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.003652,
+                        longitude: neighbourhood.location.longitude + 0.00358
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: false,
+                    status: .completed,
+                    category: .transport
+                )
+            )
+            
+            favors.append(
+                Favor(
+                    title: "Trasporto pacchi",
+                    description: "Devo portare dei pacchi al mercato, qualcuno può darmi un passaggio?",
+                    author: user,
+                    neighbourhood: neighbourhood.name,
+                    type: .group,
+                    location: CLLocationCoordinate2D(
+                        latitude: neighbourhood.location.latitude - 0.002582,
+                        longitude: neighbourhood.location.longitude - 0.0035
+                    ),
+                    isCarNecessary: true,
+                    isHeavyTask: true,
+                    status: .completed,
+                    category: .transport
+                )
+            )
+            favors.last!.helpers.append(piera)
+            favors.last!.helpers.append(giuseppe)
+            favors.last!.helpers.append(mario)
+            favors.last!.helpers.append(grazia)
         }
-        
-        favors.append(
-            Favor(
-                title: "Test16",
-                description: "This is a test",
-                author: user,
-                neighbourhood: "Città Studi",
-                type: .group,
-                location: CLLocationCoordinate2D(latitude: 45.480775, longitude: 9.224775),
-                isCarNecessary: false,
-                isHeavyTask: true,
-                status: .completed,
-                category: .gardening
-            )
-        )
-        favors.last!.helpers.append(piera)
-        
-        favors.append(
-            Favor(
-                title: "Test17",
-                description: "This is a test",
-                author: user,
-                neighbourhood: "Città Studi",
-                type: .group,
-                location: CLLocationCoordinate2D(latitude: 45.484795, longitude: 9.224675),
-                isCarNecessary: false,
-                isHeavyTask: true,
-                status: .completed,
-                category: .transport
-            )
-        )
-        
-        favors.append(
-            Favor(
-                title: "Test18",
-                description: "This is a test",
-                author: user,
-                neighbourhood: "Città Studi",
-                type: .group,
-                location: CLLocationCoordinate2D(latitude: 45.482725, longitude: 9.234755),
-                isCarNecessary: false,
-                isHeavyTask: true,
-                status: .completed,
-                category: .transport
-            )
-        )
-        favors.last!.helpers.append(piera)
-        favors.last!.helpers.append(giuseppe)
-        favors.last!.helpers.append(mario)
-        favors.last!.helpers.append(grazia)
         
         // Adds a random amount of reviews to each Favor
         for favor in favors {
