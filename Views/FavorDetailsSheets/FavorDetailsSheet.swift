@@ -69,7 +69,7 @@ struct FavorDetailsSheet: View {
                             )
                             .hoverEffect(.lift)
                             .onTapGesture {
-                                isAuthorProfileSheetPresented = true
+                                selectedUser = favor.author
                             }
                             
                             HStack(spacing: 0) {
@@ -122,9 +122,8 @@ struct FavorDetailsSheet: View {
                                         )
                                         .hoverEffect(.lift)
                                         .onTapGesture {
-                                            if helper.id != user.id {
-                                                isHelperProfileSheetPresented = true
-                                            }
+                                            selectedUser = helper
+                                            isHelperProfileSheetPresented = true
                                         }
                                     }
                                 }
@@ -154,6 +153,7 @@ struct FavorDetailsSheet: View {
                                 .hoverEffect(.lift)
                                 .onTapGesture {
                                     if favor.helpers.first!.id != user.id {
+                                        selectedUser = favor.helpers.first!
                                         isHelperProfileSheetPresented = true
                                     }
                                 }
@@ -368,9 +368,9 @@ struct FavorDetailsSheet: View {
         .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
             ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
         })
-        /*.sheet(isPresented: $isHelperProfileSheetPresented, content: {
-         ProfileView(database: database, selectedFavor: $selectedFavor, user: favor.$helper ?? nil)
-         })*/
+        .sheet(item: $selectedUser) { helper in
+            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: .constant(helper), selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+         }
         .sensoryFeedback(.impact, trigger: isHelpersMenuExpanded)
         .sensoryFeedback(.impact, trigger: isHeavyTaskAlertShowing)
         .sensoryFeedback(.impact, trigger: isCarNeededAlertShowing)
