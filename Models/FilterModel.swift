@@ -34,8 +34,10 @@ class FilterModel: ObservableObject {
     @Published var selectedCategories: [FavorCategory]
     @Published var isCarNeededSelected: Bool
     @Published var isHeavyTaskSelected: Bool
+    @Published var isFilterDaysSelected: Bool
     @Published var startingDate: Date
     @Published var endingDate: Date
+    @Published var isFilterDurationSelected: Bool
     @Published var maxDuration: Int
     @Published var isIndifferentTypesSelected: Bool
     @Published var isIndividualTypeSelected: Bool
@@ -48,9 +50,11 @@ class FilterModel: ObservableObject {
         selectedCategories: [FavorCategory] = [.all],
         isCarNeededSelected: Bool = true,
         isHeavyTaskSelected: Bool = true,
+        isFilterDaysSelected: Bool = false,
         startingDate: Date = .now,
         endingDate: Date = .now,
-        maxDuration: Int = 24,
+        isFilterDurationSelected: Bool = false,
+        maxDuration: Int = 1,
         isIndifferentTypesSelected: Bool = true,
         isIndividualTypeSelected: Bool = false,
         isGroupTypeSelected: Bool = false,
@@ -59,8 +63,10 @@ class FilterModel: ObservableObject {
         self.selectedCategories = selectedCategories
         self.isCarNeededSelected = isCarNeededSelected
         self.isHeavyTaskSelected = isHeavyTaskSelected
+        self.isFilterDaysSelected = isFilterDaysSelected
         self.startingDate = startingDate
         self.endingDate = endingDate
+        self.isFilterDurationSelected = isFilterDurationSelected
         self.maxDuration = maxDuration
         self.isIndifferentTypesSelected = isIndifferentTypesSelected
         self.isIndividualTypeSelected = isIndividualTypeSelected
@@ -68,15 +74,18 @@ class FilterModel: ObservableObject {
         self.allowNone = allowNone
         
         setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
+        setTime(of: [.endingTime], hour: 23, minute: 59, second: 59)
     }
     
     func reset() {
         selectedCategories = [.all]
         isCarNeededSelected = true
         isHeavyTaskSelected = true
+        isFilterDaysSelected = false
         startingDate = .now
         endingDate = .now
-        maxDuration = 24
+        isFilterDurationSelected = false
+        maxDuration = 1
         selectType(type: .indifferent)
         
         setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
@@ -87,8 +96,10 @@ class FilterModel: ObservableObject {
         self.selectedCategories = source.selectedCategories
         self.isCarNeededSelected = source.isCarNeededSelected
         self.isHeavyTaskSelected = source.isHeavyTaskSelected
+        self.isFilterDaysSelected = source.isFilterDaysSelected
         self.startingDate = source.startingDate
         self.endingDate = source.endingDate
+        self.isFilterDurationSelected = source.isFilterDurationSelected
         self.maxDuration = source.maxDuration
         self.isIndifferentTypesSelected = source.isIndifferentTypesSelected
         self.isIndividualTypeSelected = source.isIndividualTypeSelected
@@ -126,20 +137,19 @@ class FilterModel: ObservableObject {
         }
     }
     
-    
     // Checks if a Favor satisfies all the requirements imposed by the various Filters
     func isFavorIncluded(favor: Favor) -> Bool {
         return isCategorySelected(category: favor.category) &&
         (isCarNeededSelected || !favor.isCarNecessary)  &&
         (isHeavyTaskSelected || !favor.isHeavyTask) &&
-        (isFavorInAnyTimeSlot(slots: favor.timeSlots)) &&
+        (isFilterDaysSelected ? isFavorInAnyTimeSlot(slots: favor.timeSlots) : true) &&
         (isIndifferentTypesSelected ? true : favor.type == .individual ? isIndividualTypeSelected : isGroupTypeSelected)
     }
     
     func isFavorInAnyTimeSlot(slots: [TimeSlot]) -> Bool {
         for slot in slots {
             if (startingDate <= slot.startingDate && slot.endingDate <= endingDate) &&
-                slot.endingDate.timeIntervalSince(slot.startingDate) <= Double(maxDuration * 3600) {
+                (isFilterDurationSelected ? slot.endingDate.timeIntervalSince(slot.startingDate) <= Double(maxDuration * 3600) : true) {
                 return true // Exit immediately if the condition is satisfied
             }
         }
