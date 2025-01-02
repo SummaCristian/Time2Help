@@ -7,7 +7,9 @@ struct CategoryCapsule: View {
     
     var body: some View {
         HStack(spacing: 6) {
-            Image(systemName: category.icon)
+            if category != .all {
+                Image(systemName: category.icon)
+            }
             
             Text(category.name)
                 .fontWeight(.bold)
@@ -16,14 +18,14 @@ struct CategoryCapsule: View {
         .font(.subheadline)
         .foregroundStyle(category == .all && isCategorySelected() ? .black : .white)
         .frame(height: 40)
-        .padding(.horizontal, 12)
+        .padding(.horizontal, category == .all ? 20 : 12)
         .background((isCategorySelected() ? category.color : .gray).gradient)
         .shadow(radius: 3)
         .clipShape(Capsule())
         .scaleEffect(filter.selectedCategories.contains(category) ? 1 : 0.95)
         .animation(.bouncy, value: filter.selectedCategories)
         .hoverEffect(.lift)
-        .shadow(color: .gray.opacity(0.4), radius: 6)
+//        .shadow(color: .gray.opacity(0.4), radius: 6)
     }
     
     func isCategorySelected() -> Bool {
