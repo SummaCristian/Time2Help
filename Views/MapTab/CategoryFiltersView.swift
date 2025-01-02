@@ -5,7 +5,8 @@ struct CategoryFiltersView: View {
     
     @ObservedObject var filter: FilterModel
     
-    @State private var isAdvancedFiltersViewShowing = false
+    @State private var isAdvancedFiltersViewShowing: Bool = false
+    @State private var showBadge: Bool = false
     
     @State private var scrollingPosition: Int?
     
@@ -16,7 +17,6 @@ struct CategoryFiltersView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            
             HStack(alignment: isAdvancedFiltersViewShowing ? .top : .center, spacing: 10) {
                 // Advanced Filters Button
                 ZStack {
@@ -50,7 +50,7 @@ struct CategoryFiltersView: View {
                             isAdvancedFiltersViewShowing: $startClosing
                         )
                         .matchedGeometryEffect(id: "advancedFilters", in: animationNamespace)
-                        .clipShape(RoundedRectangle(cornerRadius: 32))
+                        .clipShape(RoundedRectangle(cornerRadius: 27))
                         .blur(radius: blurContainer ? 10 : 0)
                         .padding(5)
                     }
@@ -58,12 +58,25 @@ struct CategoryFiltersView: View {
                 .frame(minHeight: 60)
                 .background(.thinMaterial)
                 .clipShape(isAdvancedFiltersViewShowing ? AnyShape(RoundedRectangle(cornerRadius: 32)) : AnyShape(Circle()))
+//                .overlay(alignment: .topTrailing) {
+//                    if !showBadge {
+//                        Text("1")
+//                            .font(.caption2)
+//                            .fontWeight(.semibold)
+//                            .padding(.all, 6)
+//                            .background(.background, in: .circle)
+//                            .offset(x: 4)
+//                    }
+//                }
                 .offset(
-                    x: moveToCenter ? 130 : 0, 
+                    x: moveToCenter ? 130 : 0,
                     y: moveToCenter ? 200 : 0
                 )
 //                .shadow(radius: 3)
                 .shadow(color: .gray.opacity(0.4), radius: 6)
+                .onChange(of: isAdvancedFiltersViewShowing) { _, _ in
+                    showBadge.toggle()
+                }
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
@@ -94,6 +107,7 @@ struct CategoryFiltersView: View {
                         }
                     }
                     .padding(.vertical, 8)
+                    .padding(.trailing, 17.5)
                 }
                 .scrollDisabled(isAdvancedFiltersViewShowing)
                 .padding(.leading, isAdvancedFiltersViewShowing ? 10 : 0)
