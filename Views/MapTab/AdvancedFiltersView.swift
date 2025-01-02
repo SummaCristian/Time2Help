@@ -10,9 +10,11 @@ struct AdvancedFiltersView: View {
     
     @Binding var isAdvancedFiltersViewShowing: Bool
     
-    @State private var internalMaxDuration: Int = 24
-    @State private var isAllDaySelected = false
-    @State private var showTimePickers = false
+    @State private var internalMaxDuration: Int = 1
+    @State private var isAllDaySelected: Bool = false
+    @State private var showDaysPicker: Bool = false
+    @State private var showTimePickers: Bool = false
+    @State private var showDurationPicker: Bool = false
     
     @StateObject private var temporaryFilter: FilterModel = FilterModel(allowNone: true)
     
@@ -24,23 +26,23 @@ struct AdvancedFiltersView: View {
     @State private var isAllCategorySelected: Bool = true
     @State private var showCategories: Bool = false
     
-    @State private var ignoreChange = false
+    @State private var ignoreChange: Bool = false
     
     var body: some View {
         ScrollView {
             VStack {
                 // Category Filters
-                HStack(spacing: 5) {
+                HStack(spacing: 8) {
                     Image(systemName: "tag.fill")
                         .frame(width: 30)
                     
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text("Categorie")
                             .font(.title3.bold())
                         
                         Text("Seleziona le categorie che ti interessano")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.gray)
                     }
                     
                     Spacer()
@@ -49,27 +51,26 @@ struct AdvancedFiltersView: View {
                 CategoryPicker(isAllCategorySelected: $isAllCategorySelected, showCategories: $showCategories, filterModel: temporaryFilter)
                 
                 // Date and Time Filters
-                HStack(spacing: 5) {
+                HStack(spacing: 8) {
                     Image(systemName: "clock.fill")
                         .frame(width: 30)
                     
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text("Data, ora e durata")
                             .font(.title3.bold())
                         
                         Text("Imposta data, ora o durata per filtrare i Favori")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.gray)
                     }
                     
                     Spacer()
                 }
                 .padding(.top, 10)
                 
-                
                 // Starting Date and Time
-                Toggle(isOn: $isAllDaySelected, label: {
-                    HStack(spacing: 8) {
+                Toggle(isOn: $temporaryFilter.isFilterDaysSelected, label: {
+                    HStack(spacing: 12) {
                         Image(systemName: "calendar")
                             .foregroundStyle(Color(.white))
                             .frame(width: 30, height: 30)
@@ -78,10 +79,10 @@ struct AdvancedFiltersView: View {
                                     .foregroundStyle(Color(.systemOrange))
                             }
                         
-                        VStack(alignment: .leading) {
-                            Text("Tutto il giorno")
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Giorno")
                             
-                            Text("Imposta qualunque orario")
+                            Text("Filtra per giorno i favori")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -94,88 +95,139 @@ struct AdvancedFiltersView: View {
                         .fill(.thickMaterial)
                 }
                 
-                HStack {
-                    VStack {
-                        Text("Inizio")
-                            .font(.headline.bold())
-                        
-                        if !showTimePickers {
-                            DatePicker("Inizio", selection: $temporaryFilter.startingDate, displayedComponents: .hourAndMinute)
-                                .labelsHidden()
+                if showDaysPicker {
+                    Toggle(isOn: $isAllDaySelected, label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Tutto il giorno")
+                                .font(.subheadline)
+                            
+                            Text("Imposta qualunque orario")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
-                        DatePicker("Inizio", selection: $temporaryFilter.startingDate, displayedComponents: .date)
-                            .labelsHidden()
-                        
-                    }
+                    })
+                    .tint(.orange)
                     .padding()
                     .background {
                         RoundedRectangle(cornerRadius: 16)
                             .fill(.thickMaterial)
                     }
+                    .padding(.horizontal)
                     
-                    // Ending Date and Time
-                    VStack {
-                        Text("Fine")
-                            .font(.headline.bold())
-                        
-                        if !showTimePickers {
-                            DatePicker("Fine", selection: $temporaryFilter.endingDate, displayedComponents: .hourAndMinute)
+                    HStack {
+                        VStack {
+                            Text("Inizio")
+                                .font(.headline.bold())
+                            
+                            DatePicker("Inizio", selection: $temporaryFilter.startingDate, displayedComponents: .date)
                                 .labelsHidden()
+                            
+                            if !showTimePickers {
+                                DatePicker("Inizio", selection: $temporaryFilter.startingDate, displayedComponents: .hourAndMinute)
+                                    .labelsHidden()
+                            }
                         }
-                        DatePicker("Fine", selection: $temporaryFilter.endingDate, displayedComponents: .date)
-                            .labelsHidden()
+                        .padding(.vertical)
+                        .frame(maxWidth: .infinity)
+                        .background {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(.thickMaterial)
+                        }
                         
+                        // Ending Date and Time
+                        VStack {
+                            Text("Fine")
+                                .font(.headline.bold())
+                            
+                            DatePicker("Fine", selection: $temporaryFilter.endingDate, in: temporaryFilter.startingDate..., displayedComponents: .date)
+                                .labelsHidden()
+                            
+                            if !showTimePickers {
+                                DatePicker("Fine", selection: $temporaryFilter.endingDate, in: temporaryFilter.startingDate..., displayedComponents: .hourAndMinute)
+                                    .labelsHidden()
+                            }
+                        }
+                        .padding(.vertical)
+                        .frame(maxWidth: .infinity)
+                        .background {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(.thickMaterial)
+                        }
                     }
-                    .padding()
-                    .background {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.thickMaterial)
-                    }
+                    .padding(.horizontal)
+                    .tint(.orange)
                 }
-                .tint(.orange)
                 
                 // Duration
-                Stepper(value: $internalMaxDuration, in: 0 ... 24, step: 1) {
-                    HStack(alignment: .center) {
-                        Text("Durata:")
+                Toggle(isOn: $temporaryFilter.isFilterDurationSelected, label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "clock.fill")
+                            .foregroundStyle(Color(.white))
+                            .frame(width: 30, height: 30)
+                            .background {
+                                RoundedRectangle(cornerRadius: 5)
+                                    .foregroundStyle(Color(.systemOrange))
+                            }
                         
-                        Spacer()
-                        
-                        Text(String(temporaryFilter.maxDuration))
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .foregroundStyle(.orange)
-                            .contentTransition(.numericText())
-                        
-                        Text("ore")
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Durata")
+                            
+                            Text("Filtra per durata i favori")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
-                }
+                })
+                .tint(.orange)
                 .padding()
                 .background {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.thickMaterial)
                 }
-                .tint(.orange)
+                
+                if showDurationPicker {
+                    Stepper(value: $internalMaxDuration, in: 1 ... 24, step: 1) {
+                        HStack(alignment: .center) {
+                            Text("Durata:")
+                            
+                            Spacer()
+                            
+                            Text("< " + String(temporaryFilter.maxDuration))
+                                .font(.system(size: 24, weight: .bold, design: .rounded))
+                                .foregroundStyle(.orange)
+                                .contentTransition(.numericText())
+                            
+                            Text(temporaryFilter.maxDuration == 1 ? "ora" : "ore")
+                        }
+                    }
+                    .padding()
+                    .background {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.thickMaterial)
+                    }
+                    .tint(.orange)
+                    .padding(.horizontal)
+                }
                 
                 // Public and Private types
-                HStack(spacing: 5) {
+                HStack(spacing: 8) {
                     Image(systemName: "person.2.fill")
                         .frame(width: 30)
                     
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text("Modalità di partecipazione")
                             .font(.title3.bold())
                         
                         Text("Filtra in base alla tua preferenza sulla modalità")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.gray)
                     }
                     
                     Spacer()
                 }
                 .padding(.top, 10)
                 
-                
-                let zStackWidth = (screenWidth > 500 ? 360 : screenWidth - 40) - 88 // screenWidth - 30 - 10 - 32 - 16
+                let zStackWidth = (screenWidth > 500 ? 360 : screenWidth) - 88 // screenWidth - 30 - 10 - 32 - 16
                 // Adjusted for bigger screen sizes
                 
                 ZStack(alignment: .leading) {
@@ -211,17 +263,17 @@ struct AdvancedFiltersView: View {
                 }
                 
                 // Car Needed and Heavy Task Filters
-                HStack(spacing: 5) {
+                HStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .frame(width: 30)
                     
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text("Info aggiuntive")
                             .font(.title3.bold())
                         
                         Text("Escludi ciò che ritieni di non poter fare")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.gray)
                     }
                     
                     Spacer()
@@ -230,7 +282,7 @@ struct AdvancedFiltersView: View {
                 
                 VStack {
                     Toggle(isOn: $temporaryFilter.isCarNeededSelected, label: {
-                        HStack(spacing: 8) {
+                        HStack(spacing: 12) {
                             Image(systemName: "car.fill")
                                 .foregroundStyle(Color(.white))
                                 .frame(width: 30, height: 30)
@@ -248,7 +300,7 @@ struct AdvancedFiltersView: View {
                         .padding(.vertical, 8)
                     
                     Toggle(isOn: $temporaryFilter.isHeavyTaskSelected, label: {
-                        HStack(spacing: 8) {
+                        HStack(spacing: 12) {
                             Image(systemName: "hammer.fill")
                                 .foregroundStyle(Color(.white))
                                 .frame(width: 30, height: 30)
@@ -361,7 +413,8 @@ struct AdvancedFiltersView: View {
                             })
                         .buttonStyle(BorderedProminentButtonStyle())
                         .buttonBorderShape(.capsule)
-                        .tint(.blue)
+                        .tint(temporaryFilter.selectedCategories.isEmpty ? .gray : .blue)
+                        .disabled(temporaryFilter.selectedCategories.isEmpty)
                         .hoverEffect(.lift)
                         .frame(maxWidth: .infinity)
                         .shadow(radius: 3)
@@ -379,8 +432,8 @@ struct AdvancedFiltersView: View {
         .onAppear {
             temporaryFilter.clone(source: filter)
             
-            
             internalMaxDuration = temporaryFilter.maxDuration
+            
             
             if (
                 temporaryFilter.startingDate.isTime(hour: 0, minute: 0) &&
@@ -401,31 +454,53 @@ struct AdvancedFiltersView: View {
             }
             isAllCategorySelected = filter.isCategorySelected(category: .all)
         }
-        .onChange(of: internalMaxDuration) {_, _ in
-            withAnimation {
-                temporaryFilter.maxDuration = internalMaxDuration
+        .onChange(of: temporaryFilter.selectedCategories, { _, new in
+            if new.contains(.all) {
+                isAllCategorySelected = true
+            } else {
+                isAllCategorySelected = false
             }
-        }
+        })
         .onChange(of: isAllCategorySelected) { old, new in
-            if !ignoreChange {
-                if new {
-                    // All
-                    temporaryFilter.selectCategory(category: .all)
-                } else {
-                    //None
-                    temporaryFilter.selectedCategories.removeAll()
+            DispatchQueue.main.async {
+                if !ignoreChange {
+                    if new {
+                        // All
+                        temporaryFilter.selectCategory(category: .all)
+                    } else {
+                        // None
+                        if temporaryFilter.selectedCategories.contains(.all) {
+                            temporaryFilter.selectedCategories.removeAll()
+                        }
+                    }
+                }
+                ignoreChange = false
+            }
+            
+            if old {
+                withAnimation {
+                    showCategories = old
                 }
             }
-            ignoreChange = false
-            withAnimation {
-                showCategories = old
-            }
         }
+        .onChange(of: temporaryFilter.isFilterDaysSelected, { _, new in
+            withAnimation {
+                showDaysPicker = new
+            }
+            
+            if !new && !isAllDaySelected {
+                DispatchQueue.main.async {
+                    isAllDaySelected = true
+                }
+            }
+        })
         .onChange(of: isAllDaySelected) { old, new in
             if new {
                 // Is All Day
-                temporaryFilter.setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
-                temporaryFilter.setTime(of: [.endingTime], hour: 23, minute: 59, second: 59)
+                DispatchQueue.main.async {
+                    temporaryFilter.setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
+                    temporaryFilter.setTime(of: [.endingTime], hour: 23, minute: 59, second: 59)
+                }
                 
                 withAnimation {
                     showTimePickers = true
@@ -438,6 +513,16 @@ struct AdvancedFiltersView: View {
                 withAnimation {
                     showTimePickers = false
                 }
+            }
+        }
+        .onChange(of: temporaryFilter.isFilterDurationSelected, { _, new in
+            withAnimation {
+                showDurationPicker = new
+            }
+        })
+        .onChange(of: internalMaxDuration) {_, _ in
+            withAnimation {
+                temporaryFilter.maxDuration = internalMaxDuration
             }
         }
         .onChange(of: selectedType) { _, new in
@@ -461,7 +546,6 @@ struct AdvancedFiltersView: View {
         .sensoryFeedback(.levelChange, trigger: internalMaxDuration)
         .sensoryFeedback(.levelChange, trigger: temporaryFilter.selectedCategories)
     }
-    
 }
 
 extension Date {
