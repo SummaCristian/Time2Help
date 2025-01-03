@@ -88,10 +88,7 @@ struct MapView: View {
                     
                 }
             }
-            .mapControlVisibility(.visible)
-            .mapControls {
-                MapScaleView()
-            }
+            .mapControlVisibility(.hidden)
             .mapStyle(
                 isSatelliteMode ? .hybrid(elevation: .realistic, pointsOfInterest: .all) : .standard(elevation: .realistic, emphasis: .automatic, pointsOfInterest: .all, showsTraffic: false)
             )
@@ -202,33 +199,35 @@ struct MapView: View {
                 HStack {
                     Spacer()
                     
-                    Button {
-                        withAnimation {
-                            showList.toggle()
-                        }
-                    } label: {
-                        Image(systemName: showList ? "map.fill" : "list.bullet")
-                            .font(.title3.bold())
-                            .foregroundStyle(.white)
-                            .frame(width: 45, height: 45)
-                    }
-                    .background(
-                        Circle()
-                            .foregroundStyle(.blue)
-                    )
+                    MapListSelector(isListSelected: $showList)
+                    
+                    Spacer()
+                    
+//                    Button {
+//                        withAnimation {
+//                            showList.toggle()
+//                        }
+//                    } label: {
+//                        Image(systemName: showList ? "map.fill" : "list.bullet")
+//                            .font(.title3.bold())
+//                            .foregroundStyle(.white)
+//                            .frame(width: 45, height: 45)
+//                    }
+//                    .background(
+//                        Circle()
+//                            .foregroundStyle(.blue)
+//                    )
                 }
                 
                 Spacer()
             }
-            .safeAreaPadding(.top, 85)
-            .safeAreaPadding(.trailing, 17.5)
-            .animation(.easeInOut(duration: 0.4), value: showList)
+            .safeAreaPadding(.top, 20)
         }
         .overlay {
             VStack {
                 CategoryFiltersView(filter: filter)
             }
-            .padding(.top, 20)
+            .padding(.top, 75)
         }
         .onAppear {
             verifyLocationStatus()
