@@ -185,14 +185,18 @@ struct ContentView: View {
                     }
                 }
                 .onTapGesture {
-                    withAnimation {
-                        reduceRewardBadge = true
-                    }
-                    withAnimation(.interpolatingSpring) {
-                        selectedReward = nil
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        reduceRewardBadge = false
+                    var transaction = Transaction()
+                    transaction.disablesAnimations = false
+                    withTransaction(transaction) {
+                        withAnimation {
+                            reduceRewardBadge = true
+                        }
+                        withAnimation(.interpolatingSpring) {
+                            selectedReward = nil
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            reduceRewardBadge = false
+                        }
                     }
                 }
             }

@@ -210,8 +210,13 @@ struct ProfileView: View {
                                             .matchedGeometryEffect(id: reward.id, in: rewardNameSpace)
                                             .onTapGesture {
                                                 if canTapOnRewards && isEditable {
-                                                    withAnimation(.interpolatingSpring) {
-                                                        selectedReward = reward
+                                                    var transaction = Transaction()
+                                                    transaction.disablesAnimations = false
+                                                    
+                                                    withTransaction(transaction) {
+                                                        withAnimation(.interpolatingSpring) {
+                                                            selectedReward = reward
+                                                        }
                                                     }
                                                 }
                                             }
@@ -313,15 +318,15 @@ struct ProfileView: View {
             }
         }
         .onChange(of: selectedReward) { _, _ in
-                if selectedReward == nil {
-                    // Set a delay before a new Reward can be tapped
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        canTapOnRewards = true
-                    }
-                } else {
-                    // Blocks tap gesture on Rewards
-                    canTapOnRewards = false
+            if selectedReward == nil {
+                // Set a delay before a new Reward can be tapped
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    canTapOnRewards = true
                 }
+            } else {
+                // Blocks tap gesture on Rewards
+                canTapOnRewards = false
+            }
         }
         .sheet(isPresented: $isExportSheetPresented, onDismiss: {}) {
             ExportView()
