@@ -40,6 +40,8 @@ struct ContentView: View {
     // A State to show the Splash Screen on first launch
     @State private var showSplashScreen = true
     
+    @State private var ongoingFavor: Favor? = nil
+    
     // Main View
     var body: some View {
         ZStack {
@@ -55,7 +57,7 @@ struct ContentView: View {
                         TabView(selection: $selectedTab) {
                             Group {
                                 // Tab 0: Map
-                                MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood, user: $user)
+                                MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood, user: $user, ongoingFavor: $ongoingFavor)
                                     .tabItem {
                                         Label("Mappa", systemImage: "map")
                                     }
@@ -70,7 +72,7 @@ struct ContentView: View {
                                     .disabled(true)
                                 
                                 // Tab 2: Profile
-                                ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+                                ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction, ongoingFavor: $ongoingFavor)
                                     .tabItem {
                                         Label("Profilo", systemImage: "person.fill")
                                     }
@@ -113,7 +115,7 @@ struct ContentView: View {
                 selectedFavorID = nil
             },
             content: { favor in
-                FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+                FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction, ongoingFavor: $ongoingFavor)
             })
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         // Reward Details Overlay
