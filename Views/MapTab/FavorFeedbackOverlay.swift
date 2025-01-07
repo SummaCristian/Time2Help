@@ -5,6 +5,7 @@ enum FavorInteraction {
     case accepted
     case edited
     case deleted
+    case started
 }
 
 struct FavorFeedbackOverlay: View {
@@ -27,6 +28,7 @@ struct FavorFeedbackOverlay: View {
                 case .accepted: "Favore accettato!"
                 case .edited: "Favore modificato!"
                 case .deleted: "Favore eliminato!"
+                case .started: "Favore iniziato!"
                 }
             }
             
@@ -35,6 +37,7 @@ struct FavorFeedbackOverlay: View {
                 case .created, .accepted: "checkmark"
                 case .edited: "pencil"
                 case .deleted: "trash"
+                case .started: "play.fill"
                 }
             }
             
