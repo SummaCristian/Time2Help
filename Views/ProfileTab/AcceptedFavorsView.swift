@@ -20,6 +20,8 @@ struct AcceptedFavorsView: View {
     @Binding var lastFavorInteracted: Favor?
     @Binding var lastInteraction: FavorInteraction?
     
+    @Binding var ongoingFavor: Favor?
+    
     
     var body: some View {
         NavigationStack {
@@ -54,7 +56,7 @@ struct AcceptedFavorsView: View {
         }
         .navigationTitle("Favori accettati")
         .navigationDestination(item: $selectedFavor) { favor in
-            FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+            FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
         }
     }
 }
