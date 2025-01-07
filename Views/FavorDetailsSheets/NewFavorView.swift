@@ -249,8 +249,8 @@ struct NewFavorSheet: View {
                         newFavor.location = location
                     } else {
                         // Handle the case where the location is unavailable
-//                        print("Location not available yet.")
-                        // Optionally show an alert to the user
+                        // Use User's neighbourhood
+                        newFavor.location = database.favors.first(where: { $0.neighbourhood == newFavor.author.neighbourhood })!.location
                     }
                 }
                 .onDisappear() {
