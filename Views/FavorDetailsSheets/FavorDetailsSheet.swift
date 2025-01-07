@@ -34,6 +34,8 @@ struct FavorDetailsSheet: View {
     @Binding var lastFavorInteracted: Favor?
     @Binding var lastInteraction: FavorInteraction?
     
+    @Binding var ongoingFavor: Favor?
+    
     // The UI
     var body: some View {
         // The GeometryReader is used to achieve a top alignment for the UI
@@ -310,6 +312,45 @@ struct FavorDetailsSheet: View {
             // The Accept Favor Button
             // it is outside the ScrollView, because it hovers on top of the rest of the UI.
             // This allows to have it always in the same spot, always accessible
+            if (
+                favor.helpers.contains(where: { $0.id == user.id }) &&
+                favor.status == .accepted
+            ) {
+                VStack{
+                    Spacer()
+                    
+                    HStack {
+                        Spacer()
+                        
+                        Button(action: {
+                            // Accepting the Favor
+                            favor.status = .justStarted
+                            
+                            lastInteraction = .started
+                            lastFavorInteracted = favor
+                            showInteractedFavorOverlay = true
+                            
+                            selectedFavor = nil
+                            
+                            withAnimation {
+                                ongoingFavor = favor
+                            }
+                        }) {
+                            Label("Inizia Favore", systemImage: "play.fill")
+                                .font(.body.bold())
+                                .foregroundStyle(.white)
+                                .padding(.vertical, 15)
+                                .padding(.horizontal, 45)
+                                .background(.blue, in: .capsule)
+                        }
+                        .shadow(radius: 10)
+                        .hoverEffect(.highlight)
+                        
+                        Spacer()
+                    }
+                }
+            }
+            
             if favor.canBeAccepted(userID: user.id) {
                 VStack{
                     Spacer()
@@ -366,10 +407,10 @@ struct FavorDetailsSheet: View {
             }
         )
         .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
-            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
         })
         .sheet(item: $selectedUser) { helper in
-            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: .constant(helper), selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction)
+            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: .constant(helper), selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
          }
         .sensoryFeedback(.impact, trigger: isHelpersMenuExpanded)
         .sensoryFeedback(.impact, trigger: isHeavyTaskAlertShowing)
