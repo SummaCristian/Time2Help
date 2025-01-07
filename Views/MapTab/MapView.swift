@@ -41,6 +41,8 @@ struct MapView: View {
     
     @State private var showTitles = true
     
+    @Binding var ongoingFavor: Favor?
+    
     // The UI
     var body: some View {
         ZStack {
@@ -228,6 +230,25 @@ struct MapView: View {
                 CategoryFiltersView(filter: filter)
             }
             .padding(.top, 75)
+        }
+        .overlay {
+            VStack {
+                Spacer()
+                
+                HStack {
+                    Spacer()
+                    
+                    if ongoingFavor != nil {
+                        OngoingFavorBoxView(favor: ongoingFavor!)
+                            .shadow(radius: 3)
+                            .onTapGesture {
+                                selectedFavor = ongoingFavor
+                            }
+                    }
+                }
+            }
+            .padding(.vertical, 24)
+            .padding(.horizontal)
         }
         .onAppear {
             verifyLocationStatus()
