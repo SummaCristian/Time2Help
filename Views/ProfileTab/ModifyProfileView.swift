@@ -2,6 +2,8 @@ import SwiftUI
 import MapKit
 
 struct ModifyProfileView: View {
+    let isInExplanationView: Bool
+    
     @ObservedObject var viewModel: MapViewModel
     
     @Binding var isModifySheetPresented: Bool
@@ -39,6 +41,7 @@ struct ModifyProfileView: View {
                                             .onChange(of: nameSurnameTemp) { _, _ in
                                                 nameSurnameTemp = String(nameSurnameTemp.prefix(50))
                                             }
+                                            .disabled(isInExplanationView)
                                         
                                         Text("\(nameSurnameTemp.count)/50")
                                             .font(.subheadline.bold())
@@ -50,6 +53,7 @@ struct ModifyProfileView: View {
                                                 .onTapGesture {
                                                     nameSurnameTemp = ""
                                                 }
+                                                .disabled(isInExplanationView)
                                         }
                                     }
                                     .frame(height: 50)
@@ -84,6 +88,7 @@ struct ModifyProfileView: View {
                                                         selectedColorTemp = colorCase.color.toString()!
                                                     }
                                                 }
+                                                .disabled(isInExplanationView)
                                         }
                                     })
                                 }
@@ -132,6 +137,7 @@ struct ModifyProfileView: View {
                             .onTapGesture {
                                 isNeighbourhoodSelectorPresented = true
                             }
+                            .disabled(isInExplanationView)
                         },
                         header: {
                             Text("Quartiere")
@@ -183,7 +189,7 @@ struct ModifyProfileView: View {
                                 .background(!canBeModified ? .gray : .blue, in: .capsule)
                         }
                         .shadow(radius: 10)
-                        .disabled(!canBeModified)
+                        .disabled(!canBeModified || isInExplanationView)
                         .animation(.easeInOut, value: canBeModified)
                         .sensoryFeedback(.pathComplete, trigger: canBeModified)
                         .hoverEffect(.highlight)
