@@ -42,6 +42,7 @@ class FilterModel: ObservableObject {
     @Published var isIndifferentTypesSelected: Bool
     @Published var isIndividualTypeSelected: Bool
     @Published var isGroupTypeSelected: Bool
+    @Published var countActiveFilters: Int
     
     var allowNone: Bool
     
@@ -58,7 +59,8 @@ class FilterModel: ObservableObject {
         isIndifferentTypesSelected: Bool = true,
         isIndividualTypeSelected: Bool = false,
         isGroupTypeSelected: Bool = false,
-        allowNone: Bool = false
+        allowNone: Bool = false,
+        countActiveFilters: Int = 0
     ) {
         self.selectedCategories = selectedCategories
         self.isCarNeededSelected = isCarNeededSelected
@@ -72,6 +74,7 @@ class FilterModel: ObservableObject {
         self.isIndividualTypeSelected = isIndividualTypeSelected
         self.isGroupTypeSelected = isGroupTypeSelected
         self.allowNone = allowNone
+        self.countActiveFilters = countActiveFilters
         
         setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
         setTime(of: [.endingTime], hour: 23, minute: 59, second: 59)
@@ -87,6 +90,7 @@ class FilterModel: ObservableObject {
         isFilterDurationSelected = false
         maxDuration = 1
         selectType(type: .indifferent)
+        countActiveFilters = 0
         
         setTime(of: [.startingTime], hour: 0, minute: 0, second: 0)
         setTime(of: [.endingTime], hour: 23, minute: 59, second: 59)
@@ -104,6 +108,7 @@ class FilterModel: ObservableObject {
         self.isIndifferentTypesSelected = source.isIndifferentTypesSelected
         self.isIndividualTypeSelected = source.isIndividualTypeSelected
         self.isGroupTypeSelected = source.isGroupTypeSelected
+        self.countActiveFilters = source.countActiveFilters
     }
     
     func selectType(type: SettableType) {
@@ -193,5 +198,19 @@ class FilterModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    func calculateActiveFilters() {
+        var count = 0
+        
+        let filtersBool = [!self.selectedCategories.contains(.all), self.isFilterDaysSelected, self.isFilterDurationSelected, !self.isIndifferentTypesSelected, !self.isCarNeededSelected, !self.isHeavyTaskSelected]
+
+        for filterBool in filtersBool {
+            if filterBool {
+                count += 1
+            }
+        }
+        
+        self.countActiveFilters = count
     }
 }
