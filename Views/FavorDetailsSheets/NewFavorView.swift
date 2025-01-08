@@ -31,7 +31,7 @@ struct NewFavorSheet: View {
     @StateObject var newFavor: Favor
     
     @Binding var showCreatedFavorOverlay: Bool
-    @Binding var lastFavorCreated: Favor?
+    @Binding var lastFavor: Favor?
     @Binding var lastInteraction: FavorInteraction?
     
     // The UI
@@ -248,7 +248,6 @@ struct NewFavorSheet: View {
                     if let location = viewModel.locationManager.location?.coordinate {
                         newFavor.location = location
                     } else {
-                        // Handle the case where the location is unavailable
                         // Use User's neighbourhood
                         newFavor.location = database.favors.first(where: { $0.neighbourhood == newFavor.author.neighbourhood })!.location
                     }
@@ -258,13 +257,13 @@ struct NewFavorSheet: View {
                 }
                 .sheet(isPresented: $isLocationSelectorPresented, content: {
                     // Shows the Location Selector sheet
-                    LocationSelector(viewModel: viewModel, newFavor: newFavor)
+                    LocationSelector(viewModel: viewModel, favor: newFavor)
                         .interactiveDismissDisabled()
                 })
                 .alert("Tornare indietro?", isPresented: $isConfirmationDialogPresented) {
                     Button("No", role: .cancel) {}
                     Button("Sì", role: .destructive) {
-                        //dismiss()
+                        // dismiss()
                         isPresented = false
                     }
                 } message: {
@@ -302,9 +301,9 @@ struct NewFavorSheet: View {
                             newFavor.neighbourhood = newFavor.author.neighbourhood
                             
                             database.addFavor(favor: newFavor)
-                            //dismiss()
+                            // dismiss()
                                                         
-                            lastFavorCreated = newFavor
+                            lastFavor = newFavor
                             lastInteraction = .created
                             
                             showCreatedFavorOverlay = true
@@ -317,7 +316,7 @@ struct NewFavorSheet: View {
                             
                             isPresented = false
                         }) {
-                            Label("Richiedi Favore", systemImage: "plus")
+                            Label("Richiedi favore", systemImage: "plus")
                                 .font(.body.bold())
                                 .foregroundStyle(.white)
                                 .padding(.vertical, 15)
@@ -375,5 +374,5 @@ struct NewFavorSheet: View {
 }
 
 #Preview {
-    NewFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), newFavor: Favor(author: User(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue"))), showCreatedFavorOverlay: .constant(true), lastFavorCreated: .constant(nil), lastInteraction: .constant(.created))
+    NewFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), newFavor: Favor(author: User(nameSurname: .constant("Name Surname"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue"))), showCreatedFavorOverlay: .constant(true), lastFavor: .constant(nil), lastInteraction: .constant(.created))
 }
