@@ -18,7 +18,7 @@ struct MapView: View {
     @Binding var selectedFavor: Favor?
     // An Optional<FavorMarker> used as a buffer for the last selected Favor.
     // This is used to deselect the Favor once it's not selected anymore
-    @Binding var selectedFavorID: UUID?
+//    @Binding var selectedFavorID: UUID?
     
     let selectedNeighbourhood: String
     
@@ -38,8 +38,9 @@ struct MapView: View {
     @State private var selection: MapFeature? = nil
     
     @StateObject private var filter: FilterModel = FilterModel()
+    @State private var isAdvancedFiltersViewShowing: Bool = false
     
-    @State private var showTitles = true
+    @State private var showTitles: Bool = true
     
     @Binding var ongoingFavor: Favor?
     
@@ -71,15 +72,14 @@ struct MapView: View {
                                 .stroke(favor.category.color, lineWidth: 3)
                                 .mapOverlayLevel(level: .aboveRoads)
                         }
-                        
+//
                         Annotation(
                             coordinate: favor.location,
                             content: {
-                                FavorMarker(favor: favor, isSelected: .constant(selectedFavorID == favor.id), isInFavorSheet: showTitles, isOwner: user.id == favor.author.id)
+                                FavorMarker(favor: favor, isSelected: .constant(selectedFavor?.id == favor.id), isInFavorSheet: showTitles, isOwner: user.id == favor.author.id)
                                     .onTapGesture {
                                         // Selects the Favor and triggers the showing of the sheet
                                         selectedFavor = favor
-                                        selectedFavorID = favor.id
                                     }
                             },
                             label: {
@@ -87,7 +87,6 @@ struct MapView: View {
                             }
                         )
                     }
-                    
                 }
             }
             .mapControlVisibility(.hidden)
@@ -134,7 +133,7 @@ struct MapView: View {
                                                 .onTapGesture {
                                                     // Selects the Favor and triggers the showing of the sheet
                                                     selectedFavor = favor
-                                                    selectedFavorID = favor.id
+//                                                    selectedFavorID = favor.id
                                                 }
                                         }
                                     }
@@ -227,18 +226,12 @@ struct MapView: View {
         }
         .overlay {
             VStack {
-                CategoryFiltersView(filter: filter)
-            }
-            .padding(.top, 75)
-        }
-        .overlay {
-            VStack {
                 Spacer()
                 
                 HStack {
                     Spacer()
                     
-                    if ongoingFavor != nil {
+                    if ongoingFavor != nil && !isAdvancedFiltersViewShowing {
                         OngoingFavorBoxView(favor: ongoingFavor!)
                             .shadow(radius: 3)
                             .onTapGesture {
@@ -250,12 +243,20 @@ struct MapView: View {
             .padding(.vertical, 24)
             .padding(.horizontal)
         }
+        .overlay {
+            VStack {
+                CategoryFiltersView(filter: filter, isAdvancedFiltersViewShowing: $isAdvancedFiltersViewShowing)
+            }
+            .padding(.top, 78)
+        }
         .onAppear {
             verifyLocationStatus()
             
             // Set endingDate (for filtering) to 23.59 today
             filter.endingDate = Calendar.current.startOfDay(for: filter.startingDate)
             filter.endingDate = Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: filter.endingDate) ?? Calendar.current.startOfDay(for: filter.endingDate)
+            
+            ongoingFavor = database.favors.first(where: { $0.helpers.contains(where: { $0.id == user.id }) && $0.status == .ongoing })
         }
         .onChange(of: viewModel.locationManager.authorizationStatus) {
             verifyLocationStatus()
@@ -263,10 +264,17 @@ struct MapView: View {
     }
     
     func verifyLocationStatus() {
+        // To avoid UserLocation button to not appear
         if viewModel.locationManager.authorizationStatus == .authorizedAlways || viewModel.locationManager.authorizationStatus == .authorizedWhenInUse {
-            camera = .userLocation(followsHeading: true, fallback: .automatic)
-        } else {
+            let coordinates = CLLocationCoordinate2D(latitude: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location.latitude - 0.001, longitude: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location.longitude)
+            camera = MapCameraPosition.camera(.init(centerCoordinate: coordinates, distance: 3200))
+//            camera = .userLocation(followsHeading: false, fallback: .automatic)
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             camera = MapCameraPosition.camera(.init(centerCoordinate: Database.neighbourhoods.first(where: { $0.name == selectedNeighbourhood })!.location, distance: 3200))
+        
+            cameraSupport = camera
         }
     }
 }
