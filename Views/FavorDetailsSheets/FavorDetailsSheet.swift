@@ -4,6 +4,9 @@ import MapKit
 // This file contains the UI for the Favor's Details sheet, that appears when clicking on an existing Favor
 
 struct FavorDetailsSheet: View {
+//    @Environment(\.dismiss) var dismiss
+    
+    let isInExplanationView: Bool
     
     @ObservedObject var viewModel: MapViewModel
     
@@ -30,6 +33,10 @@ struct FavorDetailsSheet: View {
     
     @State private var selectedUser: User? = nil
     
+//    @State private var isEditFavorSheetPresented: Bool = false
+    @Binding var isEditFavorSheetPresented: Bool
+    @State private var showDeletePopUp: Bool = false
+    
     @Binding var showInteractedFavorOverlay: Bool
     @Binding var lastFavorInteracted: Favor?
     @Binding var lastInteraction: FavorInteraction?
@@ -41,6 +48,37 @@ struct FavorDetailsSheet: View {
         // The GeometryReader is used to achieve a top alignment for the UI
         GeometryReader { _ in
             Form {
+                if user.id == favor.author.id {
+                    Section {
+                        HStack {
+                            Text("Modifica")
+                                .font(.callout)
+                                .foregroundStyle(.orange)
+                                .padding(.vertical, 12)
+                                .padding(.horizontal, 16)
+                                .background(.orange.opacity(0.2), in: .capsule)
+                                .onTapGesture {
+                                    isEditFavorSheetPresented = true
+                                }
+                                .disabled(isInExplanationView)
+                            
+                            Spacer()
+                            
+                            Text("Elimina")
+                                .font(.callout)
+                                .foregroundStyle(.red)
+                                .padding(.vertical, 12)
+                                .padding(.horizontal, 16)
+                                .background(.red.opacity(0.2), in: .capsule)
+                                .onTapGesture {
+                                    showDeletePopUp = true
+                                }
+                        }
+                    }
+                    .padding(.vertical, -20)
+                    .listRowBackground(Color.clear)
+                }
+                
                 Section {
                     HStack(spacing: 12) {
                         // The Favor's Title
@@ -74,13 +112,13 @@ struct FavorDetailsSheet: View {
                                 selectedUser = favor.author
                             }
                             
-                            HStack(spacing: 0) {
+                            HStack(spacing: 8) {
                                 Image(systemName: favor.type.icon)
                                 
                                 Text(favor.type.string)
                             }
                             .font(.subheadline)
-                            .offset(x: 10)
+                            .offset(x: 12)
                         }
                         
                         Spacer()
@@ -90,6 +128,7 @@ struct FavorDetailsSheet: View {
                             .frame(width: 100, height: 120)
                     }
                     .cornerRadius(10)
+                    .padding(.top, user.id == favor.author.id ? -32 : 0)
                 }
                 .listRowBackground(Color.clear)
                 
@@ -173,7 +212,7 @@ struct FavorDetailsSheet: View {
                         Text(favor.description)
                     },
                     header: {
-                        Text("DESCRIZIONE")
+                        Text("Descrizione")
                     }
                 )
                 
@@ -278,7 +317,7 @@ struct FavorDetailsSheet: View {
                             }
                         },
                         header: {
-                            Text("INFO")
+                            Text("Info")
                         })
                 }
                 
@@ -287,7 +326,7 @@ struct FavorDetailsSheet: View {
                     content: {
                         // A Map to show a preview of the Location
                         Map(
-                            bounds: MapCameraBounds(minimumDistance: 500, maximumDistance: 500),
+                            bounds: MapCameraBounds(minimumDistance: 800, maximumDistance: 800),
                             interactionModes: [] // No interactions allowed
                         ) {
                             Annotation("", coordinate: favor.location, content: {
@@ -299,7 +338,7 @@ struct FavorDetailsSheet: View {
                         .cornerRadius(10)
                     },
                     header: {
-                        Text("POSIZIONE")
+                        Text("Posizione")
                     }
                 )
                 
@@ -312,10 +351,46 @@ struct FavorDetailsSheet: View {
             // The Accept Favor Button
             // it is outside the ScrollView, because it hovers on top of the rest of the UI.
             // This allows to have it always in the same spot, always accessible
-            if (
-                favor.helpers.contains(where: { $0.id == user.id }) &&
-                favor.status == .accepted
-            ) {
+//            if (
+//                favor.helpers.contains(where: { $0.id == user.id }) &&
+//                favor.status == .accepted
+//            ) {
+//                VStack{
+//                    Spacer()
+//
+//                    HStack {
+//                        Spacer()
+//
+//                        Button(action: {
+//                            // Accepting the Favor
+//                            favor.status = .justStarted
+//
+//                            lastInteraction = .started
+//                            lastFavorInteracted = favor
+//                            showInteractedFavorOverlay = true
+//
+//                            selectedFavor = nil
+//
+//                            withAnimation {
+//                                ongoingFavor = favor
+//                            }
+//                        }) {
+//                            Label("Inizia Favore", systemImage: "play.fill")
+//                                .font(.body.bold())
+//                                .foregroundStyle(.white)
+//                                .padding(.vertical, 15)
+//                                .padding(.horizontal, 45)
+//                                .background(.blue, in: .capsule)
+//                        }
+//                        .shadow(radius: 10)
+//                        .hoverEffect(.highlight)
+//
+//                        Spacer()
+//                    }
+//                }
+//            }
+            
+            if favor.canBeAccepted(userID: user.id) && favor.status != .completed && favor.status != .expired {
                 VStack{
                     Spacer()
                     
@@ -324,19 +399,18 @@ struct FavorDetailsSheet: View {
                         
                         Button(action: {
                             // Accepting the Favor
-                            favor.status = .justStarted
+                            favor.helpers.append(user)
+                            if favor.status == .notAcceptedYet {
+                                favor.status = .waitingToStart
+                            }
                             
-                            lastInteraction = .started
+                            lastInteraction = .accepted
                             lastFavorInteracted = favor
                             showInteractedFavorOverlay = true
                             
                             selectedFavor = nil
-                            
-                            withAnimation {
-                                ongoingFavor = favor
-                            }
                         }) {
-                            Label("Inizia Favore", systemImage: "play.fill")
+                            Label("Accetta favore", systemImage: "checkmark")
                                 .font(.body.bold())
                                 .foregroundStyle(.white)
                                 .padding(.vertical, 15)
@@ -349,9 +423,7 @@ struct FavorDetailsSheet: View {
                         Spacer()
                     }
                 }
-            }
-            
-            if favor.canBeAccepted(userID: user.id) {
+            } else if favor.hasBeenAccepted(userID: user.id) && favor.status == .waitingToStart {
                 VStack{
                     Spacer()
                     
@@ -360,21 +432,23 @@ struct FavorDetailsSheet: View {
                         
                         Button(action: {
                             // Accepting the Favor
-                            favor.helpers.append(user)
-                            favor.status = .accepted
+                            selectedFavor = nil
                             
-                            lastInteraction = .accepted
+                            favor.helpers.removeAll(where: { $0.id == user.id })
+                            if favor.helpers.count == 0 {
+                                favor.status = .notAcceptedYet
+                            }
+                            
+                            lastInteraction = .removed
                             lastFavorInteracted = favor
                             showInteractedFavorOverlay = true
-                            
-                            selectedFavor = nil
                         }) {
-                            Label("Accetta Favore", systemImage: "checkmark")
+                            Label("Esci dal favore", systemImage: "figure.walk.departure")
                                 .font(.body.bold())
                                 .foregroundStyle(.white)
                                 .padding(.vertical, 15)
                                 .padding(.horizontal, 45)
-                                .background(.blue, in: .capsule)
+                                .background(.red, in: .capsule)
                         }
                         .shadow(radius: 10)
                         .hoverEffect(.highlight)
@@ -386,6 +460,24 @@ struct FavorDetailsSheet: View {
         }
         .presentationDragIndicator(.visible)
         .presentationDetents([.medium, .large])
+        .alert("Vuoi eliminarlo?", isPresented: $showDeletePopUp) {
+            Button("No", role: .cancel) {}
+            Button("Sì", role: .destructive) {
+//                    database.favors.removeAll(where: { $0.id ==  })
+                database.removeFavor(id: favor.id)
+                
+                lastInteraction = .deleted
+                lastFavorInteracted = favor
+                showInteractedFavorOverlay = true
+                
+                selectedFavor = nil
+                
+//                dismiss()
+            }
+            .disabled(isInExplanationView)
+        } message: {
+            Text("Il favore verrà cancellato definitivamente")
+        }
         .alert(
             "Auto Necessaria",
             isPresented: $isCarNeededAlertShowing,
@@ -407,11 +499,14 @@ struct FavorDetailsSheet: View {
             }
         )
         .sheet(isPresented: $isAuthorProfileSheetPresented, content: {
-            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
+            ProfileView(isInExplanationView: isInExplanationView, showExplanationTemp: .constant(false), viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $favor.author, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditFavorSheetPresented: $isEditFavorSheetPresented, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
         })
         .sheet(item: $selectedUser) { helper in
-            ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: .constant(helper), selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
-         }
+            ProfileView(isInExplanationView: isInExplanationView, showExplanationTemp: .constant(false), viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: .constant(helper), selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditFavorSheetPresented: $isEditFavorSheetPresented, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
+        }
+        .sheet(isPresented: $isEditFavorSheetPresented, content: {
+            EditFavorSheet(isPresented: $isEditFavorSheetPresented, database: database, viewModel: viewModel, editFavorId: favor.id, showEditedFavorOverlay: $showInteractedFavorOverlay, lastFavor: $lastFavorInteracted, lastInteraction: $lastInteraction)
+        })
         .sensoryFeedback(.impact, trigger: isHelpersMenuExpanded)
         .sensoryFeedback(.impact, trigger: isHeavyTaskAlertShowing)
         .sensoryFeedback(.impact, trigger: isCarNeededAlertShowing)
