@@ -6,15 +6,15 @@ struct MapListSelector: View {
     var body: some View {
         ZStack {
             Capsule()
-                .frame(width: isListSelected ? 70 : 80, height: 35)
+                .frame(width: isListSelected ? 75 : 86, height: 35)
                 .foregroundStyle(.thinMaterial)
                 .overlay {
                     Color.blue
                         .clipShape(Capsule())
                 }
-                .shadow(radius: 3)
-                .offset(x: isListSelected ? 40 : -35)
-                .animation(.bouncy(duration: 0.5, extraBounce: 0.1), value: isListSelected)
+                .shadow(color: .gray.opacity(0.4), radius: 6)
+                .offset(x: isListSelected ? 42 : -37)
+                .animation(.bouncy(duration: 0.5, extraBounce: 0.05), value: isListSelected)
             
             HStack(spacing: 20) {
                 HStack(spacing: 6) {
@@ -52,7 +52,7 @@ struct MapListSelector: View {
         .background {
             Capsule()
                 .fill(.ultraThinMaterial)
-                .shadow(radius: 10)
+                .shadow(color: .gray.opacity(0.4), radius: 6)
         }
         .sensoryFeedback(.levelChange, trigger: isListSelected)
     }
