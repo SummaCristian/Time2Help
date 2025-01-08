@@ -5,7 +5,7 @@ struct CategoryFiltersView: View {
     
     @ObservedObject var filter: FilterModel
     
-    @State private var isAdvancedFiltersViewShowing: Bool = false
+    @Binding var isAdvancedFiltersViewShowing: Bool
     @State private var showBadge: Bool = false
     
     @State private var scrollingPosition: Int?
@@ -58,16 +58,16 @@ struct CategoryFiltersView: View {
                 .frame(minHeight: 60)
                 .background(.thinMaterial)
                 .clipShape(isAdvancedFiltersViewShowing ? AnyShape(RoundedRectangle(cornerRadius: 32)) : AnyShape(Circle()))
-//                .overlay(alignment: .topTrailing) {
-//                    if !showBadge {
-//                        Text("1")
-//                            .font(.caption2)
-//                            .fontWeight(.semibold)
-//                            .padding(.all, 6)
-//                            .background(.background, in: .circle)
-//                            .offset(x: 4)
-//                    }
-//                }
+                .overlay(alignment: .topTrailing) {
+                    if !showBadge && filter.countActiveFilters != 0 {
+                        Text(String(filter.countActiveFilters))
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .padding(.all, 6)
+                            .background(.background, in: .circle)
+                            .offset(x: 4)
+                    }
+                }
                 .offset(
                     x: moveToCenter ? 130 : 0,
                     y: moveToCenter ? 200 : 0
@@ -85,6 +85,8 @@ struct CategoryFiltersView: View {
                             if (category == .all ? true : filter.selectedCategories.contains(category)) {
                                 CategoryCapsule(filter: filter, category: category)
                                     .onTapGesture {
+                                        let calculateActiveFiltersBool = !filter.selectedCategories.contains(.all)
+                                        
                                         if category == .all {
                                             // The "Tutte" capsule
                                             withAnimation {
@@ -100,6 +102,12 @@ struct CategoryFiltersView: View {
                                                 withAnimation {
                                                     filter.selectCategory(category: category)
                                                 }
+                                            }
+                                        }
+                                        
+                                        if filter.selectedCategories.contains(.all) && calculateActiveFiltersBool {
+                                            withAnimation {
+                                                filter.calculateActiveFilters()
                                             }
                                         }
                                     }
@@ -173,7 +181,7 @@ struct CategoryFiltersView: View {
 
 #Preview {
     VStack(spacing: 50) {
-        CategoryFiltersView(filter: FilterModel())
-        CategoryFiltersView(filter: FilterModel(selectedCategories: []))
+        CategoryFiltersView(filter: FilterModel(), isAdvancedFiltersViewShowing: .constant(false))
+        CategoryFiltersView(filter: FilterModel(selectedCategories: []), isAdvancedFiltersViewShowing: .constant(false))
     }
 }
