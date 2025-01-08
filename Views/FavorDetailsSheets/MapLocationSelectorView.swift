@@ -13,7 +13,7 @@ struct LocationSelector: View {
     @State private var selectedLocation: CLLocationCoordinate2D? = nil
     
     // The newly created favor, whose location is being edited in here
-    @ObservedObject var newFavor: Favor
+    @ObservedObject var favor: Favor
     
     // A NameSpace needed for certain Map features
     @Namespace private var mapNameSpace
@@ -40,8 +40,8 @@ struct LocationSelector: View {
                     
                     // The Favor's Marker
                     // Note: it's set in selectedLocation if possible, but if it's nil, it defaults to the Favor's old Location
-                    Annotation("", coordinate: selectedLocation ?? newFavor.location) {
-                        FavorMarker(favor: newFavor, isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
+                    Annotation("", coordinate: selectedLocation ?? favor.location) {
+                        FavorMarker(favor: favor, isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
                     }
                 }
                 .mapControlVisibility(.visible)
@@ -60,7 +60,7 @@ struct LocationSelector: View {
                         HStack(spacing: 0) {
                             Spacer()
                             
-                            MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, selectedCLLocationCoordinate: selectedLocation ?? newFavor.location, mapNameSpace: mapNameSpace)
+                            MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, selectedCLLocationCoordinate: selectedLocation ?? favor.location, mapNameSpace: mapNameSpace)
                         }
                         
                         Spacer()
@@ -95,7 +95,7 @@ struct LocationSelector: View {
                     
                     Spacer()
                     
-                    FavorMarker(favor: newFavor, isSelected: .constant(false), isInFavorSheet: true, isOwner: true)
+                    FavorMarker(favor: favor, isSelected: .constant(false), isInFavorSheet: true, isOwner: true)
                 }
                 .padding(.vertical, 25)
                 .padding(.horizontal, 20)
@@ -130,7 +130,7 @@ struct LocationSelector: View {
                     // This button saves the newly selectedLocation inside the Favor
                     Button(action: {
                         // Saves the Location inside the Favor if it's not nil
-                        newFavor.location = selectedLocation ?? newFavor.location
+                        favor.location = selectedLocation ?? favor.location
                         // Dismisses the sheet
                         dismiss()
                     }) {
