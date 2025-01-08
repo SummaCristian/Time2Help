@@ -31,12 +31,12 @@ struct StarsView: View {
                 
                 Spacer()
             }
-            .padding(.bottom, reviews.isEmpty ? 0 : 30)
+//            .frame(height: 30)
             
             if !reviews.isEmpty {
                 // Open/Close control
                 HStack {
-                    Text(String(reviews.count) + " recensioni")
+                    Text(String(reviews.count) + (reviews.count == 1 ? " recensione" : " recensioni"))
                     
                     Image(systemName: "chevron.down")
                         .rotationEffect(.degrees(isExpanded ? -180 : 0))
@@ -45,20 +45,22 @@ struct StarsView: View {
                 .font(.title3.bold())
                 .foregroundStyle(.blue)
                 .onTapGesture {
-                    withAnimation {
+                    withAnimation(.bouncy()) {
                         isExpanded.toggle()
                     }
                 }
+//                .frame(height: 20)
+                .padding(.top, 32)
                 
                 if isExpanded {
                     // Reviews
-                    List {
+                    VStack(spacing: 12) {
                         ForEach(reviews) { review in
                             VStack(alignment: .leading) {
                                 HStack {
                                     ProfileIconView(username: review.author.$nameSurname, color: review.author.$profilePictureColor, size: .small)
-                                    
-                                    VStack(alignment: .leading, spacing: 5) {
+//
+                                    VStack(alignment: .leading, spacing: 8) {
                                         Text(review.author.nameSurname)
                                             .font(.headline)
                                         
@@ -68,41 +70,54 @@ struct StarsView: View {
                                                 .foregroundStyle(.red)
                                         }
                                     }
-                                    
+//
                                     Spacer()
                                     
                                     // Small StarsView (if there sre more than 1 review
                                     // If its only 1, the big one displays the same value, so the small one is omitted
-                                    if reviews.count > 1 {
+//                                    if reviews.count > 1 {
+                                    HStack(spacing: 0) {
+//                                        ReviewNumberView(value: review.rating)
+//                                            .frame(width: 50)
+//                                            .scaleEffect(0.8)
+                                        
                                         HStack(spacing: 0) {
-                                            ReviewNumberView(value: review.rating)
-                                                .frame(width: 40)
-                                                .scaleEffect(0.8)
-                                            
-                                            HStack(spacing: 0) {
-                                                ForEach(0..<5, id: \.self) { index in
-                                                    ClickableStar(value: .constant(review.rating), index: index, clickOnGoing: $clickOnGoing, clicked: $clicked)
-                                                        .scaleEffect(0.6)
-                                                        .frame(width: 20)
-                                                }
+                                            ForEach(0..<5, id: \.self) { index in
+                                                StaticStar(value: review.rating, index: index)
+//                                                    ClickableStar(value: .constant(review.rating), index: index, clickOnGoing: $clickOnGoing, clicked: $clicked)
+                                                    .scaleEffect(0.7)
+                                                    .frame(width: 24)
                                             }
                                         }
                                     }
+////                                    }
                                 }
                                 
                                 // Review Text
                                 Text(review.text)
+                                    .padding(.horizontal, 12)
                             }
+//                            .frame(height: 50)
+//                            .padding(.horizontal, 12)
+                            .padding(.all, 12)
+                            .background(Color(.systemGray6), in: .rect(cornerRadius: 12))
+                            .padding(.horizontal, 4)
                         }
-                        .padding(.horizontal)
                     }
-                    .padding(.top)
+//                    .frame(height: isExpanded ? 50 * CGFloat(reviews.count) : 0)
+//                    .opacity(isExpanded ? 1 : 0)
+//                    .frame(height: 40 * CGFloat(reviews.count))
+                    .padding(.top, 28)
+                    .padding(.horizontal, 12)
                     .transition(.blurReplace)
                 }
             }
         }
-        .frame(maxHeight: .infinity, alignment: .top)
-        .padding(.top, 20)
+        .padding(.vertical, 20)
+//        .frame(height: 72 + (!reviews.isEmpty ? 44 + (isExpanded ? (50 * CGFloat(reviews.count)) : 0) : 0), alignment: .top)
+//        .frame(maxHeight: .infinity, alignment: .top)
+//        .padding(.top, !reviews.isEmpty && isExpanded ? 8 : 20)
+//        .padding(.bottom, !reviews.isEmpty && isExpanded ? 4 : 20)
         .onAppear {
             if isInDetailsSheet {
                 let index = Int(value - 1)
