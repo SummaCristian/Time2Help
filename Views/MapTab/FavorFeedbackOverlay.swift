@@ -3,6 +3,7 @@ import SwiftUI
 enum FavorInteraction {
     case created
     case accepted
+    case removed
     case edited
     case deleted
     case started
@@ -26,6 +27,7 @@ struct FavorFeedbackOverlay: View {
                 switch type {
                 case .created: "Favore richiesto!"
                 case .accepted: "Favore accettato!"
+                case .removed: "Favore revocato!"
                 case .edited: "Favore modificato!"
                 case .deleted: "Favore eliminato!"
                 case .started: "Favore iniziato!"
@@ -35,6 +37,7 @@ struct FavorFeedbackOverlay: View {
             var finalIcon: String {
                 switch type {
                 case .created, .accepted: "checkmark"
+                case .removed: "figure.walk.departure"
                 case .edited: "pencil"
                 case .deleted: "trash"
                 case .started: "play.fill"
@@ -110,5 +113,5 @@ struct FavorFeedbackOverlay: View {
 }
 
 #Preview {
-    FavorFeedbackOverlay(favor: Favor(title: "Test", description: "", author: User(nameSurname: .constant("Nome"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .individual, location: MapDetails.startingLocation, isCarNecessary: true, isHeavyTask: true, status: .accepted, category: .generic), type: .created)
+    FavorFeedbackOverlay(favor: Favor(title: "Test", description: "", author: User(nameSurname: .constant("Nome"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue")), neighbourhood: "Città Studi", type: .individual, location: MapDetails.startingLocation, isCarNecessary: true, isHeavyTask: true, status: .waitingToStart, category: .generic), type: .created)
 }
