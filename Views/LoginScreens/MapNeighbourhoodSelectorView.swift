@@ -107,7 +107,7 @@ struct NeighbourhoodSelector: View {
                     HStack(spacing: 0) {
                         Spacer()
                         
-                        MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $camera, selectedCLLocationCoordinate: selectedNeighbourhoodStructTempTwo.location, mapNameSpace: mapNameSpace)
+                        MapButtonsView(viewModel: viewModel, camera: $camera, cameraSupport: $cameraSupport, selectedCLLocationCoordinate: selectedNeighbourhoodStructTempTwo.location, mapNameSpace: mapNameSpace)
                     }
                     
                     Spacer()
