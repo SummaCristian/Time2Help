@@ -16,13 +16,15 @@ struct ContentView: View {
     // Connection to the Database that stores the Favors
     @StateObject private var database = Database.shared
     
+    @AppStorage("showExplanation") var showExplanation: Bool = true
+    @State private var showExplanationTemp: Bool = true
+    
     @State private var user: User = User(nameSurname: .constant("temp"), neighbourhood: .constant("Città Studi"), profilePictureColor: .constant("blue"))
     
     // An Optional<Favor> used as a selector for a Favor:
     // nil => no Favor selected
     // *something* => that Favor is selected
     @State private var selectedFavor: Favor?
-    @State private var selectedFavorID: UUID?
     // Integer to keep track of which tab is selected
     @State private var selectedTab: Int = 0 // Track the selected tabEmptyView
     // Boolean value to hanlde the behavior of the "New Favor" sheet
@@ -38,9 +40,11 @@ struct ContentView: View {
     @State private var lastFavorInteraction: FavorInteraction?
     
     // A State to show the Splash Screen on first launch
-    @State private var showSplashScreen = true
+    @State private var showSplashScreen: Bool = true
     
     @State private var ongoingFavor: Favor? = nil
+    
+    @State private var isEditFavorSheetPresented: Bool = false
     
     // Main View
     var body: some View {
@@ -48,7 +52,6 @@ struct ContentView: View {
             if showSplashScreen {
                 SplashScreenView()
             } else {
-                
                 // The main UI of this app is composed of a TabView, meaning the the UI is divided
                 // into different tabs, each one containing a portion of the app.
                 // Each one of the different screens is then coded inside its own file.
@@ -57,7 +60,7 @@ struct ContentView: View {
                         TabView(selection: $selectedTab) {
                             Group {
                                 // Tab 0: Map
-                                MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedFavorID: $selectedFavorID, selectedNeighbourhood: selectedNeighbourhood, user: $user, ongoingFavor: $ongoingFavor)
+                                MapView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, selectedNeighbourhood: selectedNeighbourhood, user: $user, ongoingFavor: $ongoingFavor)
                                     .tabItem {
                                         Label("Mappa", systemImage: "map")
                                     }
@@ -72,7 +75,7 @@ struct ContentView: View {
                                     .disabled(true)
                                 
                                 // Tab 2: Profile
-                                ProfileView(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction, ongoingFavor: $ongoingFavor)
+                                ProfileView(isInExplanationView: false, showExplanationTemp: $showExplanationTemp, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditable: true, isEditFavorSheetPresented: $isEditFavorSheetPresented, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction, ongoingFavor: $ongoingFavor)
                                     .tabItem {
                                         Label("Profilo", systemImage: "person.fill")
                                     }
@@ -102,21 +105,32 @@ struct ContentView: View {
                         .offset(y: 5)
                     }
                 }
+                .overlay {
+                    if showExplanationTemp {
+                        ExplanationView(viewModel: viewModel, user: user, showExplanationTemp: $showExplanationTemp)
+                    }
+                }
+                .onChange(of: showExplanationTemp) { _, new in
+                    showExplanation = new
+                }
+                .onAppear {
+                    showExplanationTemp = showExplanation
+                }
             }
         }
         .sheet(isPresented: $isSheetPresented) {
-            NewFavorSheet(isPresented: $isSheetPresented, database: database, viewModel: viewModel, newFavor: Favor(author: user), showCreatedFavorOverlay: $showInteractionOverlay, lastFavorCreated: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
+            NewFavorSheet(isPresented: $isSheetPresented, database: database, viewModel: viewModel, newFavor: Favor(author: user), showCreatedFavorOverlay: $showInteractionOverlay, lastFavor: $lastInteractedFavor, lastInteraction: $lastFavorInteraction)
                 .interactiveDismissDisabled()
         }
         .sheet(
             item: $selectedFavor,
             onDismiss: {
                 selectedFavor = nil
-                selectedFavorID = nil
             },
             content: { favor in
-                FavorDetailsSheet(viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction, ongoingFavor: $ongoingFavor)
-            })
+                FavorDetailsSheet(isInExplanationView: false, viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: user, favor: favor, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditFavorSheetPresented: $isEditFavorSheetPresented, showInteractedFavorOverlay: $showInteractionOverlay, lastFavorInteracted: $lastInteractedFavor, lastInteraction: $lastFavorInteraction, ongoingFavor: $ongoingFavor)
+            }
+        )
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         // Reward Details Overlay
         .overlay {
@@ -215,7 +229,7 @@ struct ContentView: View {
         }
         .ignoresSafeArea(.keyboard)
         .tint(.blue)
-        .onAppear() {
+        .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 withAnimation {
                     showSplashScreen = false
