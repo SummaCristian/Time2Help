@@ -616,6 +616,16 @@ class Database: ObservableObject {
         favors.append(favor)
     }
     
+    // Function to remove a Favor from the List
+    func removeFavor(id: UUID) {
+        return favors.removeAll(where: { $0.id == id })
+    }
+    
+    // Function to get a Favor by id
+    func getFavor(id: UUID) -> Favor {
+        return favors.first(where: { $0.id == id })!
+    }
+    
     // Appends some pre-determined Users and Favors inside the Lists, allowing them to be seen in the Map (testing purposes)
     func initialize() {
         // Users
@@ -664,7 +674,7 @@ class Database: ObservableObject {
                     location: neighbourhood.location,
                     isCarNecessary: false,
                     isHeavyTask: true,
-                    status: .notAcceptedYet,
+                    status: .completed,
                     category: .generic
                 )
             )
@@ -684,7 +694,7 @@ class Database: ObservableObject {
                     ),
                     isCarNecessary: true,
                     isHeavyTask: false,
-                    status: .halfwayThere,
+                    status: .ongoing,
                     category: .babySitting
                 )
             )
@@ -703,11 +713,10 @@ class Database: ObservableObject {
                     ),
                     isCarNecessary: true,
                     isHeavyTask: true,
-                    status: .notAcceptedYet,
+                    status: .waitingForEvaluation,
                     category: .gardening
                 )
             )
-            
             favors.last!.helpers.append(giuseppe)
             
             favors.append(
@@ -718,12 +727,12 @@ class Database: ObservableObject {
                     neighbourhood: neighbourhood.name,
                     type: .individual,
                     location: CLLocationCoordinate2D(
-                        latitude: neighbourhood.location.latitude - 0.0009317, 
+                        latitude: neighbourhood.location.latitude - 0.0009317,
                         longitude: neighbourhood.location.longitude - 0.0001761
                     ),
                     isCarNecessary: true,
                     isHeavyTask: true,
-                    status: .accepted,
+                    status: .expired,
                     category: .generic
                 )
             )
@@ -741,13 +750,13 @@ class Database: ObservableObject {
                     ),
                     isCarNecessary: true,
                     isHeavyTask: true,
-                    status: .expired,
+                    status: .completed,
                     category: .manualJob
                 )
             )
             favors.last!.helpers.append(grazia)
-            favors.last?.helpers.append(mario)
-            favors.last?.helpers.append(giuseppe)
+            favors.last!.helpers.append(mario)
+            favors.last!.helpers.append(giuseppe)
             
             favors.append(
                 Favor(
@@ -762,11 +771,10 @@ class Database: ObservableObject {
                     ),
                     isCarNecessary: true,
                     isHeavyTask: true,
-                    status: .justStarted,
+                    status: .ongoing,
                     category: .petSitting
                 )
             )
-            
             favors.last!.helpers.append(giuseppe)
             favors.last!.helpers.append(mario)
             
@@ -820,7 +828,7 @@ class Database: ObservableObject {
                     ),
                     isCarNecessary: true,
                     isHeavyTask: true,
-                    status: .justStarted,
+                    status: .notAcceptedYet,
                     category: .shopping
                     
                 )
@@ -858,11 +866,10 @@ class Database: ObservableObject {
                     ),
                     isCarNecessary: false,
                     isHeavyTask: true,
-                    status: .expired,
+                    status: .waitingToStart,
                     category: .gardening
                 )
             )
-            
             favors.last!.helpers.append(giuseppe)
             favors.last!.helpers.append(mario)
             favors.last!.helpers.append(grazia)
@@ -880,7 +887,7 @@ class Database: ObservableObject {
                     ),
                     isCarNecessary: true,
                     isHeavyTask: true,
-                    status: .completed,
+                    status: .waitingToStart,
                     category: .manualJob
                 )
             )
@@ -917,7 +924,7 @@ class Database: ObservableObject {
                     ),
                     isCarNecessary: true,
                     isHeavyTask: true,
-                    status: .justStarted,
+                    status: .ongoing,
                     category: .babySitting
                 )
             )
@@ -942,20 +949,14 @@ class Database: ObservableObject {
             )
             favors.last!.helpers.append(piera)
             
-            // Accepts a few Favors (for testing)
+            // Accepts and create a few Favors of user (for testing)
             let user = users.first!
             var count = 0
             for favor in favors {
-                if count < 5 && favor.canBeAccepted(userID: user.id) {
+                if count < 5 && favor.canBeAccepted(userID: user.id) && favor.status != .expired {
                     favor.helpers.append(user)
-                    if (count == 0) {
-                        favor.status = .completed
-                    } else if (count == 1) { favor.status = .waitingForApprovation
-                    } else if (count == 2) { favor.status = .halfwayThere
-                    } else if (count == 3) {
-                        favor.status = .completed
-                    } else {
-                        favor.status = .completed
+                    if favor.status == .notAcceptedYet {
+                        favor.status = .waitingToStart
                     }
                     count += 1
                 } else if count >= 5 {
@@ -995,7 +996,7 @@ class Database: ObservableObject {
                     ),
                     isCarNecessary: true,
                     isHeavyTask: false,
-                    status: .completed,
+                    status: .notAcceptedYet,
                     category: .transport
                 )
             )
@@ -1023,14 +1024,12 @@ class Database: ObservableObject {
             favors.last!.helpers.append(grazia)
         }
         
-        // Adds a random amount of reviews to each Favor
+        // Adds random reviews to each helper of Favor
         for favor in favors {
-            let random = Int.random(in: 0...3)
-            for _ in 0...random {
-                let randomValue = Double.random(in: 0.0...5.0)
-                let randomUser = Int.random(in: 0...(users.count-1))
+            for helper in favor.helpers {
+                let randomValue = Int.random(in: 1...5) //Double.random(in: 0.0...5.0)
                 
-                let review = FavorReview(author: users[randomUser], rating: randomValue, text: "This is a review")
+                let review = FavorReview(author: helper, rating: Double(randomValue), text: "This is a review")
                 favor.reviews.append(review)
             }
         }
