@@ -5,33 +5,33 @@ struct OngoingFavorBoxView: View {
     @ObservedObject var favor: Favor
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(favor.title)
-                    .font(.title3.bold())
-                    .foregroundStyle(.white)
+        VStack(spacing: 0) {
+            // Title and Icon
+            HStack(alignment: .top, spacing: 8) {
+                // Title
+                VStack(alignment: .leading) {
+                    Text(favor.title)
+                        .bold()
+                        .foregroundStyle(.white)
+                    
+                    Text(favor.status.textualForm)
+                        .font(.caption)
+                        .foregroundStyle(.white)
+                }
                 
-                Text(favor.status.textualForm)
-                    .font(.caption)
+                // Icon
+                Image(systemName: favor.icon)
+                    .font(.title3)
                     .foregroundStyle(.white)
-                
+                    .frame(width: 25, height: 25)
+                    .shadow(radius: 3)
+            }
+            
+            // Author and Helper(s)
+            HStack(alignment: .bottom) {
                 // Author
                 ProfileIconView(username: favor.author.$nameSurname, color: favor.author.$profilePictureColor, size: .small)
                     .scaleEffect(0.8)
-                    .padding(.vertical, 8)
-            }
-            
-            Spacer()
-            
-            VStack {
-                ZStack {
-                    // Progress Indicator
-                    CircularProgressView(value: favor.status.progressPercentage, showNumber: false, progressColor: favor.color)
-                    
-                    // Icon
-                    Image(systemName: favor.icon)
-                        .foregroundStyle(.primary.opacity(0.7))
-                }
                 
                 Spacer()
                 
@@ -41,9 +41,9 @@ struct OngoingFavorBoxView: View {
                 }
             }
         }
-        .frame(maxWidth: 150, maxHeight: 100)
-        .padding(.vertical, 12)
-        .padding(.horizontal)
+        .frame(maxWidth: 160, maxHeight: 60)
+        .padding(.vertical, 28)
+        .padding(.horizontal, 16)
         .background {
             Rectangle()
                 .foregroundStyle(.regularMaterial)
@@ -63,7 +63,7 @@ struct OngoingFavorBoxView: View {
         .clipShape(RoundedRectangle(cornerRadius: 25))
         .hoverEffect(.lift)
     }
-    
+        
 }
 
 #Preview {
