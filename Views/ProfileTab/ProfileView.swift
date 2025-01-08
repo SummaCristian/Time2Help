@@ -8,6 +8,9 @@ struct ProfileView: View {
     @Environment(\.openURL) var openURL
     @Environment(\.colorScheme) var colorScheme
     
+    let isInExplanationView: Bool
+    @Binding var showExplanationTemp: Bool
+    
     @ObservedObject var viewModel: MapViewModel
     
     // The Database, where the Favors are stored
@@ -24,6 +27,8 @@ struct ProfileView: View {
     var rewardNameSpace: Namespace.ID
     
     @State var isEditable = false
+    
+    @Binding var isEditFavorSheetPresented: Bool
     
     @Binding var showInteractedFavorOverlay: Bool
     @Binding var lastFavorInteracted: Favor?
@@ -259,11 +264,11 @@ struct ProfileView: View {
             .navigationDestination(item: $destination) { destination in
                 switch destination {
                 case "Requested Favors":
-                    RequestedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
+                    RequestedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditFavorSheetPresented: $isEditFavorSheetPresented, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
                 case "Accepted Favors":
-                    AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
+                    AcceptedFavorsView(viewModel: viewModel, database: database, user: $user, selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditFavorSheetPresented: $isEditFavorSheetPresented, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
                 case "faqs":
-                    FaqScreen()
+                    FaqScreen(isInExplanationView: isInExplanationView, showExplanationTemp: $showExplanationTemp)
                 default:
                     Text("Unknown")
                 }
@@ -272,18 +277,30 @@ struct ProfileView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: !isEditable ? 4 : 12) {
-                        // FAQs
-                        Button(
-                            action: {
-                                destination = "faqs"
-                            }, label: {
-                                Label("Aiuto", systemImage: "questionmark.circle")
+                        if isEditable {
+                            // FAQs
+                            Button(
+                                action: {
+                                    destination = "faqs"
+                                }, label: {
+                                    Label("Aiuto", systemImage: "questionmark.circle")
+                                        .font(.title3)
+                                }
+                            )
+                            
+                            // App Settings
+                            Button {
+                                let settingsString = UIApplication.openSettingsURLString
+                                if let settingsURL = URL(string: settingsString) {
+                                    openURL(settingsURL)
+                                }
+                            } label: {
+                                Label("Impostazioni", systemImage: "gearshape.circle")
                                     .font(.title3)
                             }
-                        )
-                        
-                        // Chat Button
-                        if !isEditable {
+                            .disabled(isInExplanationView)
+                        } else {
+                            // Chat Button
                             Button {
                                 showChat = true
                             } label: {
@@ -300,19 +317,6 @@ struct ProfileView: View {
                                     Capsule()
                                         .foregroundStyle(user.profilePictureColor.toColor()!.gradient)
                                 }
-                            }
-                        }
-                        
-                        // App Settings
-                        if isEditable {
-                            Button {
-                                let settingsString = UIApplication.openSettingsURLString
-                                if let settingsURL = URL(string: settingsString) {
-                                    openURL(settingsURL)
-                                }
-                            } label: {
-                                Label("Impostazioni", systemImage: "gearshape.circle")
-                                    .font(.title3)
                             }
                         }
                     }
@@ -334,7 +338,7 @@ struct ProfileView: View {
             ExportView()
         }
         .sheet(isPresented: $isModifySheetPresented, content: {
-            ModifyProfileView(viewModel: viewModel, isModifySheetPresented: $isModifySheetPresented, user: $user, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
+            ModifyProfileView(isInExplanationView: isInExplanationView, viewModel: viewModel, isModifySheetPresented: $isModifySheetPresented, user: $user, nameSurnameTemp: $nameSurnameTemp, selectedColorTemp: $selectedColorTemp, selectedNeighbourhoodStructTemp: $selectedNeighbourhoodStructTemp)
                 .interactiveDismissDisabled()
         })
         .sheet(isPresented: $showChat, content: {
