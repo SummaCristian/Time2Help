@@ -7,15 +7,18 @@ struct TimeSlotsList: View {
     
     @State var tint: Color = .accentColor
     
+    var days: [Date] {
+        return extractDays()
+    }
+    
     var body: some View {
         if isEditable {
             List {
                 ForEach($slots) { slot in
                     HStack {
-                        Spacer()
-                        
                         DatePicker("", selection: slot.startingDate, displayedComponents: [.date, .hourAndMinute])
                             .labelsHidden()
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                         
                         
                         Image(systemName: "arrow.right")
@@ -24,12 +27,14 @@ struct TimeSlotsList: View {
                         DatePicker("", selection: slot.endingDate, displayedComponents: .hourAndMinute)
                             .labelsHidden()
                         
-                        Spacer()
                         
-                        Image(systemName: "line.horizontal.3")
-                            .foregroundStyle(.gray)
+                        if slots.count > 1 {
+                            Image(systemName: "line.horizontal.3")
+                                .foregroundStyle(.gray)
+                        }
                     }
                     .padding(5)
+                    .deleteDisabled(slots.count == 1)
                 }
                 .onDelete(perform: { indexSet in
                     slots.remove(atOffsets: indexSet)
@@ -68,7 +73,7 @@ struct TimeSlotsList: View {
                 List {
                     // The unique days in which there exists a TimeSlot.
                     // Each day will have its own Row, which is why we need to extract them
-                    let days: [Date] = extractDays()
+//                    let days: [Date] = extractDays()
                     
                     ForEach(days, id: \.self) { day in
                         HStack {
