@@ -73,6 +73,7 @@ struct faqView: View {
                 Image(systemName: faq.icon)
                     .foregroundStyle(faq.color)
                     .font(.title2.bold())
+                    .frame(width: 40)
                 
                 Text(faq.question)
                     .font(.title3.bold())
