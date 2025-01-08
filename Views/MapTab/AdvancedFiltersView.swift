@@ -329,32 +329,30 @@ struct AdvancedFiltersView: View {
         .overlay {
             // Title and Close Button
             VStack {
-                VStack {
-                    HStack {
-                        Text("Filtri avanzati")
-                            .font(.title.bold())
-                            .padding(.horizontal, 4)
-                        
-                        Spacer()
-                        
-                        // Close Button
-                        Button {
-                            isAdvancedFiltersViewShowing.toggle()
-                        } label: {
-                            Image(systemName: "xmark")
-                                .bold()
-                                .foregroundColor(.primary)
-                                .padding(10)
-                        }
-                        .background(.ultraThickMaterial)
-                        .clipShape(Circle())
-                        .shadow(radius: 3)
-                        .hoverEffect(.lift)
-                        
+                HStack(spacing: 16) {
+                    Text("Filtri avanzati")
+                        .font(.title.bold())
+                        .padding(.horizontal, 4)
+                    
+                    Spacer()
+                    
+                    // Close Button
+                    Button {
+                        isAdvancedFiltersViewShowing.toggle()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .bold()
+                            .foregroundColor(.primary)
+                            .padding(10)
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, 24)
+                    .background(.ultraThickMaterial)
+                    .clipShape(Circle())
+                    .shadow(radius: 3)
+                    .hoverEffect(.lift)
+                    
                 }
+                .padding(.horizontal)
+                .padding(.vertical, 24)
                 .background {
                     Rectangle()
                         .foregroundStyle(.ultraThinMaterial)
@@ -394,8 +392,12 @@ struct AdvancedFiltersView: View {
                         Button(
                             role: .cancel,
                             action: {
+                                // Update filters count
+                                temporaryFilter.calculateActiveFilters()
+                                
                                 // Cloning the temporaryFilter into the main Filter
                                 filter.clone(source: temporaryFilter)
+                                
                                 // Closing the popup
                                 isAdvancedFiltersViewShowing.toggle()
                             }, label: {
@@ -433,7 +435,6 @@ struct AdvancedFiltersView: View {
             temporaryFilter.clone(source: filter)
             
             internalMaxDuration = temporaryFilter.maxDuration
-            
             
             if (
                 temporaryFilter.startingDate.isTime(hour: 0, minute: 0) &&
