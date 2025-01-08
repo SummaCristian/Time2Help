@@ -83,12 +83,13 @@ enum FavorColor: Identifiable, CaseIterable {
 
 enum FavorStatus {
     case notAcceptedYet
-    case accepted
-    case justStarted
+//    case accepted
+    case waitingToStart
+//    case justStarted
     case ongoing
-    case halfwayThere
-    case almostThere
-    case waitingForApprovation
+//    case halfwayThere
+//    case almostThere
+    case waitingForEvaluation
     case completed
     case expired
     
@@ -96,19 +97,23 @@ enum FavorStatus {
     var progressPercentage: Double {
         switch self {
         case .notAcceptedYet:
+            return 0.0
+        case .waitingToStart:
             return 0.05
-        case .accepted:
-            return 0.15
-        case .justStarted:
-            return 0.20
+//        case .accepted:
+//            return 0.15
+//        case .justStarted:
+//            return 0.20
         case .ongoing:
-            return 0.35
-        case .halfwayThere:
-            return 0.50
-        case .almostThere:
-            return 0.75
-        case .waitingForApprovation:
-            return 0.90
+            return 0.5 // 0.35
+//        case .halfwayThere:
+//            return 0.50
+//        case .almostThere:
+//            return 0.75
+//        case .waitingForApprovation:
+//            return 0.90
+        case .waitingForEvaluation:
+            return 0.9
         case .completed:
             return 1.0
         case .expired:
@@ -120,19 +125,23 @@ enum FavorStatus {
     var textualForm: String {
         switch self {
         case .notAcceptedYet:
-            return "Non ancora accettato..."
-        case .accepted:
-            return "Accettato"
-        case .justStarted:
-            return "Appena iniziato..."
+            return "Non ancora accettato"
+        case .waitingToStart:
+            return "In attesa di iniziare"
+//        case .accepted:
+//            return "Accettato"
+//        case .justStarted:
+//            return "Appena iniziato..."
         case .ongoing:
             return "In corso..."
-        case .halfwayThere:
-            return "Circa a metà..."
-        case .almostThere:
-            return "Ci siamo quasi..."
-        case .waitingForApprovation:
-            return "In attesa di approvazione..."
+//        case .halfwayThere:
+//            return "Circa a metà..."
+//        case .almostThere:
+//            return "Ci siamo quasi..."
+//        case .waitingForApprovation:
+//            return "In attesa di approvazione..."
+        case .waitingForEvaluation:
+            return "In attesa di valutazione"
         case .completed:
             return "Completato!"
         case .expired:
