@@ -101,8 +101,43 @@ class Favor: Identifiable, ObservableObject, Hashable {
         self.icon = category.icon
     }
     
+    // Favor for Edit Sheet
+    init (
+        id: UUID,
+        title: String,
+        description: String,
+        author: User,
+        neighbourhood: String,
+        type: FavorType,
+        location: CLLocationCoordinate2D,
+        isCarNecessary: Bool,
+        isHeavyTask: Bool,
+        status: FavorStatus,
+        category: FavorCategory
+    ) {
+        // Custom initializer
+        self.id = id
+        self.title = title
+        self.description = description
+        self.author = author
+        self.neighbourhood = neighbourhood
+        self.type = type
+        self.location = location
+        self.isCarNecessary = isCarNecessary
+        self.isHeavyTask = isHeavyTask
+        self.status = status
+        self.category = category
+        
+        self.color = category.color
+        self.icon = category.icon
+    }
+    
     func canBeAccepted(userID: UUID) -> Bool {
         return (userID != author.id && ((type == .individual && helpers.isEmpty) || (type == .group && !helpers.contains(where: { $0.id == userID }))))
+    }
+    
+    func hasBeenAccepted(userID: UUID) -> Bool {
+        return helpers.contains(where: { $0.id == userID })
     }
     
     // MARK: - Hashable Conformance
