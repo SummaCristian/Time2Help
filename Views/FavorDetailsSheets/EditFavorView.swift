@@ -30,6 +30,8 @@ struct EditFavorSheet: View {
     // At the end of the creation process, if the User confirms it, it will be added to the Database
     let editFavorId: UUID
     
+    @Binding var selectedFavor: Favor?
+    
     @Binding var showEditedFavorOverlay: Bool
     @Binding var lastFavor: Favor?
     @Binding var lastInteraction: FavorInteraction?
@@ -293,23 +295,27 @@ struct EditFavorSheet: View {
                         
                         Button(action: {
 //                            favor.neighbourhood = favor.author.neighbourhood
-//                            
-//                            database.removeFavor(id: editFavorId)
-//                            database.addFavor(favor: favor)
+//
+                            database.removeFavor(id: editFavorId)
+                            database.addFavor(favor: favor)
 //                            // dismiss()
-//                                                        
-//                            lastFavor = favor
-//                            lastInteraction = .edited
-//                            
-//                            showEditedFavorOverlay = true
-//                            
-//                            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-//                                withAnimation {
-//                                    showEditedFavorOverlay = false
-//                                }
-//                            }
-//                            
-//                            isPresented = false
+//
+                            lastFavor = favor
+                            lastInteraction = .edited
+//
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                showEditedFavorOverlay = true
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                                    withAnimation {
+                                        showEditedFavorOverlay = false
+                                    }
+                                }
+                            }
+                            
+                            selectedFavor = nil
+                            
+                            isPresented = false
                         }) {
                             Label("Salva", systemImage: "square.and.arrow.down")
                                 .font(.body.bold())
@@ -373,5 +379,5 @@ struct EditFavorSheet: View {
 }
 
 #Preview {
-    EditFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), editFavorId: UUID(), showEditedFavorOverlay: .constant(true), lastFavor: .constant(nil), lastInteraction: .constant(.created))
+    EditFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), editFavorId: UUID(), selectedFavor: .constant(nil), showEditedFavorOverlay: .constant(true), lastFavor: .constant(nil), lastInteraction: .constant(.created))
 }
