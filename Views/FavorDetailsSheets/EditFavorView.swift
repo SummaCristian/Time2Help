@@ -36,7 +36,8 @@ struct EditFavorSheet: View {
     @Binding var lastFavor: Favor?
     @Binding var lastInteraction: FavorInteraction?
     
-    @State private var favor: Favor = Favor(author: .init(nameSurname: .constant(""), neighbourhood: .constant(""), profilePictureColor: .constant("")))
+    @Binding var favor: Favor
+    @StateObject private var tempFavor: Favor = Favor(author: User(nameSurname: .constant("Nome Cognome"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue")))
     
     // The UI
     var body: some View {
@@ -51,40 +52,40 @@ struct EditFavorSheet: View {
                     Section(
                         content: {
                             HStack(spacing: 8) {
-                                TextField("Titolo", text: $favor.title)
+                                TextField("Titolo", text: $tempFavor.title)
                                     .font(.title3.bold())
                                     .textInputAutocapitalization(.sentences)
-                                    .onChange(of: favor.title) { _, _ in
+                                    .onChange(of: tempFavor.title) { _, _ in
                                         favor.title = String(favor.title.prefix(50))
                                     }
                                 
-                                Text("\(favor.title.count)/50")
+                                Text("\(tempFavor.title.count)/50")
                                     .font(.subheadline.bold())
                                     .foregroundStyle(.gray)
                                 
-                                if !favor.title.isEmpty {
+                                if !tempFavor.title.isEmpty {
                                     Image(systemName: "xmark.circle.fill")
                                         .font(.title3)
                                         .foregroundStyle(.red, .red.opacity(0.2))
                                         .onTapGesture {
-                                            favor.title = ""
+                                            tempFavor.title = ""
                                         }
                                 }
                             }
                             .padding(.vertical, 8)
                             
                             HStack(alignment: .top, spacing: 8) {
-                                TextField("Descrizione", text: $favor.description, axis: .vertical)
+                                TextField("Descrizione", text: $tempFavor.description, axis: .vertical)
                                     .font(.callout)
                                     .textInputAutocapitalization(.sentences)
                                     .lineLimit(5 ... 5)
                                 
-                                if !favor.description.isEmpty {
+                                if !tempFavor.description.isEmpty {
                                     Image(systemName: "xmark.circle.fill")
                                         .font(.title3)
                                         .foregroundStyle(.red, .red.opacity(0.2))
                                         .onTapGesture {
-                                            favor.description = ""
+                                            tempFavor.description = ""
                                         }
                                 }
                             }
@@ -98,7 +99,7 @@ struct EditFavorSheet: View {
                     Section(
                         content: {
                             Picker(
-                                selection: $favor.type,
+                                selection: $tempFavor.type,
                                 content: {
                                     ForEach(FavorType.allCases) { type in
                                         VStack (alignment: .leading, spacing: 8) {
@@ -115,7 +116,7 @@ struct EditFavorSheet: View {
                                     //Text("Tipo di Favore")
                                 })
                             .pickerStyle(.inline)
-                            .listItemTint(favor.color)
+                            .listItemTint(tempFavor.color)
                             
                         },
                         header: {
@@ -127,10 +128,10 @@ struct EditFavorSheet: View {
                     Section(
                         content: {
                             Picker(
-                                selection: $favor.category,
+                                selection: $tempFavor.category,
                                 label:
-                                    Text(favor.category.description)
-                                        .font(.subheadline)
+                                    Text(tempFavor.category.description)
+                                    .font(.subheadline)
                             ) {
                                 ForEach(FavorCategory.allCases.filter({$0 != .all})) { category in
                                     Label(category.name, systemImage: category.icon)
@@ -138,7 +139,7 @@ struct EditFavorSheet: View {
                                 }
                             }
                             .pickerStyle(.menu)
-                            .tint(favor.color)
+                            .tint(tempFavor.color)
                         },
                         header: {
                             Text("Categoria")
@@ -148,8 +149,8 @@ struct EditFavorSheet: View {
                     // Date selectors
                     Section(
                         content: {
-                            TimeSlotsList(slots: $favor.timeSlots)
-                                .tint(favor.color)
+                            TimeSlotsList(slots: $tempFavor.timeSlots)
+                                .tint(tempFavor.color)
                         },
                         header: {
                             Text("Fasce orarie")
@@ -159,7 +160,7 @@ struct EditFavorSheet: View {
                     // Additional infos
                     Section(
                         content: {
-                            Toggle(isOn: $favor.isCarNecessary, label: {
+                            Toggle(isOn: $tempFavor.isCarNecessary, label: {
                                 HStack(spacing: 8) {
                                     Image(systemName: "car.fill")
                                         .foregroundStyle(Color(.white))
@@ -175,7 +176,7 @@ struct EditFavorSheet: View {
                             .tint(.red)
                             .padding(.vertical, 4)
                             
-                            Toggle(isOn: $favor.isHeavyTask, label: {
+                            Toggle(isOn: $tempFavor.isHeavyTask, label: {
                                 HStack(spacing: 8) {
                                     Image(systemName: "hammer.fill")
                                         .foregroundStyle(Color(.white))
@@ -211,16 +212,16 @@ struct EditFavorSheet: View {
                                             .font(.subheadline)
                                         Text("Scegli")
                                     }
-                                    .foregroundColor(favor.color)
+                                    .foregroundColor(tempFavor.color)
                                 }
                                 
                                 Map(
                                     bounds: MapCameraBounds(minimumDistance: 800, maximumDistance: 800),
                                     interactionModes: [] // No interactions allowed
                                 ) {
-                                    Annotation("", coordinate: favor.location, content: {
+                                    Annotation("", coordinate: tempFavor.location, content: {
                                         // Only this Favor is shown in this mini-Map
-                                        FavorMarker(favor: favor, isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
+                                        FavorMarker(favor: tempFavor, isSelected: .constant(true), isInFavorSheet: true, isOwner: true)
                                     })
                                 }
                                 .mapStyle(
@@ -253,7 +254,7 @@ struct EditFavorSheet: View {
                 }
                 .sheet(isPresented: $isLocationSelectorPresented, content: {
                     // Shows the Location Selector sheet
-                    LocationSelector(viewModel: viewModel, favor: favor)
+                    LocationSelector(viewModel: viewModel, favor: tempFavor)
                         .interactiveDismissDisabled()
                 })
                 .alert("Tornare indietro?", isPresented: $isConfirmationDialogPresented) {
@@ -265,15 +266,15 @@ struct EditFavorSheet: View {
                 } message: {
                     Text("I dettagli che hai inserito andranno persi")
                 }
-                .onChange(of: favor.title) {
-                    if favor.title != "" && favor.description != "" {
+                .onChange(of: tempFavor.title) {
+                    if tempFavor.title != "" && tempFavor.description != "" {
                         canBeCreated = true
                     } else {
                         canBeCreated = false
                     }
                 }
-                .onChange(of: favor.description) {
-                    if favor.title != "" && favor.description != "" {
+                .onChange(of: tempFavor.description) {
+                    if tempFavor.title != "" && tempFavor.description != "" {
                         canBeCreated = true
                     } else {
                         canBeCreated = false
@@ -294,16 +295,22 @@ struct EditFavorSheet: View {
                         Spacer()
                         
                         Button(action: {
-//                            favor.neighbourhood = favor.author.neighbourhood
-//
-                            database.removeFavor(id: editFavorId)
-                            database.addFavor(favor: favor)
-//                            // dismiss()
-//
+                            favor.title = tempFavor.title
+                            favor.description = tempFavor.description
+                            favor.author = tempFavor.author
+                            favor.neighbourhood = tempFavor.neighbourhood
+                            favor.type = tempFavor.type
+                            favor.location = tempFavor.location
+                            favor.isCarNecessary = tempFavor.isCarNecessary
+                            favor.isHeavyTask = tempFavor.isHeavyTask
+                            favor.status = tempFavor.status
+                            favor.category = tempFavor.category
+                            favor.timeSlots = tempFavor.timeSlots
+                            
                             lastFavor = favor
                             lastInteraction = .edited
-//
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 showEditedFavorOverlay = true
                                 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
@@ -313,9 +320,9 @@ struct EditFavorSheet: View {
                                 }
                             }
                             
-                            selectedFavor = nil
-                            
+                            // Close sheets
                             isPresented = false
+                            selectedFavor = nil
                         }) {
                             Label("Salva", systemImage: "square.and.arrow.down")
                                 .font(.body.bold())
@@ -356,10 +363,10 @@ struct EditFavorSheet: View {
                     // Favor's Icon
                     ZStack {
                         Circle()
-                            .foregroundStyle(favor.color.gradient)
+                            .foregroundStyle(tempFavor.color.gradient)
                             .frame(width: 35, height: 35)
                             .shadow(radius: 3)
-                        Image(systemName: favor.icon)
+                        Image(systemName: tempFavor.icon)
                             .resizable()
                             .foregroundStyle(colorScheme == .dark ? Color(.systemGray6) : .white)
                             .scaledToFit()
@@ -369,15 +376,24 @@ struct EditFavorSheet: View {
                 }
             })
         }
-        .sensoryFeedback(.selection, trigger: favor.category)
-        .sensoryFeedback(.selection, trigger: favor.type)
+        .sensoryFeedback(.selection, trigger: tempFavor.category)
+        .sensoryFeedback(.selection, trigger: tempFavor.type)
         .onAppear {
-            let favorTemp = database.getFavor(id: editFavorId)
-            favor = Favor(id: UUID(), title: favorTemp.title, description: favorTemp.description, author: favorTemp.author, neighbourhood: favorTemp.neighbourhood, type: favorTemp.type, location: favorTemp.location, isCarNecessary: favorTemp.isCarNecessary, isHeavyTask: favorTemp.isHeavyTask, status: favorTemp.status, category: favorTemp.category)
+            tempFavor.title = favor.title
+            tempFavor.description = favor.description
+            tempFavor.author = favor.author
+            tempFavor.neighbourhood = favor.neighbourhood
+            tempFavor.type = favor.type
+            tempFavor.location = favor.location
+            tempFavor.isCarNecessary = favor.isCarNecessary
+            tempFavor.isHeavyTask = favor.isHeavyTask
+            tempFavor.status = favor.status
+            tempFavor.category = favor.category
+            tempFavor.timeSlots = favor.timeSlots
         }
     }
 }
 
 #Preview {
-    EditFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), editFavorId: UUID(), selectedFavor: .constant(nil), showEditedFavorOverlay: .constant(true), lastFavor: .constant(nil), lastInteraction: .constant(.created))
+    EditFavorSheet(isPresented: .constant(true), database: Database(), viewModel: MapViewModel(), editFavorId: UUID(), selectedFavor: .constant(nil), showEditedFavorOverlay: .constant(true), lastFavor: .constant(nil), lastInteraction: .constant(.created), favor: .constant(Favor(author: User(nameSurname: .constant("Nome Cognome"), neighbourhood: .constant("Duomo"), profilePictureColor: .constant("blue")))))
 }
