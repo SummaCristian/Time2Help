@@ -19,7 +19,7 @@ struct FaqScreen: View {
                 
                 Spacer()
             }
-                .listRowBackground(Color.clear)
+            .listRowBackground(Color.clear)
             
             Section(
                 content: {
@@ -68,5 +68,5 @@ struct FaqScreen: View {
 }
 
 #Preview {
-//    FaqScreen(showExplanationTemp: .constant(false))
+    FaqScreen(isInExplanationView: true, showExplanationTemp: .constant(false))
 }
