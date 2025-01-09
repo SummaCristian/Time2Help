@@ -375,8 +375,8 @@ struct EditFavorSheet: View {
         .sensoryFeedback(.selection, trigger: favor.category)
         .sensoryFeedback(.selection, trigger: favor.type)
         .onAppear {
-//            let favorTemp = database.getFavor(id: editFavorId)
-//            favor = Favor(id: UUID(), title: favorTemp.title, description: favorTemp.description, author: favorTemp.author, neighbourhood: favorTemp.neighbourhood, type: favorTemp.type, location: favorTemp.location, isCarNecessary: favorTemp.isCarNecessary, isHeavyTask: favorTemp.isHeavyTask, status: favorTemp.status, category: favorTemp.category)
+            let favorTemp = database.getFavor(id: editFavorId)
+            favor = Favor(id: UUID(), title: favorTemp.title, description: favorTemp.description, author: favorTemp.author, neighbourhood: favorTemp.neighbourhood, type: favorTemp.type, location: favorTemp.location, isCarNecessary: favorTemp.isCarNecessary, isHeavyTask: favorTemp.isHeavyTask, status: favorTemp.status, category: favorTemp.category)
         }
     }
 }
