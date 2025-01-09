@@ -505,7 +505,7 @@ struct FavorDetailsSheet: View {
             ProfileView(isInExplanationView: isInExplanationView, showExplanationTemp: .constant(false), viewModel: viewModel, database: database, selectedFavor: $selectedFavor, user: .constant(helper), selectedReward: $selectedReward, rewardNameSpace: rewardNameSpace, isEditFavorSheetPresented: $isEditFavorSheetPresented, showInteractedFavorOverlay: $showInteractedFavorOverlay, lastFavorInteracted: $lastFavorInteracted, lastInteraction: $lastInteraction, ongoingFavor: $ongoingFavor)
         }
         .sheet(isPresented: $isEditFavorSheetPresented, content: {
-            EditFavorSheet(isPresented: $isEditFavorSheetPresented, database: database, viewModel: viewModel, editFavorId: favor.id, showEditedFavorOverlay: $showInteractedFavorOverlay, lastFavor: $lastFavorInteracted, lastInteraction: $lastInteraction)
+            EditFavorSheet(isPresented: $isEditFavorSheetPresented, database: database, viewModel: viewModel, editFavorId: favor.id, selectedFavor: $selectedFavor, showEditedFavorOverlay: $showInteractedFavorOverlay, lastFavor: $lastFavorInteracted, lastInteraction: $lastInteraction)
         })
         .sensoryFeedback(.impact, trigger: isHelpersMenuExpanded)
         .sensoryFeedback(.impact, trigger: isHeavyTaskAlertShowing)
