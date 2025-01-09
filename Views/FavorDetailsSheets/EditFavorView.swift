@@ -246,15 +246,6 @@ struct EditFavorSheet: View {
                         .safeAreaPadding(.bottom, 34)
                 }
                 .scrollDismissesKeyboard(.immediately)
-                .onAppear {
-                    if let location = viewModel.locationManager.location?.coordinate {
-                        favor.location = location
-                    } else {
-                        // Handle the case where the location is unavailable
-                        // print("Location not available yet.")
-                        // Optionally show an alert to the user
-                    }
-                }
                 .onDisappear() {
                     isConfirmationDialogPresented = true
                 }
