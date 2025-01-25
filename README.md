@@ -32,15 +32,15 @@ Time2Help is a community-focused app designed to foster collaboration, mutual ai
   <table>
     <tr>
       <td align="center">
-        <img src="https://github.com/user-attachments/assets/a68fb225-0758-4380-ab44-74bf8d767bd3" alt="Swift Logo" width="80" height="80">
+        <img src="https://github.com/SummaCristian/Progetto_HCI_iOS/blob/main/docs/swift.png" alt="Swift Logo" width="80" height="80">
         <h2>Made with <strong>Swift</strong></h2>
       </td>
       <td align="center">
-        <img src="https://github.com/user-attachments/assets/bbf203cd-2997-431d-9541-cb50b1ecbb82" alt="Swift Logo" width="80" height="80">
+        <img src="https://github.com/SummaCristian/Progetto_HCI_iOS/blob/main/docs/swiftUI.png" alt="SwiftUI Logo" width="80" height="80">
         <h2>Built in <strong>SwiftUI</strong></h2>
       </td>
       <td align="center">
-        <img src="https://github.com/user-attachments/assets/8795a0ec-2bd9-45bc-8038-2400920c0862" alt="Swift Logo" width="80" height="80">
+        <img src="https://github.com/SummaCristian/Progetto_HCI_iOS/blob/main/docs/mapKit.png" alt="MapKit Logo" width="80" height="80">
         <h2>Built with <strong>MapKit</strong></h2>
       </td>
     </tr>
@@ -58,6 +58,17 @@ Tested in iOS 18.
 
 Here are some highlights of the app in action:
 
+<div align="center">
+  <img src="https://github.com/SummaCristian/Progetto_HCI_iOS/blob/main/docs/MapViewLight.png" width="250" alt="Map in Light Mode">
+  <img src="https://github.com/SummaCristian/Progetto_HCI_iOS/blob/main/docs/ListViewLight.png" width="250" alt="List in Light Mode">
+  <img src="https://github.com/SummaCristian/Progetto_HCI_iOS/blob/main/docs/FiltersViewLight.png" width="250" alt="Filters in Light Mode">
+</div>
+
+<div align="center">
+  <img src="https://github.com/SummaCristian/Progetto_HCI_iOS/blob/main/docs/MapViewDark.png" width="250" alt="Map in Dark Mode">
+  <img src="https://github.com/SummaCristian/Progetto_HCI_iOS/blob/main/docs/ListViewDark.png" width="250" alt="List in Dark Mode">
+  <img src="https://github.com/SummaCristian/Progetto_HCI_iOS/blob/main/docs/FiltersViewDark.png" width="250" alt="Filters in Dark Mode">
+</div>
 
 
 ## About the Project
