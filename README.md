@@ -83,10 +83,10 @@ The team behind **Time2Help** is called **Imagineers**
 <table style="width: 100%; border-collapse: collapse;">
   <tr>
     <td style="text-align: center; padding: 10px;">
-      <img src="https://github.com/mattiaDina.png" width="100" style="border-radius: 50%;">
+      <img src="https://github.com/DiNardoMattia.png" width="100" style="border-radius: 50%;">
     </td>
     <td style="text-align: center; padding: 10px;">
-      <b><a href="https://github.com/mattiaDina" style="text-decoration: none; color: black;">mattiaDina</a></b>
+      <b><a href="https://github.com/DiNardoMattia" style="text-decoration: none; color: black;">DiNardoMattia</a></b>
     </td>
     <td style="text-align: center; padding: 10px;">
       Mattia Di Nardo
